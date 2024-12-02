@@ -1,16 +1,33 @@
 body {
-    background-color: cornflowerblue;
-    padding: 15px;
+    background-color: darkgray;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
-/* top navigation bar */
+#main-content {
+    background-color: white;
+    margin: 0 30px;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* navbar */
 .navbar {
-    border-radius: 10px;
+    background-color: #522A5E;
 }
 
 /* logo */
 .navbar-brand {
     font-size: xx-large
+}
+
+.navbar-logo {
+    height: 75px;
+    width: auto;
+    max-height: 50px;
 }
 
 #user-account {
@@ -71,4 +88,17 @@ ul {
 
 textarea {
     min-height: 400px;
+}
+
+.footer {
+    background-color: #222326;
+    padding: 50px;
+}
+
+#footer-title {
+    font-size: small;
+}
+
+#footer-link {
+    font-size: x-small;
 }

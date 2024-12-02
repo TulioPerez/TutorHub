@@ -1,19 +1,73 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>{% block title %} Tutor Hub</title>
+        <title>{% block title %}Mentor Finder{% endblock %}</title>
+        <link rel="icon" type="image/svg+xml" href="{% static 'tutorhub/images/mentor-logo-bull.svg' %}">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="{% static 'tutorhub/styles.css' %}">
-        {% block script %}
-        {% endblock %}
     </head>
     <body>
-        <div class="container">
-            {% block body %}
-            {% endblock %}
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <a class="navbar-brand"  href="{% url 'index' %}">
+            <!-- navbar branding -->
+            <div>
+                <img class="navbar-logo" src="{% static '/tutorhub/images/mentor-logo-text.svg' %}" alt="Mentor Logo" class="logo">
+                <img class="navbar-logo" src="{% static '/tutorhub/images/mentor-logo-bull.svg' %}" alt="Mentor Logo" class="logo">
+            </div>
+        </a>
+        <div>
+            <ul class="navbar-nav mr-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" id="menu-username" href="#"><strong>{{ user.username }} ⚙️</strong></a></li>
+                {% endif %}
+                    <li class="nav-item"><a class="nav-link" id="menu-all-tutors" href="#">All Tutors</a></li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" id="menu-following" href="#">Following</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Log In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
         </div>
+    </nav>
+    <div id="main-content">
+        {% block body %}
+        {% endblock %}
+    </div>
     </body>
+    <footer class="bg-dark text-white mt-auto py-3">
+        <div class="container" id="footer-title">
+            <div class="row">
+                <div class="col-md-4">
+                    About Us
+                    <p id="footer-link">Mentor Finder is a platform dedicated to connecting mentors with mentees worldwide.</p>
+                </div>
+                <div class="col-md-4">
+                    Quick Links
+                    <ul class="list-unstyled" id="footer-link">
+                        <li><a href="{% url 'index' %}" class="text-white">Home</a></li>
+                        <!-- <li><a href="{% url 'login' %}" class="text-white">Log In</a></li>
+                        <li><a href="{% url 'register' %}" class="text-white">Register</a></li> -->
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    Contact Us
+                    <ul class="list-unstyled" id="footer-link">
+                        <li>Email: support@mentorfinder.com</li>
+                        <li>Phone: +1 (555) 123-4567</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center">
+                <p class="mb-0" id="footer-link">© {% now "Y" %} Mentor Finder. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
 </html>
-{% endblock %}
+<script>
+    const loggedInUsername = "{{ request.user.username }}";
+</script>

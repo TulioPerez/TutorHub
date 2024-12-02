@@ -2,42 +2,18 @@
 {% load static %}
 
 {% block body %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{% url 'index' %}">TutorHub 📚</a>
-    <div>
-        <ul class="navbar-nav mr-auto">
-            {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" id="menu-username" href="#"><strong>{{ user.username }} ⚙️</strong></a></li>
-            <!-- <li class="nav-item"><a class="nav-link" id="menu-compose-post" href="#">Create a Post</a></li> -->
-            {% endif %}
-            <li class="nav-item"><a class="nav-link" id="menu-all-tutors" href="#">All Tutors</a></li>
-            {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" id="menu-following" href="#">Following</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
-            {% else %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Log In</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
-            {% endif %}
-        </ul>
-    </div>
-</nav>
-
-<hr />
+<!-- <hr /> -->
 
 <div class="title">
     <!-- header titles populated here -->
+     <h1>MAIN TITLE</h1>
 </div>
 
 <div class="page">
     <!-- page content -->
 </div>
 {% endblock %}
-
 {% block script %}
-<!-- username reference -->
-<script>
-    const loggedInUsername = "{{ request.user.username }}";
-</script>
 
 <script src="{% static 'tutorhub/index.js' %}"></script>
 {% endblock %}
