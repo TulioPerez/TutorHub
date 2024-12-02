@@ -17,10 +17,11 @@
                 <img class="navbar-logo" src="{% static '/tutorhub/images/mentor-logo-bull.svg' %}" alt="Mentor Logo" class="logo">
             </div>
         </a>
-        <div>
+        <div class="ml-auto">
             <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" id="menu-username" href="#"><strong>{{ user.username }} ⚙️</strong></a></li>
+                    <li class="nav-item"><a class="nav-link" id="menu-messages" href="#">Messages<a></li>
                 {% endif %}
                     <li class="nav-item"><a class="nav-link" id="menu-all-tutors" href="#">All Tutors</a></li>
                 {% if user.is_authenticated %}
