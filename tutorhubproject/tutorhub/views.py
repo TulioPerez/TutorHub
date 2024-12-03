@@ -1,24 +1,27 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
-from django.core.paginator import Paginator
-import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import User
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from .models import User, Tutor, Message, Subject, GradeLevel, User
+from django.db.models import Q
 
 
 # default page display
+# def index(request):
+#     if request.user.is_authenticated:
+#         return render(request, "tutorhub/index.html")
+    
+#     else:
+#         return HttpResponseRedirect(reverse("login"))
+    
+
+
 def index(request):
     if request.user.is_authenticated:
-        return render(request, "tutorhub/index.html")
-    
-    else:
-        return HttpResponseRedirect(reverse("login"))
+        return redirect('search_tutors')
+    return render(request, 'tutorhub/index.html')
 
 
 # authentication
@@ -72,3 +75,52 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "tutorhub/register.html")
+
+
+@login_required
+def profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return render(request, 'tutorhub/profile.html', {'profile': user})
+
+
+@login_required
+def search_tutors(request):
+    query = request.GET.get('q', '')
+    results = Tutor.objects.filter(
+        Q(user__nickname__icontains=query) |
+        Q(subjects__name__icontains=query) |
+        Q(user__address__icontains=query)
+    ).distinct()
+    return render(request, 'tutorhub/tutors.html', {'results': results})
+
+
+@login_required
+def like_tutor(request, tutor_id):
+    tutor = get_object_or_404(Tutor, id=tutor_id)
+    if tutor in request.user.liked_tutors.all():
+        request.user.liked_tutors.remove(tutor)
+    else:
+        request.user.liked_tutors.add(tutor)
+    return redirect('liked_tutors')
+
+
+@login_required
+def liked_tutors(request):
+    liked = request.user.liked_tutors.all()
+    return render(request, 'tutorhub/liked_tutors.html', {'liked': liked})
+
+
+@login_required
+def message_list(request):
+    messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-timestamp')
+    return render(request, 'tutorhub/messages.html', {'messages': messages})
+
+
+@login_required
+def send_message(request, receiver_id):
+    receiver = get_object_or_404(User, id=receiver_id)
+    if request.method == "POST":
+        content = request.POST['content']
+        Message.objects.create(sender=request.user, receiver=receiver, content=content)
+        return redirect('message_list')
+    return render(request, 'tutorhub/send_message.html', {'receiver': receiver})
