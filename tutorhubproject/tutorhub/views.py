@@ -4,18 +4,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .models import User, Tutor, Message, Subject, GradeLevel, User
+from .models import User, Tutor, Message, Subject, GradeLevel, User, Credential
 from django.db.models import Q
-
-
-# default page display
-# def index(request):
-#     if request.user.is_authenticated:
-#         return render(request, "tutorhub/index.html")
-    
-#     else:
-#         return HttpResponseRedirect(reverse("login"))
-    
 
 
 def index(request):
@@ -53,10 +43,10 @@ def logout_view(request):
 def register(request):
     if request.method == "POST":
         email = request.POST["email"]
-
-        # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
+        user_type = request.POST.get("user_type")
+
         if password != confirmation:
             return render(request, "tutorhub/register.html", {
                 "message": "Passwords must match."
@@ -71,10 +61,35 @@ def register(request):
             return render(request, "tutorhub/register.html", {
                 "message": "Email address already taken."
             })
+        
+          # Handle tutor-specific fields
+        if user_type == "tutor":
+            tutor = Tutor.objects.create(user=user)
+
+            tutor.availability = request.POST.get("availability", "{}")
+            tutor.save()
+
+            # Add subjects and grade levels
+            subjects = request.POST.getlist("subjects")
+            grade_levels = request.POST.getlist("grade_levels")
+            tutor.subjects.add(*Subject.objects.filter(id__in=subjects))
+            tutor.grade_levels.add(*GradeLevel.objects.filter(id__in=grade_levels))
+        
+            # Process credential uploads
+            credentials = request.FILES.getlist("credentials")
+            for file in credentials[:5]:  # Enforce max 5 files
+                Credential.objects.create(tutor=tutor, file=file)
+
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request, "tutorhub/register.html")
+
+    # Pass subject and grade-level data for the form
+    subjects = Subject.objects.all()
+    grade_levels = GradeLevel.objects.all()
+    return render(request, "tutorhub/register.html", {
+        "subjects": subjects,
+        "grade_levels": grade_levels
+    })
 
 
 @login_required

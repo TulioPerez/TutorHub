@@ -3,6 +3,32 @@
 <div class="container mt-5">
     <h1>{{ profile.username }}'s Profile</h1>
 
+    {% if profile.tutor_profile %}
+        <h3>Tutor Details</h3>
+        <p><strong>Availability:</strong> {{ profile.tutor_profile.availability }}</p>
+        <h4>Subjects</h4>
+        <ul>
+            {% for subject in profile.tutor_profile.subjects.all %}
+                <li>{{ subject.name }}</li>
+            {% endfor %}
+        </ul>
+        <h4>Grade Levels</h4>
+        <ul>
+            {% for grade_level in profile.tutor_profile.grade_levels.all %}
+                <li>{{ grade_level.level }}</li>
+            {% endfor %}
+        </ul>
+        <h4>Credentials</h4>
+        <ul>
+            {% for credential in profile.tutor_profile.credentials.all %}
+                <li><a href="{{ credential.file.url }}" target="_blank">View Credential</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>This user is a student.</p>
+    {% endif %}
+    </div>
+
     {% if is_own_profile %}
         <form method="post">
             {% csrf_token %}
