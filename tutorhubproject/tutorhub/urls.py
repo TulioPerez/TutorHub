@@ -12,6 +12,8 @@ urlpatterns = [
 
     # pages & functions
     path('profile/<int:user_id>/', views.profile, name='profile'),
+    path('profile/', views.profile, name='my_profile'),  # For the logged-in user's own profile
+
     path('search/', views.search_tutors, name='search_tutors'),
     path('messages/', views.message_list, name='message_list'),
     path('message/<int:receiver_id>/', views.send_message, name='send_message'),

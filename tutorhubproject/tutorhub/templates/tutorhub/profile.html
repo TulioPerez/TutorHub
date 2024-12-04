@@ -1,19 +1,30 @@
 {% extends "tutorhub/layout.html" %}
-{% load static %}
-
 {% block body %}
-<!-- <hr /> -->
+<div class="container mt-5">
+    <h1>{{ profile.username }}'s Profile</h1>
 
-<div class="title">
-    <!-- header titles populated here -->
-    PROFILE
-</div>
-
-<div class="page">
-    <!-- page content -->
+    {% if is_own_profile %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="nickname">Nickname</label>
+                <input type="text" id="nickname" name="nickname" class="form-control" value="{{ profile.nickname }}">
+            </div>
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" name="bio" class="form-control">{{ profile.bio }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" class="form-control">{{ profile.address }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    {% else %}
+        <p><strong>Nickname:</strong> {{ profile.nickname }}</p>
+        <p><strong>Bio:</strong> {{ profile.bio }}</p>
+        <p><strong>Address:</strong> {{ profile.address }}</p>
+    {% endif %}
 </div>
 {% endblock %}
-{% block script %}
 
-<script src="{% static 'tutorhub/scripts.js' %}"></script>
-{% endblock %}

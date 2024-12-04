@@ -78,9 +78,24 @@ def register(request):
 
 
 @login_required
-def profile(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    return render(request, 'tutorhub/profile.html', {'profile': user})
+def profile(request, user_id=None):
+    if user_id is None:
+        user_id = request.user.id
+
+    profile_user = get_object_or_404(User, id=user_id)
+    is_own_profile = profile_user == request.user
+
+    if request.method == "POST" and is_own_profile:
+        profile_user.nickname = request.POST.get("nickname", profile_user.nickname)
+        profile_user.bio = request.POST.get("bio", profile_user.bio)
+        profile_user.address = request.POST.get("address", profile_user.address)
+        profile_user.save()
+        return redirect("profile", user_id=profile_user.id)
+
+    return render(request, 'tutorhub/profile.html', {
+        'profile': profile_user,
+        'is_own_profile': is_own_profile,
+    })
 
 
 @login_required
