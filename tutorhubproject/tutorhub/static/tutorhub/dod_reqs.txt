@@ -60,13 +60,18 @@ TEMPLATES:
         + Row color == read or not
 
 Good Outcome:
-A registration page and routing for students to a default search results page showing teachers in their neighborhood.
-Tutors and students will submit their profile pages data during the registration process. Details will include name, nickname, profile image, address, bio, and availability. This data will be editable if the user is the owner of the profile page.
-Students will be able to find a tutor via a search, and criteria will include address, subject and grade level. 
-Students will be able to message tutors and tutors will be able to respond. Conversations with parent (original) and child (response) messages will be shown in list form on a “messages” page. Messaging will be similar to what we have covered in the “Network” project. For tutors and students, if a message exists that has not been read, a notification icon will appear in the navbar.
-Students will be able to “like” and “unlike” a tutor. Liked tutors will be displayed in list form on a separate page with the option to message the tutors or check their availability by visiting their profile.
-
-
+    + A registration page and routing for students to a default search results page showing teachers in their neighborhood.
+    + Tutors and students will submit their profile page data during the registration process. 
+        Details will include name, nickname, profile image, address, bio, and availability. 
+        This data will be editable if the user is the owner of the profile page.
+    + Students will be able to find a tutor via a search, and criteria will include address, subject and grade level. 
+    + Students will be able to message tutors and tutors will be able to respond. 
+        Conversations with parent (original) and child (response) messages will be shown in list form on a “messages” page. 
+        Messaging will be similar to what we have covered in the “Network” project. 
+        For tutors and students, if a message exists that has not been read, a notification icon will appear in the navbar.
+    + Students will be able to “like” and “unlike” a tutor. 
+        Liked tutors will be displayed in list form on a separate page with the option to message the tutors
+        or check their availability by visiting their profile.
 
 Better Outcome: 
 In addition to the “good” outcomes, I would like to implement either the Google Maps or Mapbox API for location proximity searching. 

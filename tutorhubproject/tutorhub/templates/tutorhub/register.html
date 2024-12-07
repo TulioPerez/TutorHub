@@ -7,19 +7,71 @@
     <div>{{ message }}</div>
 {% endif %}
 
-<form action="{% url 'register' %}" enctype="multipart/form-data">
+<form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="form-group">
-        <input class="form-control" type="email" name="email" placeholder="Email Address">
+        <label for="email">Email Address:</label>
+        <input class="form-control" type="email" name="email" id="email" placeholder="Email Address" maxlength="100" required>
     </div>
+    
     <div class="form-group">
-        <input class="form-control" type="password" name="password" placeholder="Password">
-    </div>
-    <div class="form-group">
-        <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+        <label for="password">Password:</label>
+        <input class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="100" required>
     </div>
 
+    <div class="form-group">
+        <label for="confirmation">Confirm Password:</label>
+        <input class="form-control" type="password" name="confirmation" id="confirmation" placeholder="Confirm Password" maxlength="100" required>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="first_name">First Name:</label>
+                <input class="form-control" type="text" name="first_name" id="first_name" placeholder="First Name" maxlength="50" required>
+            </div>
+            <div class="col-md-6">
+                <label for="last_name">Last Name:</label>
+                <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Last Name" maxlength="50" required>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="nickname">Nickname:</label>
+        <input class="form-control" type="text" name="nickname" id="nickname" placeholder="Nickname" maxlength="50">
+    </div>
+    <h4>Address</h4>
+    <div class="form-group">
+        <label for="street_address">Street Address:</label>
+        <input class="form-control" type="text" name="street_address" id="street_address" placeholder="Street Address" maxlength="100" required>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="city">City:</label>
+                <input class="form-control" type="text" name="city" id="city" placeholder="City" maxlength="50" required>
+            </div>
+            <div class="col-md-3">
+                <label for="state">State:</label>
+                <input class="form-control" type="text" name="state" id="state" placeholder="State" maxlength="50" required>
+            </div>
+            <div class="col-md-3">
+                <label for="zip_code">Zip Code:</label>
+                <input class="form-control" type="text" name="zip_code" id="zip_code" placeholder="Zip Code" maxlength="10" required>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="bio">Bio:</label>
+        <textarea class="form-control" name="bio" id="bio" placeholder="Tell us about yourself" rows="4" maxlength="500"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="profile_image">Profile Image:</label>
+        <input class="form-control" type="file" name="profile_image" id="profile_image" accept="image/*">
+    </div>
 
     <div class="form-group">
         <label>User Type:</label><br>
@@ -28,34 +80,52 @@
     </div>
 
     <div id="tutor-fields" style="display: none;">
-        <div class="form-group">
-            <label for="availability">Availability (JSON format)</label>
-            <textarea class="form-control" id="availability" name="availability"></textarea>
+        <div id="subject-grade-section">
+            <h4>Subjects and Grade Levels</h4>
+            <div class="form-group">
+                <div id="subject-rows">
+                    <div class="subject-row row mb-3">
+                        <div class="col-md-4">
+                            <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label><input type="checkbox" name="grade_levels_a" value="PK / KG">Pre-K / KG</label>
+                            <label><input type="checkbox" name="grade_levels_b" value="1 - 5">1 - 5</label>
+                            <label><input type="checkbox" name="grade_levels_c" value="6 - 8">6 - 8</label>
+                            <label><input type="checkbox" name="grade_levels_d" value="9 - 12">9 - 12</label>
+                            <label><input type="checkbox" name="grade_levels_e" value="Adults">Adults</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="add-subject-row" class="btn btn-secondary">Add Subject</button>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label>Subjects</label><br>
-            {% for subject in subjects %}
-                <input type="checkbox" name="subjects" value="{{ subject.id }}"> {{ subject.name }}<br>
-            {% endfor %}
+        
+        <div id="credentials-section">
+            <h4>Upload Credentials</h4>
+            <div id="credential-rows">
+                <div class="credential-row row mb-3">
+                    <div class="col-md-12">
+                        <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
+                    </div>
+                </div>
+            </div>
+            <button type="button" id="add-credential-row" class="btn btn-secondary">Add Credential</button>
         </div>
-
-        <div class="form-group">
-            <label>Grade Levels</label><br>
-            {% for grade_level in grade_levels %}
-                <input type="checkbox" name="grade_levels" value="{{ grade_level.id }}"> {{ grade_level.level }}<br>
-            {% endfor %}
-        </div>
-
-        <div class="form-group">
-            <label>Upload Credentials (Max 5 files)</label>
-            <input type="file" name="credentials" multiple>
-        </div>
+        
     </div>
-
-    <input class="btn btn-primary" type="submit" value="Register">
+    
+    <input class="btn btn-primary mt-3" type="submit" value="Register">
 </form>
 
-Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+<p>Already have an account? <a href="{% url 'login' %}">Log In here.</a></p>
+
+<script>
+    document.querySelectorAll('input[name="user_type"]').forEach((el) => {
+        el.addEventListener('change', function () {
+            document.getElementById('tutor-fields').style.display = this.value === 'tutor' ? 'block' : 'none';
+        });
+    });
+</script>
 
 {% endblock %}

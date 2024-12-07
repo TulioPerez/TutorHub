@@ -1,56 +1,122 @@
 {% extends "tutorhub/layout.html" %}
 {% block body %}
 <div class="container mt-5">
-    <h1>{{ profile.username }}'s Profile</h1>
+    <h1>{{ profile.nickname or profile.username }}'s Profile</h1>
 
-    {% if profile.tutor_profile %}
+    <div class="profile-section">
+        <h3>Personal Details</h3>
+        <p><strong>Email:</strong> {{ profile.email }}</p>
+        <p><strong>Nickname:</strong> {{ profile.nickname }}</p>
+        <p><strong>Bio:</strong> {{ profile.bio }}</p>
+        <p><strong>Address:</strong> {{ profile.street_address }}, {{ profile.city }}, {{ profile.state }} {{ profile.zip_code }}</p>
+        {% if is_own_profile %}
+        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#editPersonalDetailsModal">Edit</button>
+        {% endif %}
+    </div>
+
+    {% if profile.is_tutor %}
+    <div class="profile-section">
         <h3>Tutor Details</h3>
-        <p><strong>Availability:</strong> {{ profile.tutor_profile.availability }}</p>
-        <h4>Subjects</h4>
+        <p><strong>Availability:</strong> {{ profile.availability }}</p>
+        <h4>Subjects and Grade Levels</h4>
         <ul>
-            {% for subject in profile.tutor_profile.subjects.all %}
-                <li>{{ subject.name }}</li>
-            {% endfor %}
-        </ul>
-        <h4>Grade Levels</h4>
-        <ul>
-            {% for grade_level in profile.tutor_profile.grade_levels.all %}
-                <li>{{ grade_level.level }}</li>
+            {% for subject_grade in profile.subject_grades.all %}
+            <li>{{ subject_grade.subject }} - {{ subject_grade.grade_level }}</li>
             {% endfor %}
         </ul>
         <h4>Credentials</h4>
         <ul>
-            {% for credential in profile.tutor_profile.credentials.all %}
-                <li><a href="{{ credential.file.url }}" target="_blank">View Credential</a></li>
+            {% for credential in profile.credentials.all %}
+            <li><a href="{{ credential.file.url }}" target="_blank">View Credential</a></li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p>This user is a student.</p>
-    {% endif %}
+        {% if is_own_profile %}
+        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#editTutorDetailsModal">Edit</button>
+        {% endif %}
     </div>
-
-    {% if is_own_profile %}
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="nickname">Nickname</label>
-                <input type="text" id="nickname" name="nickname" class="form-control" value="{{ profile.nickname }}">
-            </div>
-            <div class="form-group">
-                <label for="bio">Bio</label>
-                <textarea id="bio" name="bio" class="form-control">{{ profile.bio }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="address">Address</label>
-                <textarea id="address" name="address" class="form-control">{{ profile.address }}</textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-        </form>
     {% else %}
-        <p><strong>Nickname:</strong> {{ profile.nickname }}</p>
-        <p><strong>Bio:</strong> {{ profile.bio }}</p>
-        <p><strong>Address:</strong> {{ profile.address }}</p>
+    <p>This user is a student.</p>
     {% endif %}
 </div>
-{% endblock %}
 
+<!-- Modals for Editing -->
+{% if is_own_profile %}
+<div class="modal fade" id="editPersonalDetailsModal" tabindex="-1" aria-labelledby="editPersonalDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'edit_profile' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPersonalDetailsModalLabel">Edit Personal Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="nickname">Nickname</label>
+                        <input type="text" id="nickname" name="nickname" class="form-control" value="{{ profile.nickname }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" class="form-control">{{ profile.bio }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="street_address">Street Address</label>
+                        <input type="text" id="street_address" name="street_address" class="form-control" value="{{ profile.street_address }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" class="form-control" value="{{ profile.city }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" id="state" name="state" class="form-control" value="{{ profile.state }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="zip_code">Zip Code</label>
+                        <input type="text" id="zip_code" name="zip_code" class="form-control" value="{{ profile.zip_code }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if profile.is_tutor %}
+<div class="modal fade" id="editTutorDetailsModal" tabindex="-1" aria-labelledby="editTutorDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'edit_tutor_details' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTutorDetailsModalLabel">Edit Tutor Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="availability">Availability</label>
+                        <textarea id="availability" name="availability" class="form-control">{{ profile.availability }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject_grades">Subjects and Grade Levels</label>
+                        <textarea id="subject_grades" name="subject_grades" class="form-control" placeholder="e.g., Math - High School">{{ profile.subject_grades.all|join:", " }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="credentials">Credentials</label>
+                        <input type="file" id="credentials" name="credentials" class="form-control" multiple>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}
