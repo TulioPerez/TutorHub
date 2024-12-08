@@ -60,6 +60,8 @@ def register(request):
         try:
             user = User.objects.create_user(email, email, password)
             user.nickname = request.POST.get("nickname", "")
+            user.first_name = request.POST.get("first_name", "")
+            user.last_name = request.POST.get("last_name", "")
             user.street_address = request.POST.get("street_address", "")
             user.city = request.POST.get("city", "")
             user.state = request.POST.get("state", "")
@@ -70,7 +72,7 @@ def register(request):
                         # Handle profile image
             if 'profile_image' in request.FILES:
                 user.profile_image = request.FILES['profile_image']
-                
+
             user.save()
         except IntegrityError as e:
             print(e)

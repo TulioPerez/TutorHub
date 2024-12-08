@@ -8,9 +8,10 @@
             {% for tutor in page_obj %}
             <!-- Tutor Row -->
             <tr>
-                <!-- Profile Picture, Nickname, and Likes -->
+                <!-- Profile Picture, Nickname, Name, and Likes -->
                 <td>
                     <div class="tutor-row">
+                        <!-- Profile Picture and Nickname -->
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
                             {% if tutor.profile_image %}
                                 <img id="profile-img" src="{{ tutor.profile_image.url }}" alt="{{ tutor.nickname }}">
@@ -18,12 +19,10 @@
                                 <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
                             {% endif %}
                             <a href="{% url 'profile' tutor.id %}" style="font-weight: bold;">{{ tutor.nickname }}</a>
-                            {% if user.is_authenticated %}
-                                <div>{{ tutor.first_name }}</div>
-                                <div>{{ tutor.last_name }}</div>
-                            {% endif %}
                         </div>
-                        <div class="likes-container">
+                        
+                        <!-- Likes -->
+                        <div class="likes-container" style="text-align: center;">
                             <strong>Likes:</strong>
                             <p>{{ tutor.liked_by.count }}</p>
                         </div>
