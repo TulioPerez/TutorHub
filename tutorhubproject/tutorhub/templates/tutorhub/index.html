@@ -7,22 +7,22 @@
         <tbody>
             {% for tutor in page_obj %}
             <!-- Tutor Row -->
-            <tr>
+            <tr class="clickable-row" data-href="{% url 'profile' tutor.id %}">
                 <!-- Profile Picture, Nickname, Name, and Likes -->
                 <td>
                     <div class="tutor-row">
                         <!-- Profile Picture and Nickname -->
-                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div class="profile-info">
                             {% if tutor.profile_image %}
-                                <img id="profile-img" src="{{ tutor.profile_image.url }}" alt="{{ tutor.nickname }}">
+                                <img id="profile-img-thumb" src="{{ tutor.profile_image.url }}" alt="{{ tutor.nickname }}">
                             {% else %}
-                                <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
+                                <img id="profile-img-thumb" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
                             {% endif %}
-                            <a href="{% url 'profile' tutor.id %}" style="font-weight: bold;">{{ tutor.nickname }}</a>
+                            <a href="{% url 'profile' tutor.id %}" class="profile-name">{{ tutor.nickname }}</a>
                         </div>
-                        
+
                         <!-- Likes -->
-                        <div class="likes-container" style="text-align: center;">
+                        <div class="likes-container">
                             <strong>Likes:</strong>
                             <p>{{ tutor.liked_by.count }}</p>
                         </div>

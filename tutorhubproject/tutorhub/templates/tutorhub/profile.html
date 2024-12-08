@@ -1,122 +1,90 @@
 {% extends "tutorhub/layout.html" %}
+{% load static %}
 {% block body %}
 <div class="container mt-5">
-    <h1>{{ profile.nickname or profile.username }}'s Profile</h1>
-
-    <div class="profile-section">
-        <h3>Personal Details</h3>
-        <p><strong>Email:</strong> {{ profile.email }}</p>
-        <p><strong>Nickname:</strong> {{ profile.nickname }}</p>
-        <p><strong>Bio:</strong> {{ profile.bio }}</p>
-        <p><strong>Address:</strong> {{ profile.street_address }}, {{ profile.city }}, {{ profile.state }} {{ profile.zip_code }}</p>
-        {% if is_own_profile %}
-        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#editPersonalDetailsModal">Edit</button>
-        {% endif %}
-    </div>
-
-    {% if profile.is_tutor %}
-    <div class="profile-section">
-        <h3>Tutor Details</h3>
-        <p><strong>Availability:</strong> {{ profile.availability }}</p>
-        <h4>Subjects and Grade Levels</h4>
-        <ul>
-            {% for subject_grade in profile.subject_grades.all %}
-            <li>{{ subject_grade.subject }} - {{ subject_grade.grade_level }}</li>
-            {% endfor %}
-        </ul>
-        <h4>Credentials</h4>
-        <ul>
-            {% for credential in profile.credentials.all %}
-            <li><a href="{{ credential.file.url }}" target="_blank">View Credential</a></li>
-            {% endfor %}
-        </ul>
-        {% if is_own_profile %}
-        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#editTutorDetailsModal">Edit</button>
-        {% endif %}
-    </div>
-    {% else %}
-    <p>This user is a student.</p>
-    {% endif %}
-</div>
-
-<!-- Modals for Editing -->
-{% if is_own_profile %}
-<div class="modal fade" id="editPersonalDetailsModal" tabindex="-1" aria-labelledby="editPersonalDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="{% url 'edit_profile' %}">
-                {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editPersonalDetailsModalLabel">Edit Personal Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="row">
+        <!-- Left Column: Profile Image, Credentials -->
+        <div class="col-md-8">
+            <!-- Profile Header -->
+            <h2>{{ profile.nickname }}'s Profile</h2>
+            <div class="profile-header">
+                <!-- Profile Picture -->
+                <div>
+                    {% if profile.profile_image %}
+                        <img id="profile-img" src="{{ profile.profile_image.url }}" alt="{{ profile.nickname }}">
+                    {% else %}
+                        <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
+                    {% endif %}
                 </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="nickname">Nickname</label>
-                        <input type="text" id="nickname" name="nickname" class="form-control" value="{{ profile.nickname }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="bio">Bio</label>
-                        <textarea id="bio" name="bio" class="form-control">{{ profile.bio }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="street_address">Street Address</label>
-                        <input type="text" id="street_address" name="street_address" class="form-control" value="{{ profile.street_address }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="city">City</label>
-                        <input type="text" id="city" name="city" class="form-control" value="{{ profile.city }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="state">State</label>
-                        <input type="text" id="state" name="state" class="form-control" value="{{ profile.state }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="zip_code">Zip Code</label>
-                        <input type="text" id="zip_code" name="zip_code" class="form-control" value="{{ profile.zip_code }}">
-                    </div>
+                <!-- Name -->
+                <div>
+                    <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
+                    <div>{{ profile.city|default:"City not available" }}, {{ profile.state|default:"State not available" }}</div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+
+            <!-- Credentials -->
+            <div class="credentials-container">
+                <h4>Credentials</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    {% for credential in profile.credentials.all %}
+                        <a href="{{ credential.file.url }}" target="_blank">
+                            <div class="credential-box">
+                                <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Credential Icon">
+                                <div>View</div>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <p>No credentials available.</p>
+                    {% endfor %}
                 </div>
-            </form>
+            </div>
+
+            <!-- Bio -->
+            <div class="bio-container">
+                <h4>Bio</h4>
+                <p>{{ profile.bio|default:"No bio available." }}</p>
+            </div>
+
+            <!-- Send a Message -->
+            {% if user.is_authenticated %}
+            <div class="message-container">
+                <h4>Send a Message</h4>
+                <form action="{% url 'send_message' profile.id %}" method="post">
+                    {% csrf_token %}
+                    <textarea name="content" rows="3" class="form-control mb-2" placeholder="Write your message here..." required></textarea>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column: Availability and Subjects -->
+        <div class="col-md-4">
+            <!-- Availability -->
+            <div class="right-column-section">
+                <h4>Availability</h4>
+                <ul>
+                    {% for day, time in profile.availability.items %}
+                        <li><strong>{{ day|title }}:</strong> {{ time }}</li>
+                    {% empty %}
+                        <p>Availability not provided.</p>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Subjects -->
+            <div class="right-column-section">
+                <h4>Subjects</h4>
+                <ul>
+                    {% for subject_grade in profile.tutor_subject_grades.all %}
+                        <li><strong>{{ subject_grade.subject }}:</strong> {{ subject_grade.grade_levels|join:", " }}</li>
+                    {% empty %}
+                        <p>No subjects available.</p>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-
-{% if profile.is_tutor %}
-<div class="modal fade" id="editTutorDetailsModal" tabindex="-1" aria-labelledby="editTutorDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="{% url 'edit_tutor_details' %}">
-                {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editTutorDetailsModalLabel">Edit Tutor Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="availability">Availability</label>
-                        <textarea id="availability" name="availability" class="form-control">{{ profile.availability }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject_grades">Subjects and Grade Levels</label>
-                        <textarea id="subject_grades" name="subject_grades" class="form-control" placeholder="e.g., Math - High School">{{ profile.subject_grades.all|join:", " }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="credentials">Credentials</label>
-                        <input type="file" id="credentials" name="credentials" class="form-control" multiple>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{% endif %}
-{% endif %}
 {% endblock %}

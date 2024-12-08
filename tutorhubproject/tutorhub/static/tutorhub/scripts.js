@@ -6,6 +6,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
     const tutorFields = document.getElementById('tutor-fields');
 
+    // Handle row clicks on index page
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+        row.addEventListener('click', function () {
+            window.location.href = this.dataset.href;
+        });
+    });
+    
     if (userTypeRadios && tutorFields) {
         userTypeRadios.forEach(radio => {
             radio.addEventListener('change', function () {

@@ -116,19 +116,12 @@ def register(request):
 
 
 @login_required
-def profile(request, user_id=None):
-    if user_id is None:
-        user_id = request.user.id
-
+def profile(request, user_id):
     profile_user = get_object_or_404(User, id=user_id)
-    tutor_profile = profile_user if profile_user.is_tutor else None
-
     return render(request, 'tutorhub/profile.html', {
-        'profile': profile_user,
-        'tutor_profile': tutor_profile,
-        'subject_grades': tutor_profile.subject_grades.all() if tutor_profile else None,
-        'is_own_profile': profile_user == request.user,
+        'profile': profile_user
     })
+
 
 
 

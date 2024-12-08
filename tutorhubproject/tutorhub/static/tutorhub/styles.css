@@ -16,13 +16,28 @@ html, body {
     gap: 25px;
 }
 
-/* Profile Image */
-#profile-img {
+/* Profile Information */
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Profile Image (Thumbnail) */
+#profile-img-thumb {
     width: 50px;
     height: 50px;
-    object-fit: cover;
+    /* object-fit: cover; */
     border-radius: 50%;
     margin-bottom: 5px;
+}
+
+/* Profile Name (Nickname) */
+.profile-name {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
 }
 
 /* Likes Container */
@@ -60,7 +75,6 @@ html, body {
     min-width: 120px; 
     margin-bottom: 15px;
 }
-
 
 #main-content {
     background-color: white;
@@ -148,6 +162,97 @@ ul {
 textarea {
     min-height: 400px;
 }
+
+
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover {
+    background-color: #f0f0f0;
+}
+
+
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+/* Profile Image */
+#profile-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+}
+
+/* Credentials Section */
+.credentials-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.credential-box {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.credential-box img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+/* Bio Section */
+.bio-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+/* Message Section */
+.message-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+/* Right Column: Availability and Subjects */
+.right-column-section {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+}
+
+.right-column-section ul {
+    padding: 0;
+    list-style: none;
+}
+
+
+
 
 .footer {
     background-color: #222326;
