@@ -4,69 +4,48 @@
 <div class="container mt-5">
     <h1 class="mb-4">Tutors</h1>
     <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Profile</th>
-                <th>Nickname</th>
-                {% if user.is_authenticated %}
-                    <th>Street Address</th>
-                    <th>City</th>
-                    <th>State</th>
-                    <th>Zip Code</th>
-                    <th>Likes</th>
-                {% else %}
-                    <th>City</th>
-                    <th>State</th>
-                {% endif %}
-            </tr>
-        </thead>
         <tbody>
             {% for tutor in page_obj %}
-            <!-- First Row: Basic User Data -->
+            <!-- Tutor Row -->
             <tr>
-                <!-- Profile Picture -->
+                <!-- Profile Picture, Nickname, and Likes -->
                 <td>
-                    {% if tutor.profile_image %}
-                        <img id="profile-img" src="{{ tutor.profile_image.url }}" alt="{{ tutor.nickname }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-                    {% else %}
-                        <img src="{% static 'default-profile.png' %}" alt="Default Profile" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-                    {% endif %}
+                    <div class="tutor-row">
+                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                            {% if tutor.profile_image %}
+                                <img id="profile-img" src="{{ tutor.profile_image.url }}" alt="{{ tutor.nickname }}">
+                            {% else %}
+                                <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
+                            {% endif %}
+                            <a href="{% url 'profile' tutor.id %}" style="font-weight: bold;">{{ tutor.nickname }}</a>
+                            {% if user.is_authenticated %}
+                                <div>{{ tutor.first_name }}</div>
+                                <div>{{ tutor.last_name }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="likes-container">
+                            <strong>Likes:</strong>
+                            <p>{{ tutor.liked_by.count }}</p>
+                        </div>
+                    </div>
                 </td>
-                
-                <!-- Nickname -->
-                <td><a href="{% url 'profile' tutor.id %}">{{ tutor.nickname }}</a></td>
-                
+
+                <!-- Address (Only for Logged-In Users) -->
                 {% if user.is_authenticated %}
-                    <!-- Street Address -->
-                    <td>{{ tutor.street_address|default:"N/A" }}</td>
-
-                    <!-- City -->
-                    <td>{{ tutor.city|default:"N/A" }}</td>
-
-                    <!-- State -->
-                    <td>{{ tutor.state|default:"N/A" }}</td>
-
-                    <!-- Zip Code -->
-                    <td>{{ tutor.zip_code|default:"N/A" }}</td>
-
-                    <!-- Likes -->
-                    <td>{{ tutor.liked_by.count }}</td>
-                {% else %}
-                    <!-- City -->
-                    <td>{{ tutor.city|default:"N/A" }}</td>
-
-                    <!-- State -->
-                    <td>{{ tutor.state|default:"N/A" }}</td>
+                <td>
+                    <div class="address-container">
+                        <div>{{ tutor.street_address|default:"N/A" }}</div>
+                        <div>{{ tutor.city|default:"N/A" }}, {{ tutor.state|default:"N/A" }} {{ tutor.zip_code|default:"" }}</div>
+                    </div>
+                </td>
                 {% endif %}
-            </tr>
 
-            <!-- Second Row: Subjects and Grades -->
-            <tr>
-                <td colspan="9">
-                    <div style="padding-top: 10px; display: flex; flex-wrap: wrap; gap: 15px;">
+                <!-- Subjects and Grades -->
+                <td>
+                    <div class="subject-grade-container">
                         {% for subject_grade in tutor.tutor_subject_grades.all %}
                             <div id="subject-grade">
-                                <strong>{{ subject_grade.subject }}:</strong>
+                                <strong>{{ subject_grade.subject }}</strong>
                                 <div>{{ subject_grade.grade_levels|join:", " }}</div>
                             </div>
                         {% empty %}
@@ -75,17 +54,9 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Third Row: Bio -->
-            <tr>
-                <td colspan="9">
-                    <strong>Bio:</strong>
-                    <p>{{ tutor.bio|default:"No bio available." }}</p>
-                </td>
-            </tr>
             {% empty %}
             <tr>
-                <td colspan="9" class="text-center">No tutors found.</td>
+                <td colspan="3" class="text-center">No tutors found.</td>
             </tr>
             {% endfor %}
         </tbody>

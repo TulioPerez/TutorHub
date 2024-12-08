@@ -66,6 +66,11 @@ def register(request):
             user.zip_code = request.POST.get("zip_code", "")
             user.bio = request.POST.get("bio", "")
             user.is_tutor = (user_type == "tutor")
+
+                        # Handle profile image
+            if 'profile_image' in request.FILES:
+                user.profile_image = request.FILES['profile_image']
+                
             user.save()
         except IntegrityError as e:
             print(e)
