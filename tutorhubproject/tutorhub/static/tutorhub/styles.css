@@ -9,6 +9,18 @@ html, body {
     flex-direction: column;
 }
 
+#subject-grade {
+    padding: 10px; 
+    border-radius: 5px; 
+    /* flex: 1 1 auto;  */
+    /* min-width: 200px; */
+}
+
+#profile-img {
+    width: 100px;
+    height: auto;
+}
+
 #main-content {
     background-color: white;
     margin: 0 30px;
