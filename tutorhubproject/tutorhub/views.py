@@ -6,11 +6,16 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import User, Message, SubjectGrade, Credential
 from django.db.models import Q
+from django.core.paginator import Paginator
+
 
 
 def index(request):
     tutors = User.objects.filter(is_tutor=True)
-    return render(request, 'tutorhub/index.html', {'tutors': tutors})
+    paginator = Paginator(tutors, 10)  # Show 10 tutors per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'tutorhub/index.html', {'page_obj': page_obj})
 
 
 # authentication
@@ -76,7 +81,7 @@ def register(request):
             # Process subjects and grade levels
             subjects = request.POST.getlist("subjects[]")
             for i, subject in enumerate(subjects):
-                grade_levels = request.POST.getlist(f"grade_levels_{i}[]")
+                grade_levels = request.POST.getlist(f"grade_levels_{i}")
                 SubjectGrade.objects.create(
                     tutor=user,
                     subject=subject,
@@ -87,7 +92,12 @@ def register(request):
             # Process credentials
             credentials = request.FILES.getlist("credentials[]")
             for file in credentials[:7]:  # Max 7 files
+                if file.size > 5 * 1024 * 1024:  # Max 5MB
+                    return render(request, "tutorhub/register.html", {
+                        "message": "One or more files exceed the maximum allowed size of 5MB."
+                    })
                 Credential.objects.create(user=user, file=file)
+
 
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
@@ -104,7 +114,7 @@ def profile(request, user_id=None):
         user_id = request.user.id
 
     profile_user = get_object_or_404(User, id=user_id)
-    tutor_profile = getattr(profile_user, 'tutor_profile', None)
+    tutor_profile = profile_user if profile_user.is_tutor else None
 
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
@@ -159,12 +169,14 @@ def edit_tutor_details(request):
 @login_required
 def search_tutors(request):
     query = request.GET.get('q', '')
-    results = Tutor.objects.filter(
-        Q(user__nickname__icontains=query) |
-        Q(subject_grades__subject__icontains=query) |
-        Q(subject_grades__grade_level__icontains=query) |
-        Q(user__city__icontains=query)
+    results = User.objects.filter(
+        Q(nickname__icontains=query) |
+        Q(tutor_subject_grades__subject__icontains=query) |
+        Q(city__icontains=query),
+        is_tutor=True,
     ).distinct()
+
+
     return render(request, 'tutorhub/tutors.html', {'results': results})
 
 
