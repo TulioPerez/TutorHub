@@ -69,9 +69,10 @@ def register(request):
             user.bio = request.POST.get("bio", "")
             user.is_tutor = (user_type == "tutor")
 
-                        # Handle profile image
+            # Handle profile image
             if 'profile_image' in request.FILES:
                 user.profile_image = request.FILES['profile_image']
+                user.save()
 
             user.save()
         except IntegrityError as e:
@@ -98,8 +99,8 @@ def register(request):
 
             # Process credentials
             credentials = request.FILES.getlist("credentials[]")
-            for file in credentials[:7]:  # Max 7 files
-                if file.size > 5 * 1024 * 1024:  # Max 5MB
+            for file in credentials[:7]:
+                if file.size > 5 * 1024 * 1024:
                     return render(request, "tutorhub/register.html", {
                         "message": "One or more files exceed the maximum allowed size of 5MB."
                     })
@@ -126,14 +127,17 @@ def profile(request, user_id):
 
 
 @login_required
-def my_profile(request):
-    profile_user = request.user
-    tutor_profile = getattr(profile_user, 'tutor_profile', None)
+def profile(request, user_id):
+    profile_user = get_object_or_404(User, id=user_id)
+    credentials = profile_user.credentials.all()
+
+    # Add an `is_image` property to each credential
+    for credential in credentials:
+        credential.is_image = credential.file.url.lower().endswith(('.jpg', '.jpeg', '.png'))
 
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
-        'tutor_profile': tutor_profile,
-        'is_own_profile': True,
+        'credentials': credentials,
     })
 
 

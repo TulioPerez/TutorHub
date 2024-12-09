@@ -1,5 +1,8 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     # default route
@@ -13,7 +16,7 @@ urlpatterns = [
     # pages & functions
     path('profile/<int:user_id>/', views.profile, name='profile'),
 
-    path('my-profile/', views.my_profile, name='my_profile'),
+    path('my-profile/', views.profile, name='my_profile'),
 
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     path('edit-tutor-details/', views.edit_tutor_details, name='edit_tutor_details'),
@@ -24,3 +27,7 @@ urlpatterns = [
     path('like/<int:tutor_id>/', views.like_tutor, name='like_tutor'),
     path('liked/', views.liked_tutors, name='liked_tutors'),
 ]
+
+# For image uploading 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

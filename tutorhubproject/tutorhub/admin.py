@@ -1,32 +1,35 @@
+from django.utils.html import format_html
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, SubjectGrade, Credential
 
 
 class UserAdmin(BaseUserAdmin):
-    # Define the fields to display in the admin list view
     list_display = ('email', 'nickname', 'is_tutor', 'city', 'state', 'zip_code', 'date_joined')
     list_filter = ('is_tutor', 'is_active', 'date_joined')
     search_fields = ('email', 'nickname', 'city', 'state')
     ordering = ('-date_joined',)
 
-    # Fields to display on the user details page
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('nickname', 'first_name', 'last_name', 'bio', 'profile_image', 'birthdate')}),
         ('Address', {'fields': ('street_address', 'city', 'state', 'zip_code')}),
         ('Tutor Details', {'fields': ('is_tutor', 'availability', 'subject_grades')}),
+        ('Credentials', {'fields': ()}),  # Placeholder for credentials
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important Dates', {'fields': ('last_login', 'date_joined')}),
     )
 
-    # Fields to display when adding a new user
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'nickname', 'is_tutor', 'first_name', 'last_name'),
-        }),
-    )
+    def credentials_list(self, obj):
+        """List all credentials uploaded by the user."""
+        credentials = obj.credentials.all()
+        if credentials.exists():
+            return format_html(
+                '<br>'.join([f'<a href="{cred.file.url}" target="_blank">{cred.file.name}</a>' for cred in credentials])
+            )
+        return "No credentials"
+
+    readonly_fields = ('credentials_list',)
 
 
 # Register SubjectGrade and Credential for the admin interface

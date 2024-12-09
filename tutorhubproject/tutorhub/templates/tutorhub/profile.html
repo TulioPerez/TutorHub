@@ -27,10 +27,14 @@
             <div class="credentials-container">
                 <h4>Credentials</h4>
                 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    {% for credential in profile.credentials.all %}
+                    {% for credential in credentials %}
                         <a href="{{ credential.file.url }}" target="_blank">
                             <div class="credential-box">
-                                <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Credential Icon">
+                                {% if credential.is_image %}
+                                    <img src="{{ credential.file.url }}" alt="Credential Image" style="width: 100px; height: auto;">
+                                {% else %}
+                                    <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Credential Icon" style="width: 50px; height: auto;">
+                                {% endif %}
                                 <div>View</div>
                             </div>
                         </a>
@@ -38,6 +42,7 @@
                         <p>No credentials available.</p>
                     {% endfor %}
                 </div>
+                
             </div>
 
             <!-- Bio -->
