@@ -117,18 +117,9 @@ def register(request):
 
 
 @login_required
-def profile(request, user_id):
-    profile_user = get_object_or_404(User, id=user_id)
-    return render(request, 'tutorhub/profile.html', {
-        'profile': profile_user
-    })
-
-
-
-
-@login_required
-def profile(request, user_id):
-    profile_user = get_object_or_404(User, id=user_id)
+def profile(request, user_id=None):
+    # Use the logged-in user if no user_id is provided
+    profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
     credentials = profile_user.credentials.all()
 
     # Add an `is_image` property to each credential
@@ -138,6 +129,7 @@ def profile(request, user_id):
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
         'credentials': credentials,
+        'is_own_profile': profile_user == request.user,
     })
 
 
@@ -151,23 +143,22 @@ def edit_profile(request):
         profile.city = request.POST.get("city", profile.city)
         profile.state = request.POST.get("state", profile.state)
         profile.zip_code = request.POST.get("zip_code", profile.zip_code)
+
+        if profile.is_tutor:
+            profile.availability = request.POST.get("availability", profile.availability)
+
+            # Handle subjects and grade levels
+            subject_grades = request.POST.get("subject_grades", "").split(", ")
+            profile.subject_grades.clear()
+            for item in subject_grades:
+                subject, grade_level = item.split(" - ")
+                sg, _ = SubjectGrade.objects.get_or_create(subject=subject, grade_level=grade_level)
+                profile.subject_grades.add(sg)
+
         profile.save()
         return redirect("my_profile")
 
-@login_required
-def edit_tutor_details(request):
-    if request.method == "POST" and request.user.is_tutor:
-        tutor = request.user
-        tutor.availability = request.POST.get("availability", tutor.availability)
-        # Handle subjects and grade levels dynamically
-        subject_grades = request.POST.get("subject_grades", "").split(", ")
-        tutor.subject_grades.clear()
-        for item in subject_grades:
-            subject, grade_level = item.split(" - ")
-            sg, _ = SubjectGrade.objects.get_or_create(subject=subject, grade_level=grade_level)
-            tutor.subject_grades.add(sg)
-        tutor.save()
-        return redirect("my_profile")
+    return render(request, 'tutorhub/edit_profile.html', {'profile': request.user})
 
 
 @login_required
@@ -180,9 +171,7 @@ def search_tutors(request):
         is_tutor=True,
     ).distinct()
 
-
     return render(request, 'tutorhub/tutors.html', {'results': results})
-
 
 
 @login_required

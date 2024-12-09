@@ -28,7 +28,6 @@ html, body {
 #profile-img-thumb {
     width: 50px;
     height: 50px;
-    /* object-fit: cover; */
     border-radius: 50%;
     margin-bottom: 5px;
 }
@@ -164,7 +163,6 @@ textarea {
 }
 
 
-
 .clickable-row {
     cursor: pointer;
 }
@@ -173,7 +171,12 @@ textarea {
     background-color: #f0f0f0;
 }
 
-
+#stack-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; 
+}
 
 /* Profile Header */
 .profile-header {
@@ -190,6 +193,11 @@ textarea {
     border-radius: 50%;
     border: 2px solid #ddd;
 }
+
+/* #credential-thumb {
+    width: 75px;
+    height: 75px;
+} */
 
 /* Credentials Section */
 .credentials-container {
@@ -214,9 +222,9 @@ textarea {
 }
 
 .credential-box img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
+    max-width: 75px;
+    max-height: 75px;
+    object-fit: fill;
 }
 
 /* Bio Section */

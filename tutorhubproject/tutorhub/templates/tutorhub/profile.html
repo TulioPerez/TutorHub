@@ -9,17 +9,26 @@
             <h2>{{ profile.nickname }}'s Profile</h2>
             <div class="profile-header">
                 <!-- Profile Picture -->
-                <div>
+                <div id="stack-vertical">
                     {% if profile.profile_image %}
                         <img id="profile-img" src="{{ profile.profile_image.url }}" alt="{{ profile.nickname }}">
                     {% else %}
                         <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
                     {% endif %}
+                    <!-- Edit Link for Profile Picture -->
+                    {% if is_own_profile %}
+                        <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Picture</a>
+                    {% endif %}
                 </div>
+
                 <!-- Name -->
-                <div>
+                <div id="stack-vertical">
                     <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
                     <div>{{ profile.city|default:"City not available" }}, {{ profile.state|default:"State not available" }}</div>
+                    <!-- Edit Link for Profile Info -->
+                    {% if is_own_profile %}
+                        <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Info</a>
+                    {% endif %}
                 </div>
             </div>
 
@@ -31,9 +40,9 @@
                         <a href="{{ credential.file.url }}" target="_blank">
                             <div class="credential-box">
                                 {% if credential.is_image %}
-                                    <img src="{{ credential.file.url }}" alt="Credential Image" style="width: 100px; height: auto;">
+                                    <img src="{{ credential.file.url }}" alt="Credential Image">
                                 {% else %}
-                                    <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Credential Icon" style="width: 50px; height: auto;">
+                                    <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Credential Icon">
                                 {% endif %}
                                 <div>View</div>
                             </div>
@@ -42,13 +51,20 @@
                         <p>No credentials available.</p>
                     {% endfor %}
                 </div>
-                
+                <!-- Edit Link for Credentials -->
+                {% if is_own_profile %}
+                    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Credentials</a>
+                {% endif %}
             </div>
 
             <!-- Bio -->
             <div class="bio-container">
                 <h4>Bio</h4>
                 <p>{{ profile.bio|default:"No bio available." }}</p>
+                <!-- Edit Link for Bio -->
+                {% if is_own_profile %}
+                    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Bio</a>
+                {% endif %}
             </div>
 
             <!-- Send a Message -->
@@ -65,6 +81,7 @@
         </div>
 
         <!-- Right Column: Availability and Subjects -->
+        <!-- Right Column: Availability and Subjects -->
         <div class="col-md-4">
             <!-- Availability -->
             <div class="right-column-section">
@@ -76,6 +93,9 @@
                         <p>Availability not provided.</p>
                     {% endfor %}
                 </ul>
+                {% if is_own_profile %}
+                    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Availability</a>
+                {% endif %}
             </div>
 
             <!-- Subjects -->
@@ -88,8 +108,12 @@
                         <p>No subjects available.</p>
                     {% endfor %}
                 </ul>
+                {% if is_own_profile %}
+                    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Subjects</a>
+                {% endif %}
             </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
