@@ -2,16 +2,17 @@
 {% load static %}
 {% block body %}
 <div class="container mt-5">
-    <div id="search-container" class="mb-4">
-        <h1 id="page-title">Tutors</h1>
-        <form id="search-form" action="{% url 'index' %}" method="get" class="d-none">
-            <div class="form-group">
-                <input type="text" name="q" id="search-input" class="form-control" placeholder="Search by city, state, grade level, nickname, first or last name">
-            </div>
+    <h1 id="page-title" class="mb-0">Tutors</h1>
+
+    <div id="search-container" class="mb-4 d-flex justify-content-end align-items-center">
+        <!-- Search Form -->
+        <form id="search-form" action="{% url 'index' %}" method="get" class="d-flex align-items-center">
+            <input type="text" name="q" id="search-input" class="form-control me-2" placeholder="Search by city, state, grade, name" value="{{ request.GET.q|default:'' }}">
+            <button type="submit" class="btn btn-primary me-2">Search</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Clear</a>
         </form>
-        <button id="toggle-search" class="btn btn-link">Search</button>
     </div>
-    
+
     <table class="table table-striped">
         <tbody>
             {% for tutor in page_obj %}

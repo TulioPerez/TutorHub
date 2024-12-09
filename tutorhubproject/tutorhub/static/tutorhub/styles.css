@@ -163,6 +163,12 @@ textarea {
     min-height: 400px;
 }
 
+#search-input {
+    width: 255px;
+    display: flex;
+    max-width: 500px;
+    margin: 0 10px;
+}
 
 .clickable-row {
     cursor: pointer;
