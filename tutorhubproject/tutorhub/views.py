@@ -9,13 +9,27 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 
 
+from django.db.models import Q
 
 def index(request):
+    query = request.GET.get('q', '').strip()
     tutors = User.objects.filter(is_tutor=True)
+
+    if query:
+        tutors = tutors.filter(
+            Q(city__icontains=query) |
+            Q(state__icontains=query) |
+            Q(nickname__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(tutor_subject_grades__grade_levels__icontains=query)
+        ).distinct()
+
     paginator = Paginator(tutors, 10)  # Show 10 tutors per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'tutorhub/index.html', {'page_obj': page_obj})
+
 
 
 # authentication

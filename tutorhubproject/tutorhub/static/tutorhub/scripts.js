@@ -8,6 +8,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Handle row clicks on index page
     const rows = document.querySelectorAll('.clickable-row');
+
+    const toggleSearchBtn = document.getElementById('toggle-search');
+    const pageTitle = document.getElementById('page-title');
+    const searchForm = document.getElementById('search-form');
+
+    toggleSearchBtn.addEventListener('click', () => {
+        const isSearchVisible = searchForm.classList.toggle('d-none');
+        pageTitle.style.display = isSearchVisible ? 'block' : 'none';
+        toggleSearchBtn.textContent = isSearchVisible ? 'Search' : 'Cancel';
+    });
+
     rows.forEach(row => {
         row.addEventListener('click', function () {
             window.location.href = this.dataset.href;

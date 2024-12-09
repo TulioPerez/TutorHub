@@ -2,7 +2,16 @@
 {% load static %}
 {% block body %}
 <div class="container mt-5">
-    <h1 class="mb-4">Tutors</h1>
+    <div id="search-container" class="mb-4">
+        <h1 id="page-title">Tutors</h1>
+        <form id="search-form" action="{% url 'index' %}" method="get" class="d-none">
+            <div class="form-group">
+                <input type="text" name="q" id="search-input" class="form-control" placeholder="Search by city, state, grade level, nickname, first or last name">
+            </div>
+        </form>
+        <button id="toggle-search" class="btn btn-link">Search</button>
+    </div>
+    
     <table class="table table-striped">
         <tbody>
             {% for tutor in page_obj %}
