@@ -51,15 +51,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
                 </div>
                 <div class="col-md-8">
-                    <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="Pre-K / KG"> Pre-K / KG</label>
-                    <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="Elementary"> Elementary</label>
-                    <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="Middle School"> Middle School</label>
-                    <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="High School"> High School</label>
-                    <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="University"> University</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="PK / KG"> Pre-K / KG</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="1 - 5"> 1 - 5</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="6 - 8"> 6 - 8</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="9 - 12"> 9 - 12</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="Adults"> Adults</label>
+                    </div>
                 </div>
+                <button type="button" class="btn btn-danger remove-row">Remove</button>
             `;
-            subjectRowsContainer.appendChild(newRow);
-            subjectCount++;
+           // Append the new row to the subject rows container
+           subjectRowsContainer.appendChild(newRow);
+
+           // Add event listener for the remove button
+           newRow.querySelector(".remove-row").addEventListener("click", function () {
+               subjectRowsContainer.removeChild(newRow);
+           });
+
+           // Increment the subject count
+           subjectCount++;
         });
     }
 
