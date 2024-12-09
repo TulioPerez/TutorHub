@@ -89,12 +89,13 @@ def register(request):
             # Process subjects and grade levels
             subjects = request.POST.getlist("subjects[]")
             for i, subject in enumerate(subjects):
-                grade_levels = request.POST.getlist(f"grade_levels_{i}")
-                SubjectGrade.objects.create(
-                    tutor=user,
-                    subject=subject,
-                    grade_levels=grade_levels
-                )
+                grade_levels = request.POST.getlist(f"grade_levels_{i}[]")
+                if grade_levels:
+                    SubjectGrade.objects.create(
+                        tutor=user,
+                        subject=subject,
+                        grade_levels=grade_levels
+                    )
 
 
             # Process credentials
