@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchForm = document.getElementById('search-form');
     const searchButton = document.querySelector('#search-form button[type="submit"]');
     
+    // Profile section editing
+    const editForm = document.getElementById("editProfileForm");
+
     // const toggleSearchBtn = document.getElementById('toggle-search');
     // toggleSearchBtn.addEventListener('click', () => {
     //     const isSearchVisible = searchForm.classList.toggle('d-none');
@@ -133,4 +136,28 @@ document.addEventListener("DOMContentLoaded", () => {
             credentialCount++;
         });
     }
+
+
+    // Profile editing functionality
+    editForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(editForm);
+        try {
+            const response = await fetch(editForm.action, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                alert("Profile updated successfully!");
+                window.location.reload(); // Reload to see changes
+            } else {
+                alert("An error occurred. Please try again.");
+            }
+        } catch (error) {
+            alert("Failed to update profile. Check your connection.");
+        }
+    });
+
 });

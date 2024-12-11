@@ -17,7 +17,7 @@
                     {% endif %}
                     <!-- Edit Link for Profile Picture -->
                     {% if is_own_profile %}
-                        <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Picture</a>
+                        <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Picture</button>
                     {% endif %}
                 </div>
 
@@ -27,7 +27,7 @@
                     <div>{{ profile.city|default:"City not available" }}, {{ profile.state|default:"State not available" }}</div>
                     <!-- Edit Link for Profile Info -->
                     {% if is_own_profile %}
-                        <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Info</a>
+                       <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Info</button>
                     {% endif %}
                 </div>
             </div>
@@ -53,7 +53,7 @@
                 </div>
                 <!-- Edit Link for Credentials -->
                 {% if is_own_profile %}
-                    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Credentials</a>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Credentials</button>
                 {% endif %}
             </div>
 
@@ -63,7 +63,7 @@
                 <p>{{ profile.bio|default:"No bio available." }}</p>
                 <!-- Edit Link for Bio -->
                 {% if is_own_profile %}
-                    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Bio</a>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Bio</button>
                 {% endif %}
             </div>
 
@@ -94,7 +94,7 @@
                     {% endfor %}
                 </ul>
                 {% if is_own_profile %}
-                    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Availability</a>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Availability</button>
                 {% endif %}
             </div>
 
@@ -109,11 +109,44 @@
                     {% endfor %}
                 </ul>
                 {% if is_own_profile %}
-                    <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-link">Edit Subjects</a>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Subjects</button>
                 {% endif %}
             </div>
         </div>
 
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm" action="{% url 'edit_profile' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <label for="nickname">Nickname</label>
+                        <input type="text" name="nickname" id="nickname" class="form-control" value="{{ profile.nickname }}">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="bio">Bio</label>
+                        <textarea name="bio" id="bio" class="form-control">{{ profile.bio }}</textarea>
+                    </div>
+                    <!-- Add fields for other profile details -->
+                    <div class="form-group mb-3">
+                        <label for="city">City</label>
+                        <input type="text" name="city" id="city" class="form-control" value="{{ profile.city }}">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="state">State</label>
+                        <input type="text" name="state" id="state" class="form-control" value="{{ profile.state }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
