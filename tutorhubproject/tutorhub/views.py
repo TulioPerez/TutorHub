@@ -149,7 +149,6 @@ def profile(request, user_id=None):
         'is_own_profile': profile_user == request.user,
     })
 
-
 @login_required
 def edit_profile(request):
     profile = request.user
@@ -158,16 +157,21 @@ def edit_profile(request):
             profile.profile_image = request.FILES['profile_image']
         if 'nickname' in request.POST:
             profile.nickname = request.POST.get('nickname', profile.nickname)
+        if 'first_name' in request.POST:
+            profile.first_name = request.POST.get('first_name', profile.first_name)
+        if 'last_name' in request.POST:
+            profile.last_name = request.POST.get('last_name', profile.last_name)
         if 'bio' in request.POST:
             profile.bio = request.POST.get('bio', profile.bio)
         if 'city' in request.POST:
             profile.city = request.POST.get('city', profile.city)
         if 'state' in request.POST:
             profile.state = request.POST.get('state', profile.state)
-        # Handle other fields as needed
+        # Save changes and redirect to profile page
         profile.save()
         return redirect("my_profile")
     return HttpResponse(status=400)
+
 
 
 # @login_required
