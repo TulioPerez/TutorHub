@@ -17,7 +17,7 @@
                     {% endif %}
                     <!-- Edit Link for Profile Picture -->
                     {% if is_own_profile %}
-                        <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Picture</button>
+                        <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editPictureModal">Edit Picture</button>
                     {% endif %}
                 </div>
 
@@ -116,37 +116,13 @@
 
     </div>
 </div>
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editProfileForm" action="{% url 'edit_profile' %}" method="post">
-                    {% csrf_token %}
-                    <div class="form-group mb-3">
-                        <label for="nickname">Nickname</label>
-                        <input type="text" name="nickname" id="nickname" class="form-control" value="{{ profile.nickname }}">
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="bio">Bio</label>
-                        <textarea name="bio" id="bio" class="form-control">{{ profile.bio }}</textarea>
-                    </div>
-                    <!-- Add fields for other profile details -->
-                    <div class="form-group mb-3">
-                        <label for="city">City</label>
-                        <input type="text" name="city" id="city" class="form-control" value="{{ profile.city }}">
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="state">State</label>
-                        <input type="text" name="state" id="state" class="form-control" value="{{ profile.state }}">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
+<!-- Modals for profile data editing -->
+{% include 'tutorhub/modals/edit_picture_modal.html' %}
+{% include 'tutorhub/modals/edit_info_modal.html' %}
+{% include 'tutorhub/modals/edit_bio_modal.html' %}
+{% include 'tutorhub/modals/edit_credentials_modal.html' %}
+{% include 'tutorhub/modals/edit_availability_modal.html' %}
+{% include 'tutorhub/modals/edit_subjects_modal.html' %}
+
 {% endblock %}

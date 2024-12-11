@@ -137,27 +137,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-    // Profile editing functionality
-    editForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const formData = new FormData(editForm);
-        try {
-            const response = await fetch(editForm.action, {
-                method: "POST",
-                body: formData,
-            });
-
-            if (response.ok) {
-                alert("Profile updated successfully!");
-                window.location.reload(); // Reload to see changes
-            } else {
-                alert("An error occurred. Please try again.");
+    // Modal functionality for profile editing
+    document.querySelectorAll(".modal form").forEach((form) => {
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            try {
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    body: formData,
+                });
+                if (response.ok) {
+                    alert("Changes saved successfully!");
+                    window.location.reload();
+                } else {
+                    alert("An error occurred. Please try again.");
+                }
+            } catch (error) {
+                alert("Failed to save changes. Check your connection.");
             }
-        } catch (error) {
-            alert("Failed to update profile. Check your connection.");
-        }
+        });
     });
 
 });
