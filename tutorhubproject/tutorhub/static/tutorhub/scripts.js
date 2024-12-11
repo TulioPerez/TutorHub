@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Authentication status
+    const authStatus = JSON.parse(document.getElementById("auth-status").textContent);
+
     // Handle unread message badge
     const unreadBadge = document.getElementById("unread-badge");
 
@@ -7,23 +10,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const tutorFields = document.getElementById('tutor-fields');
 
     // Handle row clicks on index page
-    const rows = document.querySelectorAll('.clickable-row');
+    // const rows = document.querySelectorAll('.clickable-row');
 
-    const toggleSearchBtn = document.getElementById('toggle-search');
     const pageTitle = document.getElementById('page-title');
     const searchForm = document.getElementById('search-form');
+    const searchButton = document.querySelector('#search-form button[type="submit"]');
+    
+    // const toggleSearchBtn = document.getElementById('toggle-search');
+    // toggleSearchBtn.addEventListener('click', () => {
+    //     const isSearchVisible = searchForm.classList.toggle('d-none');
+    //     pageTitle.style.display = isSearchVisible ? 'block' : 'none';
+    //     toggleSearchBtn.textContent = isSearchVisible ? 'Search' : 'Cancel';
+    // });
 
-    toggleSearchBtn.addEventListener('click', () => {
-        const isSearchVisible = searchForm.classList.toggle('d-none');
-        pageTitle.style.display = isSearchVisible ? 'block' : 'none';
-        toggleSearchBtn.textContent = isSearchVisible ? 'Search' : 'Cancel';
-    });
-
-    rows.forEach(row => {
-        row.addEventListener('click', function () {
-            window.location.href = this.dataset.href;
-        });
-    });
+    // rows.forEach(row => {
+    //     row.addEventListener('click', function () {
+    //         window.location.href = this.dataset.href;
+    //     });
+    // });
     
     if (userTypeRadios && tutorFields) {
         userTypeRadios.forEach(radio => {
@@ -33,11 +37,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // If search performed when not logged in, alert
+    if (searchButton.dataset.alert) {
+        searchButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            alert("Please login to use this feature");
+            window.location.href = searchButton.closest("form").action;
+        });
+    }
+
     // Handle clickable rows for navigation
-    document.querySelectorAll('.clickable-row').forEach(row => {
-        row.addEventListener('click', function () {
-            const href = this.dataset.href; // Get the URL from data-href
-            if (href) {
+    document.querySelectorAll(".clickable-row").forEach((row) => {
+        row.addEventListener("click", function () {
+            const href = this.dataset.href;
+
+            if (!authStatus) {
+                alert("Please login to view tutor profiles.");
+                window.location.href = "/login";
+            } else if (href) {
                 window.location.href = href;
             }
         });

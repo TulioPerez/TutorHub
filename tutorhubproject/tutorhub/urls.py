@@ -16,7 +16,7 @@ urlpatterns = [
     # Profile management
     path('profile/<int:user_id>/', views.profile, name='profile'),  # View another user's profile
     path('my-profile/', views.profile, name='my_profile'),  # View your profile
-    path('edit-profile/', views.edit_profile, name='edit_profile'),
+    # path('edit-profile/', views.profile, name='edit_profile'),
 
     path('search/', views.search_tutors, name='search_tutors'),
     path('messages/', views.message_list, name='message_list'),
