@@ -9,6 +9,51 @@ html, body {
     flex-direction: column;
 }
 
+#auth-form {
+    border-radius: 15px;
+    border-color: aliceblue;
+    border-style: solid;
+    width: fit-content;
+    padding: 25px 45px 25px 45px;
+    background-color: #222937;
+}
+
+#auth-form-title {
+    font-weight: 600;
+    color: white;
+    font-size: x-large;
+    margin: 0;
+}
+
+#auth-form-blurb {
+    font-weight: 100;
+    color: #ffffff;
+    font-size: small;
+}
+
+#auth-fields {
+    padding: 20px;
+}
+
+#auth-logo {
+    width: 50px;
+    height: auto;
+    margin: 5px 0 10px 0;
+}
+
+#auth-label, #auth-form_section{
+    color: white;
+}
+
+#auth-form_section {
+    margin: 25px 0;
+    text-align: center;
+}
+
+#btn-login {
+    width: fit-content;
+}
+
 /* Tutor Row: Profile, Address, and Other Details */
 .tutor-row {
     display: flex;

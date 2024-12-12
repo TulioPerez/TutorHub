@@ -1,143 +1,154 @@
 {% extends "tutorhub/layout.html" %}
 {% block body %}
+{% load static %}
 
-<h2>Register</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div id="auth-form" class="col-md-6 col-lg-4">
+            <img id="auth-logo" src="{% static '/tutorhub/images/mentor-logo-bull.svg' %}" alt="Mentor Logo">
 
-{% if message %}
-    <div>{{ message }}</div>
-{% endif %}
+            <div id="auth-form-title">Create an account</div>
 
-<form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+            {% if message %}
+                <div>{{ message }}</div>
+            {% endif %}
 
-    <div class="form-group">
-        <label for="email">Email Address:</label>
-        <input class="form-control" type="email" name="email" id="email" placeholder="Email Address" maxlength="100" required>
-    </div>
-    
-    <div class="form-group">
-        <label for="password">Password:</label>
-        <input class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="100" required>
-    </div>
+            <form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
 
-    <div class="form-group">
-        <label for="confirmation">Confirm Password:</label>
-        <input class="form-control" type="password" name="confirmation" id="confirmation" placeholder="Confirm Password" maxlength="100" required>
-    </div>
+                <div id="auth-label" class="form-group">
+                    <label for="email" id="auth-label">Email Address:</label>
+                    <input class="form-control" type="email" name="email" id="email" placeholder="Email Address" maxlength="100" required>
+                </div>
+                
+                <div class="form-group">
+                    <label id="auth-label" for="password">Password:</label>
+                    <input class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="100" required>
+                </div>
 
-    <div class="form-group">
-        <div class="row">
-            <div class="col-md-6">
-                <label for="first_name">First Name:</label>
-                <input class="form-control" type="text" name="first_name" id="first_name" placeholder="First Name" maxlength="50" required>
-            </div>
-            <div class="col-md-6">
-                <label for="last_name">Last Name:</label>
-                <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Last Name" maxlength="50" required>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="nickname">Nickname:</label>
-        <input class="form-control" type="text" name="nickname" id="nickname" placeholder="Nickname" maxlength="50">
-    </div>
-    <h4>Address</h4>
-    <div class="form-group">
-        <label for="street_address">Street Address:</label>
-        <input class="form-control" type="text" name="street_address" id="street_address" placeholder="Street Address" maxlength="100" required>
-    </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-md-6">
-                <label for="city">City:</label>
-                <input class="form-control" type="text" name="city" id="city" placeholder="City" maxlength="50" required>
-            </div>
-            <div class="col-md-3">
-                <label for="state">State:</label>
-                <input class="form-control" type="text" name="state" id="state" placeholder="State" maxlength="50" required>
-            </div>
-            <div class="col-md-3">
-                <label for="zip_code">Zip Code:</label>
-                <input class="form-control" type="text" name="zip_code" id="zip_code" placeholder="Zip Code" maxlength="10" required>
-            </div>
-        </div>
-    </div>
+                <p class="form-group">
+                    <label id="auth-label" for="confirmation">Confirm Password:</label>
+                    <input class="form-control" type="password" name="confirmation" id="confirmation" placeholder="Confirm Password" maxlength="100" required>
+                </p>
 
-    <div class="form-group">
-        <label for="bio">Bio:</label>
-        <textarea class="form-control" name="bio" id="bio" placeholder="Tell us about yourself" rows="4" maxlength="500"></textarea>
-    </div>
-
-    <div class="form-group">
-        <label for="profile_image">Profile Image:</label>
-        <input class="form-control" type="file" name="profile_image" id="profile_image" accept="image/*">
-    </div>
-
-    <div class="form-group">
-        <label>User Type:</label><br>
-        <input type="radio" name="user_type" value="student" checked> Student
-        <input type="radio" name="user_type" value="tutor"> Tutor
-    </div>
-
-    <div id="tutor-fields" style="display: none;">
-        <div id="subject-grade-section">
-            <h4>Subjects and Grade Levels</h4>
-            <div class="form-group">
-                <div id="subject-rows">
-                    <div class="subject-row row mb-3">
-                        <div class="col-md-4">
-                            <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label id="auth-label" for="first_name">First Name:</label>
+                            <input class="form-control" type="text" name="first_name" id="first_name" placeholder="First Name" maxlength="50" required>
                         </div>
-                        <div class="col-md-8">
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="grade_levels_0[]" value="PK / KG"> Pre-K / KG</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="grade_levels_0[]" value="1 - 5"> 1 - 5</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="grade_levels_0[]" value="6 - 8"> 6 - 8</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="grade_levels_0[]" value="9 - 12"> 9 - 12</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="grade_levels_0[]" value="Adults"> Adults</label>
-                            </div>
+                        <div class="col-md-6">
+                            <label id="auth-label" for="last_name">Last Name:</label>
+                            <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Last Name" maxlength="50" required>
                         </div>
-                        
-                        <button type="button" class="btn btn-danger remove-row">Remove</button>
                     </div>
                 </div>
-                <button type="button" id="add-subject-row" class="btn btn-secondary">Add Subject</button>
-            </div>
-        </div>
-        
-        <div id="credentials-section">
-            <h4>Upload Credentials</h4>
-            <div id="credential-rows">
-                <div class="credential-row row mb-3">
-                    <div class="col-md-12">
-                        <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
+                <p class="form-group">
+                    <label id="auth-label" for="nickname">Nickname:</label>
+                    <input class="form-control" type="text" name="nickname" id="nickname" placeholder="Nickname" maxlength="50">
+                </p>
+                <h4 id="auth-label">Address</h4>
+                <div class="form-group">
+                    <label id="auth-label" for="street_address">Street Address:</label>
+                    <input class="form-control" type="text" name="street_address" id="street_address" placeholder="Street Address" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label id="auth-label" for="city">City:</label>
+                            <input class="form-control" type="text" name="city" id="city" placeholder="City" maxlength="50" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label id="auth-label" for="state">State:</label>
+                            <input class="form-control" type="text" name="state" id="state" placeholder="State" maxlength="50" required>
+                        </div>
+                        <p class="col-md-3">
+                            <label id="auth-label" for="zip_code">Zip Code:</label>
+                            <input class="form-control" type="number" name="zip_code" id="zip_code" placeholder="Zip Code" maxlength="10" required>
+                        </p>
                     </div>
                 </div>
-            </div>
-            <button type="button" id="add-credential-row" class="btn btn-secondary">Add Credential</button>
-        </div>
-        
-    </div>
-    
-    <input class="btn btn-primary mt-3" type="submit" value="Register">
-</form>
 
-<p>Already have an account? <a href="{% url 'login' %}">Log In here.</a></p>
+                <p class="form-group">
+                    <label id="auth-label" for="bio">Bio:</label>
+                    <textarea class="form-control" name="bio" id="bio" placeholder="Tell us about yourself" rows="4" maxlength="500"></textarea>
+                </p>
 
-<script>
-    document.querySelectorAll('input[name="user_type"]').forEach((el) => {
-        el.addEventListener('change', function () {
-            document.getElementById('tutor-fields').style.display = this.value === 'tutor' ? 'block' : 'none';
-        });
-    });
-</script>
+                <p class="form-group">
+                    <label id="auth-label" for="profile_image">Profile Image:</label>
+                    <input class="form-control" type="file" name="profile_image" id="profile_image" accept="image/*">
+                </p>
+
+                <p class="form-group" id="auth-form_section">
+                    <label>User Type:</label><br>
+                    <input type="radio" name="user_type" value="student" checked> Student
+                    <input type="radio" name="user_type" value="tutor"> Tutor
+                </p>
+
+                <div id="tutor-fields" style="display: none;">
+                    <div id="subject-grade-section">
+                        <h4 id="auth-label">Subjects and Grade Levels</h4>
+                        <div id="auth-label" class="form-group">
+                            <div id="subject-rows">
+                                <div class="subject-row row mb-3">
+                                    <div class="col-md-4">
+                                        <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
+                                    </div>
+                                    <p class="col-md-8">
+                                        <div class="checkbox-group">
+                                            <label><input type="checkbox" name="grade_levels_0[]" value="PK / KG"> Pre-K / KG</label>
+                                        </div>
+                                        <div class="checkbox-group">
+                                            <label><input type="checkbox" name="grade_levels_0[]" value="1 - 5"> 1 - 5</label>
+                                        </div>
+                                        <div class="checkbox-group">
+                                            <label><input type="checkbox" name="grade_levels_0[]" value="6 - 8"> 6 - 8</label>
+                                        </div>
+                                        <div class="checkbox-group">
+                                            <label><input type="checkbox" name="grade_levels_0[]" value="9 - 12"> 9 - 12</label>
+                                        </div>
+                                        <div class="checkbox-group">
+                                            <label><input type="checkbox" name="grade_levels_0[]" value="Adults"> Adults</label>
+                                        </div>
+                                    </p>
+                                    
+                                    <button type="button" class="btn btn-danger remove-row">Remove</button>
+                                </div>
+                            </div>
+                            <button type="button" id="add-subject-row" class="btn btn-secondary">Add Subject</button>
+                        </div>
+                    </div>
+                    
+                    <p id="credentials-section">
+                        <h4>Upload Credentials</h4>
+                        <div id="credential-rows">
+                            <div class="credential-row row mb-3">
+                                <div class="col-md-12">
+                                    <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="add-credential-row" class="btn btn-secondary">Add Credential</button>
+                    </p>
+                    
+                </div>
+                
+                <!-- <input class="btn btn-primary mt-3" type="submit" value="Register"> -->
+                <input class="btn btn-primary mt-3 d-block mx-auto" type="submit" value="Register">
+
+            </form>
+
+            <div id="auth-form_section">Already have an account? <a href="{% url 'login' %}">Log In here.</a></div>
+
+            <script>
+                document.querySelectorAll('input[name="user_type"]').forEach((el) => {
+                    el.addEventListener('change', function () {
+                        document.getElementById('tutor-fields').style.display = this.value === 'tutor' ? 'block' : 'none';
+                    });
+                });
+            </script>
+</div>
+</div>
+</div>
 
 {% endblock %}

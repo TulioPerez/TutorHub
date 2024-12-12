@@ -1,23 +1,33 @@
 {% extends "tutorhub/layout.html" %}
 {% block body %}
+{% load static %}
 
-<h2>Login</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div id="auth-form" class="col-md-6 col-lg-4 text-center">
+            <img id="auth-logo" src="{% static '/tutorhub/images/mentor-logo-bull.svg' %}" alt="Mentor Logo">
 
-{% if message %}
-    <div>{{ message }}</div>
-{% endif %}
+            <p id="auth-form-title" class="text-center">Sign in to your account</>
+            <p id="auth-form-blurb" class="text-center">Brilliant teachers just around the corner</p>
 
-<form action="{% url 'login' %}" method="post">
-    {% csrf_token %}
-    <div class="form-group">
-        <input autofocus class="form-control" type="email" name="email" placeholder="Email">
+            {% if message %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endif %}
+
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <input id="auth-field" autofocus class="form-control" type="email" name="email" placeholder="Email">
+                </div>
+                <div class="form-group mb-3">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+                <input class="btn btn-primary w-100" type="submit" value="Login">
+            </form>
+
+            <p class="text-center mt-3">Don't have an account? <a href="{% url 'register' %}">Register here.</a></p>
+        </div>
     </div>
-    <div class="form-group">
-        <input class="form-control" type="password" name="password" placeholder="Password">
-    </div>
-    <input class="btn btn-primary" type="submit" value="Login">
-</form>
-
-Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+</div>
 
 {% endblock %}
