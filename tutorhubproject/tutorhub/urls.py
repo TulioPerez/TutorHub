@@ -13,8 +13,10 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
 
-    # Profile management
+    # View a user's profile
     path('profile/<int:user_id>/', views.profile, name='profile'),  # View another user's profile
+
+    # View & edit one's own profile
     path('my-profile/', views.profile, name='my_profile'),  # View your profile
     path('edit-profile/', views.edit_profile, name='edit_profile'),
 
