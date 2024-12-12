@@ -10,7 +10,6 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 
 
-
 from django.db.models import Q
 
 def index(request):

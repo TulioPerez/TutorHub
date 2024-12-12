@@ -27,7 +27,7 @@
                     <div>{{ profile.city|default:"City not available" }}, {{ profile.state|default:"State not available" }}</div>
                     <!-- Edit Link for Profile Info -->
                     {% if is_own_profile %}
-                       <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Info</button>
+                       <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editInfoModal">Edit Info</button>
                     {% endif %}
                 </div>
             </div>
@@ -53,7 +53,7 @@
                 </div>
                 <!-- Edit Link for Credentials -->
                 {% if is_own_profile %}
-                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Credentials</button>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_credentials_modal">Edit Credentials</button>
                 {% endif %}
             </div>
 
@@ -63,7 +63,7 @@
                 <p>{{ profile.bio|default:"No bio available." }}</p>
                 <!-- Edit Link for Bio -->
                 {% if is_own_profile %}
-                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Bio</button>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_bio_modal">Edit Bio</button>
                 {% endif %}
             </div>
 
@@ -94,7 +94,7 @@
                     {% endfor %}
                 </ul>
                 {% if is_own_profile %}
-                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Availability</button>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_availability_modal">Edit Availability</button>
                 {% endif %}
             </div>
 
@@ -109,7 +109,7 @@
                     {% endfor %}
                 </ul>
                 {% if is_own_profile %}
-                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editModal">Edit Subjects</button>
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_subjects_modal">Edit Subjects</button>
                 {% endif %}
             </div>
         </div>

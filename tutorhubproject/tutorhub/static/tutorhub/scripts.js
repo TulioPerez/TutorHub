@@ -159,4 +159,39 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+
+    addCredentialButton.addEventListener("click", () => {
+        const newRow = document.createElement("div");
+        newRow.classList.add("row", "mb-3");
+
+        newRow.innerHTML = `
+            <div class="col">
+                <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
+            </div>
+        `;
+        credentialRowsContainer.appendChild(newRow);
+    });
+
+    // Handle removing existing credentials
+    document.querySelectorAll(".remove-existing").forEach(button => {
+        button.addEventListener("click", function() {
+            const credentialId = this.dataset.id;
+            const row = this.closest(".credential-row");
+            if (confirm("Are you sure you want to remove this credential?")) {
+                fetch(`/credentials/${credentialId}/delete/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        row.remove();
+                    } else {
+                        alert("Failed to delete credential. Please try again.");
+                    }
+                });
+            }
+        });
+    });
+
 });
