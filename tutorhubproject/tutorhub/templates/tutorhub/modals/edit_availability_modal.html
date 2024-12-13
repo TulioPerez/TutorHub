@@ -2,25 +2,43 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="edit_availability_modal_label">Edit Profile Details</h5>
+                <h5 class="modal-title" id="edit_availability_modal_label">Edit Availability</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editInfoForm" action="{% url 'edit_profile' %}" method="post">
+                <form id="editAvailabilityForm" action="{% url 'edit_profile' %}" method="post">
                     {% csrf_token %}
-                    <div class="form-group mb-3">
-                        <label for="first_name">First Name</label>
-                        <input type="text" name="first_name" id="first_name" class="form-control" value="{{ profile.first_name }}" required>
+                    <div id="edit-availability-rows-container">
+                        {% for slot in user.availability %}
+                            <div class="availability-row row mb-3">
+                                <div class="col-md-4">
+                                    <input type="text" name="availability_days[]" value="{{ slot.day }}" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="time" name="availability_start[]" value="{{ slot.start }}" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="time" name="availability_end[]" value="{{ slot.end }}" class="form-control" required>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="availability-row row mb-3">
+                                <div class="col-md-4">
+                                    <input type="text" name="availability_days[]" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="time" name="availability_start[]" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="time" name="availability_end[]" class="form-control" required>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="last_name">Last Name</label>
-                        <input type="text" name="last_name" id="last_name" class="form-control" value="{{ profile.last_name }}" required>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" id="btn-add-availability-edit" class="btn btn-secondary btn-sm mt-2">Add Row</button>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="nickname">Nickname</label>
-                        <input type="text" name="nickname" id="nickname" class="form-control" value="{{ profile.nickname }}" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
                 </form>
             </div>
         </div>

@@ -83,14 +83,13 @@
         </div>
 
         <!-- Right Column: Availability and Subjects -->
-        <!-- Right Column: Availability and Subjects -->
         <div class="col-md-4">
             <!-- Availability -->
             <div class="right-column-section">
                 <h4>Availability</h4>
                 <ul>
-                    {% for day, time in profile.availability.items %}
-                        <li><strong>{{ day|title }}:</strong> {{ time }}</li>
+                    {% for slot in profile.availability %}
+                        <li>{{ slot.day }}: {{ slot.start }} - {{ slot.end }}</li>
                     {% empty %}
                         <p>Availability not provided.</p>
                     {% endfor %}

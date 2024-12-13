@@ -167,6 +167,18 @@ def edit_profile(request):
             profile.city = request.POST.get('city', profile.city)
         if 'state' in request.POST:
             profile.state = request.POST.get('state', profile.state)
+
+        # Handle availability updates
+        availability_days = request.POST.getlist("availability_days[]")
+        availability_start = request.POST.getlist("availability_start[]")
+        availability_end = request.POST.getlist("availability_end[]")
+        
+        if availability_days and availability_start and availability_end:
+            availability = []
+            for day, start, end in zip(availability_days, availability_start, availability_end):
+                availability.append({"day": day, "start": start, "end": end})
+            profile.availability = availability
+            
         # Save changes and redirect to profile page
         profile.save()
         return redirect("my_profile")

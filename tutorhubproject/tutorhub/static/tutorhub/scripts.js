@@ -8,16 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Toggle tutor-specific fields in the registration form
     const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
     const tutorFields = document.getElementById('tutor-fields');
-
-    // Handle row clicks on index page
-
-    const pageTitle = document.getElementById('page-title');
-    const searchForm = document.getElementById('search-form');
-    const searchButton = document.querySelector('#search-form button[type="submit"]');
-
-    // Profile section editing
-    const editForm = document.getElementById("editProfileForm");
-
+   
     // Toggle visibility of tutor-specific registration fields
     if (userTypeRadios && tutorFields) {
         userTypeRadios.forEach(radio => {
@@ -27,8 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // If search performed when not logged in, alert
-    if (searchButton.dataset.alert) {
+    // Search button functionality
+    const searchButton = document.querySelector('#search-form button[type="submit"]');
+    if (searchButton && searchButton.dataset.alert) {
         searchButton.addEventListener("click", (event) => {
             event.preventDefault();
             alert("Please login to use this feature");
@@ -36,26 +28,31 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Handle clickable rows for navigation
-    document.querySelectorAll(".clickable-row").forEach((row) => {
-        row.addEventListener("click", function () {
-            const href = this.dataset.href;
-
-            if (!authStatus) {
-                alert("Please login to view tutor profiles.");
-                window.location.href = "/login";
-            } else if (href) {
-                window.location.href = href;
-            }
+    // Handle row clicks on index page
+    const clickableRow = document.querySelectorAll(".clickable-row");
+    if (clickableRow.length > 0) {
+        clickableRow.forEach((row) => {
+            row.addEventListener("click", function () {
+                const href = this.dataset.href;
+    
+                if (!authStatus) {
+                    alert("Please login to view tutor profiles.");
+                    window.location.href = "/login";
+                } else if (href) {
+                    window.location.href = href;
+                }
+            });
         });
-    });
+    } else {
+        console.warn("No clickable rows found.");
+    }
+    
 
     // Subject Handling
     const maxSubjects = 10;
     const subjectRowsContainer = document.getElementById("subject-rows-container");
     const addSubjectButton = document.getElementById("btn-add-subject");
-
-    let subjectCount = document.querySelectorAll(".subject-row").length;
+    let subjectCount = subjectRowsContainer ? document.querySelectorAll(".subject-row").length : 0;
 
     if (addSubjectButton) {
         addSubjectButton.addEventListener("click", function () {
@@ -105,12 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const maxCredentials = 7;
     const credentialRowsContainer = document.getElementById("credential-rows-container");
     const addCredentialButton = document.getElementById("btn-add-credential");
-
-    let credentialCount = document.querySelectorAll(".credential-row").length;
+    let credentialCount = credentialRowsContainer ? document.querySelectorAll(".credential-row").length : 0;
 
     if (addCredentialButton) {
         addCredentialButton.addEventListener("click", function () {
-            console.log("Add Credential Button Clicked");
 
             if (credentialCount >= maxCredentials) {
                 alert("You cannot add more than 7 credentials.");
@@ -142,8 +137,42 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Availability handling
+    function addAvailabilityRow(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const newRow = document.createElement("div");
+        newRow.classList.add("availability-row", "row", "mb-3");
+
+        newRow.innerHTML = `
+            <div class="col-md-4">
+                <input type="text" name="availability_days[]" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
+            </div>
+            <div class="col-md-4">
+                <input type="time" name="availability_start[]" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <input type="time" name="availability_end[]" class="form-control" required>
+            </div>
+        `;
+
+        container.appendChild(newRow);
+    }
+
+
+    // Availability button listener
+    const addAvailabilityButton = document.getElementById("btn-add-availability");
+    if (addAvailabilityButton) {
+        addAvailabilityButton.addEventListener("click", () => {
+            addAvailabilityRow("availability-rows-container");
+        });
+    }
+
+
     // Modal functionality for profile editing
-    document.querySelectorAll(".modal form").forEach((form) => {
+    const modalForms = document.querySelectorAll(".modal form");
+    modalForms.forEach(form => {
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
             const formData = new FormData(form);
@@ -164,21 +193,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-
-    // addCredentialButton.addEventListener("click", () => {
-    //     const newRow = document.createElement("div");
-    //     newRow.classList.add("row", "mb-3");
-
-    //     newRow.innerHTML = `
-    //         <div class="col">
-    //             <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
-    //         </div>
-    //     `;
-    //     credentialRowsContainer.appendChild(newRow);
-    // });
-
-    // Handle removing existing credentials
-    document.querySelectorAll(".remove-existing").forEach(button => {
+    
+    // Handle removing existing subjects & credentials
+    const removeCredentialButton = document.querySelectorAll(".btn-remove-credential");
+    removeCredentialButton.forEach(button => {
         button.addEventListener("click", function () {
             const credentialId = this.dataset.id;
             const row = this.closest(".credential-row");
