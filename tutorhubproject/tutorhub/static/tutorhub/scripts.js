@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const tutorFields = document.getElementById('tutor-fields');
 
     // Handle row clicks on index page
-    // const rows = document.querySelectorAll('.clickable-row');
 
     const pageTitle = document.getElementById('page-title');
     const searchForm = document.getElementById('search-form');
@@ -53,23 +52,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Subject Handling
     const maxSubjects = 10;
-    const subjectRowsContainer = document.getElementById("subject-rows");
+    const subjectRowsContainer = document.getElementById("subject-rows-container");
     const addSubjectButton = document.getElementById("btn-add-subject");
 
-    let subjectCount = document.querySelectorAll(".subject-row").length; // Track existing rows
+    let subjectCount = document.querySelectorAll(".subject-row").length;
 
     if (addSubjectButton) {
         addSubjectButton.addEventListener("click", function () {
-            console.log("Add Subject Button Clicked"); // Debugging log
-
+            console.log("Add Subject Button Clicked");
+    
             if (subjectCount >= maxSubjects) {
                 alert("You cannot add more than 10 subjects.");
                 return;
             }
-
+    
             const newRow = document.createElement("div");
             newRow.classList.add("subject-row", "row", "mb-3");
-
+    
             newRow.innerHTML = `
                 <div class="col-md-4">
                     <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
@@ -87,31 +86,31 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
                 </div>
             `;
-
+    
             // Append the new row
             subjectRowsContainer.appendChild(newRow);
-
+    
             // Add event listener to the "Remove" button
             newRow.querySelector(".remove-row").addEventListener("click", function () {
                 newRow.remove();
                 subjectCount--;
-                console.log("Subject Removed"); // Debugging log
+                console.log("Subject Removed");
             });
-
+    
             subjectCount++;
         });
     }
 
     // Credential Handling
     const maxCredentials = 7;
-    const credentialRowsContainer = document.getElementById("credential-rows");
+    const credentialRowsContainer = document.getElementById("credential-rows-container");
     const addCredentialButton = document.getElementById("btn-add-credential");
 
-    let credentialCount = document.querySelectorAll(".credential-row").length; // Track existing rows
+    let credentialCount = document.querySelectorAll(".credential-row").length;
 
     if (addCredentialButton) {
         addCredentialButton.addEventListener("click", function () {
-            console.log("Add Credential Button Clicked"); // Debugging log
+            console.log("Add Credential Button Clicked");
 
             if (credentialCount >= maxCredentials) {
                 alert("You cannot add more than 7 credentials.");
@@ -137,13 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
             newRow.querySelector(".remove-row").addEventListener("click", function () {
                 newRow.remove();
                 credentialCount--;
-                console.log("Credential Removed"); // Debugging log
+                console.log("Credential Removed");
             });
-
             credentialCount++;
         });
     }
-
 
     // Modal functionality for profile editing
     document.querySelectorAll(".modal form").forEach((form) => {
@@ -168,17 +165,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    addCredentialButton.addEventListener("click", () => {
-        const newRow = document.createElement("div");
-        newRow.classList.add("row", "mb-3");
+    // addCredentialButton.addEventListener("click", () => {
+    //     const newRow = document.createElement("div");
+    //     newRow.classList.add("row", "mb-3");
 
-        newRow.innerHTML = `
-            <div class="col">
-                <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
-            </div>
-        `;
-        credentialRowsContainer.appendChild(newRow);
-    });
+    //     newRow.innerHTML = `
+    //         <div class="col">
+    //             <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
+    //         </div>
+    //     `;
+    //     credentialRowsContainer.appendChild(newRow);
+    // });
 
     // Handle removing existing credentials
     document.querySelectorAll(".remove-existing").forEach(button => {
