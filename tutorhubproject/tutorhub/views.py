@@ -148,6 +148,7 @@ def profile(request, user_id=None):
         'is_own_profile': profile_user == request.user,
     })
 
+
 @login_required
 def edit_profile(request):
     profile = request.user
@@ -170,35 +171,6 @@ def edit_profile(request):
         profile.save()
         return redirect("my_profile")
     return HttpResponse(status=400)
-
-
-
-# @login_required
-# def edit_profile(request):
-#     if request.method == "POST":
-#         profile = request.user
-#         profile.nickname = request.POST.get("nickname", profile.nickname)
-#         profile.bio = request.POST.get("bio", profile.bio)
-#         profile.street_address = request.POST.get("street_address", profile.street_address)
-#         profile.city = request.POST.get("city", profile.city)
-#         profile.state = request.POST.get("state", profile.state)
-#         profile.zip_code = request.POST.get("zip_code", profile.zip_code)
-
-#         if profile.is_tutor:
-#             profile.availability = request.POST.get("availability", profile.availability)
-
-#             # Handle subjects and grade levels
-#             subject_grades = request.POST.get("subject_grades", "").split(", ")
-#             profile.subject_grades.clear()
-#             for item in subject_grades:
-#                 subject, grade_level = item.split(" - ")
-#                 sg, _ = SubjectGrade.objects.get_or_create(subject=subject, grade_level=grade_level)
-#                 profile.subject_grades.add(sg)
-
-#         profile.save()
-#         return redirect("my_profile")
-
-#     return render(request, 'tutorhub/edit_profile.html', {'profile': request.user})
 
 
 @login_required

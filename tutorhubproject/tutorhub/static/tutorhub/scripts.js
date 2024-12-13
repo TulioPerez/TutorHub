@@ -15,23 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const pageTitle = document.getElementById('page-title');
     const searchForm = document.getElementById('search-form');
     const searchButton = document.querySelector('#search-form button[type="submit"]');
-    
+
     // Profile section editing
     const editForm = document.getElementById("editProfileForm");
 
-    // const toggleSearchBtn = document.getElementById('toggle-search');
-    // toggleSearchBtn.addEventListener('click', () => {
-    //     const isSearchVisible = searchForm.classList.toggle('d-none');
-    //     pageTitle.style.display = isSearchVisible ? 'block' : 'none';
-    //     toggleSearchBtn.textContent = isSearchVisible ? 'Search' : 'Cancel';
-    // });
-
-    // rows.forEach(row => {
-    //     row.addEventListener('click', function () {
-    //         window.location.href = this.dataset.href;
-    //     });
-    // });
-    
+    // Toggle visibility of tutor-specific registration fields
     if (userTypeRadios && tutorFields) {
         userTypeRadios.forEach(radio => {
             radio.addEventListener('change', function () {
@@ -66,57 +54,57 @@ document.addEventListener("DOMContentLoaded", () => {
     // Dynamic rows for subjects and grade levels
     const maxSubjects = 10;
     const subjectRowsContainer = document.getElementById("subject-rows");
-    const addSubjectButton = document.getElementById("add-subject-row");
+    const addSubjectButton = document.getElementById("btn-add-subject");
 
     let subjectCount = 1;
 
     if (addSubjectButton) {
         addSubjectButton.addEventListener("click", function () {
+            console.log("add subject CLICKED");
             if (subjectCount >= maxSubjects) return;
-
             const newRow = document.createElement("div");
             newRow.classList.add("subject-row", "row", "mb-3");
 
             newRow.innerHTML = `
-                <div class="col-md-4">
-                    <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
-                </div>
-                <div class="col-md-8">
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="PK / KG"> Pre-K / KG</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="1 - 5"> 1 - 5</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="6 - 8"> 6 - 8</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="9 - 12"> 9 - 12</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="Adults"> Adults</label>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-danger remove-row">Remove</button>
-            `;
-           // Append the new row to the subject rows container
-           subjectRowsContainer.appendChild(newRow);
+              <div class="col-md-4">
+                  <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
+              </div>
+              <div class="col-md-8">
+                  <div class="checkbox-group">
+                      <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="PK / KG"> Pre-K / KG</label>
+                  </div>
+                  <div class="checkbox-group">
+                      <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="1 - 5"> 1 - 5</label>
+                  </div>
+                  <div class="checkbox-group">
+                      <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="6 - 8"> 6 - 8</label>
+                  </div>
+                  <div class="checkbox-group">
+                      <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="9 - 12"> 9 - 12</label>
+                  </div>
+                  <div class="checkbox-group">
+                      <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="Adults"> Adults</label>
+                  </div>
+              </div>
+              <button type="button" class="btn btn-danger remove-row">Remove</button>
+          `;
+            // Append the new row to the subject rows container
+            subjectRowsContainer.appendChild(newRow);
 
-           // Add event listener for the remove button
-           newRow.querySelector(".remove-row").addEventListener("click", function () {
-               subjectRowsContainer.removeChild(newRow);
-           });
+            // Add event listener for the remove button
+            newRow.querySelector(".remove-row").addEventListener("click", function () {
+                subjectRowsContainer.removeChild(newRow);
+            });
 
-           // Increment the subject count
-           subjectCount++;
+            // Increment the subject count
+            subjectCount++;
         });
     }
 
     // Dynamic rows for credentials
     const maxCredentials = 7;
     const credentialRowsContainer = document.getElementById("credential-rows");
-    const addCredentialButton = document.getElementById("add-credential-row");
+    const addCredentialButton = document.getElementById("btn-add-credential");
 
     let credentialCount = 1;
 
@@ -124,18 +112,32 @@ document.addEventListener("DOMContentLoaded", () => {
         addCredentialButton.addEventListener("click", function () {
             if (credentialCount >= maxCredentials) return;
 
+
+
+
             const newRow = document.createElement("div");
             newRow.classList.add("credential-row", "row", "mb-3");
 
             newRow.innerHTML = `
-                <div class="col-md-12">
-                    <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
-                </div>
-            `;
+              <div class="col-md-12">
+                  <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
+              </div>
+
+
+
+          `;
             credentialRowsContainer.appendChild(newRow);
+
+
+
+
+
+
+
             credentialCount++;
         });
     }
+
 
     // Modal functionality for profile editing
     document.querySelectorAll(".modal form").forEach((form) => {
@@ -174,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Handle removing existing credentials
     document.querySelectorAll(".remove-existing").forEach(button => {
-        button.addEventListener("click", function() {
+        button.addEventListener("click", function () {
             const credentialId = this.dataset.id;
             const row = this.closest(".credential-row");
             if (confirm("Are you sure you want to remove this credential?")) {

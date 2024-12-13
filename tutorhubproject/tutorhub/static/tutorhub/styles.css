@@ -35,6 +35,10 @@ html, body {
     padding: 20px;
 }
 
+#auth-checkbox-label {
+    margin: 0 12px;
+}
+
 #auth-logo-container {
     width: 1fr;
     text-align: center;
@@ -46,11 +50,11 @@ html, body {
     margin: 5px 0 10px 0;
 }
 
-#auth-label, #auth-form_section{
+#auth-label, #auth-form-section, #auth-checkbox-label {
     color: white;
 }
 
-#auth-form_section {
+#auth-form-section {
     margin: 25px 0;
     text-align: center;
 }
