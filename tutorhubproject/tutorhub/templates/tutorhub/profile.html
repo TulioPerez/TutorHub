@@ -33,6 +33,7 @@
             </div>
 
             <!-- Credentials -->
+            {% if profile.is_tutor %}
             <div class="credentials-container">
                 <h4>Credentials</h4>
                 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
@@ -56,6 +57,7 @@
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_credentials_modal">Edit Credentials</button>
                 {% endif %}
             </div>
+            {% endif %}
 
             <!-- Bio -->
             <div class="bio-container">
@@ -99,6 +101,7 @@
             </div>
 
             <!-- Subjects -->
+            {% if profile.is_tutor %}
             <div class="right-column-section">
                 <h4>Subjects</h4>
                 <ul>
@@ -112,6 +115,7 @@
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_subjects_modal">Edit Subjects</button>
                 {% endif %}
             </div>
+            {% endif %}
         </div>
 
     </div>
