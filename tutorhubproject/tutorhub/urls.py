@@ -15,6 +15,7 @@ urlpatterns = [
 
     # View a user's profile
     path('profile/<int:user_id>/', views.profile, name='profile'),  # View another user's profile
+    path('delete_credential/<int:credential_id>/', views.delete_credential, name='delete_credential'),
 
     # View & edit one's own profile
     path('my-profile/', views.profile, name='my_profile'),  # View your profile

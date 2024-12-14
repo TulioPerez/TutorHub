@@ -167,6 +167,9 @@ def edit_profile(request):
             profile.city = request.POST.get('city', profile.city)
         if 'state' in request.POST:
             profile.state = request.POST.get('state', profile.state)
+        if 'credentials[]' in request.FILES:
+            for uploaded_file in request.FILES.getlist("credentials[]"):
+                Credential.objects.create(user=profile, file=uploaded_file)
 
         # Handle availability updates
         availability_days = request.POST.getlist("availability_days[]")
@@ -178,11 +181,21 @@ def edit_profile(request):
             for day, start, end in zip(availability_days, availability_start, availability_end):
                 availability.append({"day": day, "start": start, "end": end})
             profile.availability = availability
-            
+
         # Save changes and redirect to profile page
         profile.save()
         return redirect("my_profile")
     return HttpResponse(status=400)
+
+
+@login_required
+def delete_credential(request, credential_id):
+    try:
+        credential = Credential.objects.get(id=credential_id, user=request.user)
+        credential.delete()
+        return JsonResponse({"success": True})
+    except Credential.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Credential not found."}, status=404)
 
 
 @login_required

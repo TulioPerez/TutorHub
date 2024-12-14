@@ -102,10 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const maxCredentials = 7;
     const credentialRowsContainer = document.getElementById("credential-rows-container");
     const addCredentialButton = document.getElementById("btn-add-credential");
-    let credentialCount = credentialRowsContainer ? document.querySelectorAll(".credential-row").length : 0;
 
     if (addCredentialButton) {
-        addCredentialButton.addEventListener("click", function () {
+        addCredentialButton.addEventListener("click", () => {
+            const credentialCount = document.querySelectorAll(".credential-row").length;
 
             if (credentialCount >= maxCredentials) {
                 alert("You cannot add more than 7 credentials.");
@@ -120,22 +120,47 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
                 </div>
                 <div class="col-md-2 text-end">
-                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">X</button>
                 </div>
             `;
 
-            // Append the new row
             credentialRowsContainer.appendChild(newRow);
 
             // Add event listener to the "Remove" button
-            newRow.querySelector(".remove-row").addEventListener("click", function () {
+            newRow.querySelector(".remove-row").addEventListener("click", () => {
                 newRow.remove();
-                credentialCount--;
-                console.log("Credential Removed");
             });
-            credentialCount++;
         });
     }
+
+    // Event delegation for removing existing credentials
+    credentialRowsContainer.addEventListener("click", (event) => {
+        if (event.target.classList.contains("remove-credential")) {
+            const row = event.target.closest(".credential-row");
+            const credentialId = event.target.getAttribute("data-id");
+
+            // Confirm deletion
+            if (confirm("Are you sure you want to delete this credential?")) {
+                // Make an AJAX request to delete the credential
+                fetch(`/delete_credential/${credentialId}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                    },
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            row.remove();
+                            console.log("Credential deleted successfully.");
+                        } else {
+                            alert("Failed to delete credential.");
+                        }
+                    })
+                    .catch((error) => console.error("Error:", error));
+            }
+        }
+    });
+    
 
     // Availability handling
     function addAvailabilityRow(containerId) {
@@ -192,29 +217,4 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-
-    
-    // Handle removing existing subjects & credentials
-    const removeCredentialButton = document.querySelectorAll(".btn-remove-credential");
-    removeCredentialButton.forEach(button => {
-        button.addEventListener("click", function () {
-            const credentialId = this.dataset.id;
-            const row = this.closest(".credential-row");
-            if (confirm("Are you sure you want to remove this credential?")) {
-                fetch(`/credentials/${credentialId}/delete/`, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                        row.remove();
-                    } else {
-                        alert("Failed to delete credential. Please try again.");
-                    }
-                });
-            }
-        });
-    });
-
 });
