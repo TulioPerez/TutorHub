@@ -177,10 +177,10 @@ def edit_profile(request):
         availability_end = request.POST.getlist("availability_end[]")
         
         if availability_days and availability_start and availability_end:
-            availability = []
-            for day, start, end in zip(availability_days, availability_start, availability_end):
-                availability.append({"day": day, "start": start, "end": end})
-            profile.availability = availability
+            profile.availability = [
+                {"day": day, "start": start, "end": end}
+                for day, start, end in zip(availability_days, availability_start, availability_end)
+            ]
 
         # Save changes and redirect to profile page
         profile.save()

@@ -160,39 +160,54 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-    
+
 
     // Availability handling
-    function addAvailabilityRow(containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+const availabilityContainer = document.getElementById("availability-rows-container");
+    const addAvailabilityButton = document.getElementById("btn-add-availability");
 
+    // Function to create a new availability row
+    const createAvailabilityRow = (day = "", start = "", end = "") => {
         const newRow = document.createElement("div");
         newRow.classList.add("availability-row", "row", "mb-3");
 
         newRow.innerHTML = `
             <div class="col-md-4">
-                <input type="text" name="availability_days[]" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
+                <input type="text" name="availability_days[]" value="${day}" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
             </div>
-            <div class="col-md-4">
-                <input type="time" name="availability_start[]" class="form-control" required>
+            <div class="col-md-3">
+                <input type="time" name="availability_start[]" value="${start}" class="form-control" required>
             </div>
-            <div class="col-md-4">
-                <input type="time" name="availability_end[]" class="form-control" required>
+            <div class="col-md-3">
+                <input type="time" name="availability_end[]" value="${end}" class="form-control" required>
+            </div>
+            <div class="col-md-2 text-end">
+                <button type="button" class="btn btn-danger btn-sm remove-availability">X</button>
             </div>
         `;
 
-        container.appendChild(newRow);
-    }
+        // Add event listener to the "Remove" button
+        newRow.querySelector(".remove-availability").addEventListener("click", () => {
+            newRow.remove();
+        });
 
+        return newRow;
+    };
 
-    // Availability button listener
-    const addAvailabilityButton = document.getElementById("btn-add-availability");
+    // Add a new availability row
     if (addAvailabilityButton) {
         addAvailabilityButton.addEventListener("click", () => {
-            addAvailabilityRow("availability-rows-container");
+            availabilityContainer.appendChild(createAvailabilityRow());
         });
     }
+
+    // Initialize existing rows with "Remove" button functionality
+    availabilityContainer.querySelectorAll(".remove-availability").forEach(button => {
+        button.addEventListener("click", (event) => {
+            const row = button.closest(".availability-row");
+            row.remove();
+        });
+    });
 
 
     // Modal functionality for profile editing

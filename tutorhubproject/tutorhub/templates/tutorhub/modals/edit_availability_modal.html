@@ -9,36 +9,41 @@
                 <form id="editAvailabilityForm" action="{% url 'edit_profile' %}" method="post">
                     {% csrf_token %}
                     <div id="availability-rows-container">
+                        <!-- Existing availability rows -->
                         {% for slot in user.availability %}
-                            <div class="availability-row row mb-3">
-                                <div class="col-md-4">
-                                    <input type="text" name="availability_days[]" value="{{ slot.day }}" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="time" name="availability_start[]" value="{{ slot.start }}" class="form-control" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="time" name="availability_end[]" value="{{ slot.end }}" class="form-control" required>
-                                </div>
+                        <div class="availability-row row mb-3" data-day="{{ slot.day }}">
+                            <div class="col-md-4">
+                                <input type="text" name="availability_days[]" value="{{ slot.day }}" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
                             </div>
+                            <div class="col-md-3">
+                                <input type="time" name="availability_start[]" value="{{ slot.start }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="time" name="availability_end[]" value="{{ slot.end }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button type="button" class="btn btn-danger btn-sm remove-availability">X</button>
+                            </div>
+                        </div>
                         {% empty %}
-                            <div class="availability-row row mb-3">
-                                <div class="col-md-4">
-                                    <input type="text" name="availability_days[]" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="time" name="availability_start[]" class="form-control" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="time" name="availability_end[]" class="form-control" required>
-                                </div>
+                        <div class="availability-row row mb-3">
+                            <div class="col-md-4">
+                                <input type="text" name="availability_days[]" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
                             </div>
+                            <div class="col-md-3">
+                                <input type="time" name="availability_start[]" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="time" name="availability_end[]" class="form-control" required>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button type="button" class="btn btn-danger btn-sm remove-availability">X</button>
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="button" id="btn-add-availability" class="btn btn-secondary btn-sm mt-2">Add Row</button>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                    <button type="button" id="btn-add-availability" class="btn btn-secondary mb-3">Add Availability</button>
+                    <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
                 </form>
             </div>
         </div>
