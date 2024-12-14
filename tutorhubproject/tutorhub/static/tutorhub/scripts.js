@@ -163,8 +163,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Availability handling
-const availabilityContainer = document.getElementById("availability-rows-container");
+    const availabilityContainer = document.getElementById("availability-rows-container");
     const addAvailabilityButton = document.getElementById("btn-add-availability");
+
+    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
     // Function to create a new availability row
     const createAvailabilityRow = (day = "", start = "", end = "") => {
@@ -173,7 +175,12 @@ const availabilityContainer = document.getElementById("availability-rows-contain
 
         newRow.innerHTML = `
             <div class="col-md-4">
-                <input type="text" name="availability_days[]" value="${day}" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
+                <select name="availability_days[]" class="form-select" required>
+                    <option value="" disabled ${!day ? "selected" : ""}>Select a day</option>
+                    ${daysOfWeek
+                        .map(d => `<option value="${d}" ${d === day ? "selected" : ""}>${d}</option>`)
+                        .join("")}
+                </select>
             </div>
             <div class="col-md-3">
                 <input type="time" name="availability_start[]" value="${start}" class="form-control" required>
@@ -194,18 +201,15 @@ const availabilityContainer = document.getElementById("availability-rows-contain
         return newRow;
     };
 
-    // Add a new availability row
-    if (addAvailabilityButton) {
-        addAvailabilityButton.addEventListener("click", () => {
-            availabilityContainer.appendChild(createAvailabilityRow());
-        });
-    }
+    // Add a new availability row when the button is clicked
+    addAvailabilityButton.addEventListener("click", () => {
+        availabilityContainer.appendChild(createAvailabilityRow());
+    });
 
-    // Initialize existing rows with "Remove" button functionality
+    // Attach remove functionality to existing rows
     availabilityContainer.querySelectorAll(".remove-availability").forEach(button => {
-        button.addEventListener("click", (event) => {
-            const row = button.closest(".availability-row");
-            row.remove();
+        button.addEventListener("click", () => {
+            button.closest(".availability-row").remove();
         });
     });
 

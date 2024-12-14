@@ -11,30 +11,20 @@
                     <div id="availability-rows-container">
                         <!-- Existing availability rows -->
                         {% for slot in user.availability %}
-                        <div class="availability-row row mb-3" data-day="{{ slot.day }}">
+                        <div class="availability-row row mb-3">
                             <div class="col-md-4">
-                                <input type="text" name="availability_days[]" value="{{ slot.day }}" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
+                                <select name="availability_days[]" class="form-select" required>
+                                    <option value="" disabled>Select a day</option>
+                                    {% for day in days_of_week %}
+                                    <option value="{{ day }}" {% if slot.day == day %}selected{% endif %}>{{ day }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md-3">
                                 <input type="time" name="availability_start[]" value="{{ slot.start }}" class="form-control" required>
                             </div>
                             <div class="col-md-3">
                                 <input type="time" name="availability_end[]" value="{{ slot.end }}" class="form-control" required>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <button type="button" class="btn btn-danger btn-sm remove-availability">X</button>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <div class="availability-row row mb-3">
-                            <div class="col-md-4">
-                                <input type="text" name="availability_days[]" class="form-control" placeholder="Day (e.g., Mon)" maxlength="10" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="time" name="availability_start[]" class="form-control" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="time" name="availability_end[]" class="form-control" required>
                             </div>
                             <div class="col-md-2 text-end">
                                 <button type="button" class="btn btn-danger btn-sm remove-availability">X</button>

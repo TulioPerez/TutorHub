@@ -98,8 +98,8 @@ def register(request):
 
         # Handle tutor-specific fields
         if user.is_tutor:
-            user.availability = request.POST.get("availability", "{}")
-            user.save()
+            # user.availability = request.POST.get("availability", "{}")
+            # user.save()
 
             # Process subjects and grade levels
             subjects = request.POST.getlist("subjects[]")
@@ -142,17 +142,33 @@ def profile(request, user_id=None):
     for credential in credentials:
         credential.is_image = credential.file.url.lower().endswith(('.jpg', '.jpeg', '.png'))
 
+    # List of days to pass to the template
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
         'credentials': credentials,
         'is_own_profile': profile_user == request.user,
+        'days_of_week': days_of_week,  # Pass days to template
     })
 
 
 @login_required
 def edit_profile(request):
     profile = request.user
+    
     if request.method == "POST":
+        # Handle availability updates
+        availability_days = request.POST.getlist("availability_days[]")
+        availability_start = request.POST.getlist("availability_start[]")
+        availability_end = request.POST.getlist("availability_end[]")
+        
+        if availability_days and availability_start and availability_end:
+            profile.availability = [
+                {"day": day, "start": start, "end": end}
+                for day, start, end in zip(availability_days, availability_start, availability_end)
+            ]
+
         if 'profile_image' in request.FILES:
             profile.profile_image = request.FILES['profile_image']
         if 'nickname' in request.POST:
@@ -171,16 +187,6 @@ def edit_profile(request):
             for uploaded_file in request.FILES.getlist("credentials[]"):
                 Credential.objects.create(user=profile, file=uploaded_file)
 
-        # Handle availability updates
-        availability_days = request.POST.getlist("availability_days[]")
-        availability_start = request.POST.getlist("availability_start[]")
-        availability_end = request.POST.getlist("availability_end[]")
-        
-        if availability_days and availability_start and availability_end:
-            profile.availability = [
-                {"day": day, "start": start, "end": end}
-                for day, start, end in zip(availability_days, availability_start, availability_end)
-            ]
 
         # Save changes and redirect to profile page
         profile.save()
