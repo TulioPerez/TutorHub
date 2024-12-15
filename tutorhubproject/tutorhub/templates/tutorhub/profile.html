@@ -69,6 +69,9 @@
                 {% endif %}
             </div>
 
+            <!-- Auto scrolling target for new messages -->
+            <div id="scroll-target" data-scroll-to="{{ scroll_to }}"></div>
+
             <!-- Send a Message -->
             {% if user.is_authenticated %}
             <div class="messages-container">
@@ -130,7 +133,6 @@
             </div>
             {% endif %}
         </div>
-
     </div>
 </div>
 
