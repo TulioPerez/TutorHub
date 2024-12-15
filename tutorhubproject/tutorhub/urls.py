@@ -21,11 +21,12 @@ urlpatterns = [
     path('my-profile/', views.profile, name='my_profile'),  # View your profile
     path('edit-profile/', views.edit_profile, name='edit_profile'),
 
-    path('search/', views.search_tutors, name='search_tutors'),
-    path('messages/', views.message_list, name='message_list'),
-    path('message/<int:receiver_id>/', views.send_message, name='send_message'),
+    path('edit_message/<int:message_id>/', views.edit_message, name='edit_message'),
+
     path('like/<int:tutor_id>/', views.like_tutor, name='like_tutor'),
     path('liked/', views.liked_tutors, name='liked_tutors'),
+
+    path('search/', views.search_tutors, name='search_tutors'),
 ]
 
 # For image uploading 

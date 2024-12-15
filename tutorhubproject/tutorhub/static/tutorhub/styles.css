@@ -297,13 +297,43 @@ textarea {
     background-color: #f9f9f9;
 }
 
-/* Message Section */
-.message-container {
+/* Messaging */
+.messages-container {
     margin-top: 20px;
+}
+
+.conversation-box {
+    border: 1px solid #ccc;
     padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #f9f9f9;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.message.sent {
+    background-color: #e0ffe0;
+    text-align: right;
+}
+
+.message.received {
+    background-color: #e0e0ff;
+    text-align: left;
+}
+
+.timestamp {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.edited {
+    font-style: italic;
+    font-size: 0.8em;
+    color: #999;
 }
 
 /* Right Column: Availability and Subjects */

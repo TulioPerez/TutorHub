@@ -134,13 +134,24 @@ def register(request):
 
 @login_required
 def profile(request, user_id=None):
-    # Use the logged-in user if no user_id is provided
     profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
+    # profile_user = get_object_or_404(User, id=user_id)
     credentials = profile_user.credentials.all()
+
+    messages = Message.objects.filter(
+        (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
+    ).order_by('timestamp')
 
     # Add an `is_image` property to each credential
     for credential in credentials:
         credential.is_image = credential.file.url.lower().endswith(('.jpg', '.jpeg', '.png'))
+
+    # Handle messaging
+    if request.method == "POST":
+        content = request.POST.get('content')
+        if content:
+            Message.objects.create(sender=request.user, receiver=profile_user, content=content)
+        return redirect('profile', user_id=user_id)
 
     # List of days to pass to the template
     days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -149,8 +160,40 @@ def profile(request, user_id=None):
         'profile': profile_user,
         'credentials': credentials,
         'is_own_profile': profile_user == request.user,
-        'days_of_week': days_of_week,  # Pass days to template
+        'days_of_week': days_of_week,
+        'messages': messages
     })
+
+
+# views.py
+import json
+from django.http import JsonResponse
+from django.utils.timezone import now
+
+@login_required
+def edit_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        action = data.get("action")
+
+        if action == "edit":
+            new_content = data.get("content", "").strip()
+            if new_content:
+                message.content = new_content
+                message.edited = True
+                message.edited_timestamp = now()
+                message.save()
+                return JsonResponse({"status": "success", "content": new_content, "edited": True})
+        elif action == "delete":
+            message.content = "deleted message"
+            message.deleted = True
+            message.save()
+            return JsonResponse({"status": "success", "content": "deleted message", "deleted": True})
+
+    return JsonResponse({"status": "error", "message": "Invalid request"})
+
 
 
 @login_required
@@ -233,17 +276,17 @@ def liked_tutors(request):
     return render(request, 'tutorhub/liked_tutors.html', {'liked': liked})
 
 
-@login_required
-def message_list(request):
-    messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-timestamp')
-    return render(request, 'tutorhub/messages.html', {'messages': messages})
+# @login_required
+# def message_list(request):
+#     messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-timestamp')
+#     return render(request, 'tutorhub/messages.html', {'messages': messages})
 
 
-@login_required
-def send_message(request, receiver_id):
-    receiver = get_object_or_404(User, id=receiver_id)
-    if request.method == "POST":
-        content = request.POST['content']
-        Message.objects.create(sender=request.user, receiver=receiver, content=content)
-        return redirect('message_list')
-    return render(request, 'tutorhub/send_message.html', {'receiver': receiver})
+# @login_required
+# def send_message(request, receiver_id):
+#     receiver = get_object_or_404(User, id=receiver_id)
+#     if request.method == "POST":
+#         content = request.POST['content']
+#         Message.objects.create(sender=request.user, receiver=receiver, content=content)
+#         return redirect('message_list')
+#     return render(request, 'tutorhub/send_message.html', {'receiver': receiver})

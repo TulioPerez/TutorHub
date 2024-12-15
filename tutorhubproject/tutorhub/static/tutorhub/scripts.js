@@ -5,6 +5,64 @@ document.addEventListener("DOMContentLoaded", () => {
     // Handle unread message badge
     const unreadBadge = document.getElementById("unread-badge");
 
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const messageId = button.getAttribute('data-message-id');
+            const messageElement = button.parentElement.querySelector('p');
+            const originalContent = messageElement.textContent;
+
+            const textarea = document.createElement('textarea');
+            textarea.value = originalContent;
+            textarea.style.width = "100%";
+            textarea.style.marginBottom = "5px";
+            messageElement.replaceWith(textarea);
+
+            const saveButton = document.createElement('button');
+            saveButton.textContent = 'Save';
+            saveButton.classList.add("btn", "btn-success", "btn-sm");
+
+            const cancelButton = document.createElement("button");
+            cancelButton.textContent = "Cancel";
+            cancelButton.classList.add("btn", "btn-secondary", "btn-sm");
+            cancelButton.style.marginLeft = "5px";
+
+            button.after(saveButton, cancelButton);
+            button.style.display = "none";
+
+            saveButton.addEventListener("click", () => {
+                fetch(`/edit_message/${messageId}/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                    },
+                    body: JSON.stringify({ action: "edit", content: textarea.value })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        const newMessageElement = document.createElement("p");
+                        newMessageElement.textContent = data.content;
+                        textarea.replaceWith(newMessageElement);
+                        saveButton.remove();
+                        cancelButton.remove();
+                        button.style.display = "inline-block"; // Show the Edit button again
+                    }
+                });
+            });
+
+            // Cancel edit
+            cancelButton.addEventListener("click", () => {
+                const originalMessage = document.createElement("p");
+                originalMessage.textContent = originalContent;
+                textarea.replaceWith(originalMessage);
+                saveButton.remove();
+                cancelButton.remove();
+                button.style.display = "inline-block"; // Show the Edit button again
+            });
+        });
+    });
+
     // Toggle tutor-specific fields in the registration form
     const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
     const tutorFields = document.getElementById('tutor-fields');

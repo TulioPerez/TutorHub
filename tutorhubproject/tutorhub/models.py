@@ -63,6 +63,9 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
+    edited = models.BooleanField(default=False)
+    edited_timestamp = models.DateTimeField(null=True, blank=True)
+    deleted = models.BooleanField(default=False)  # Track if the message is deleted
 
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver} at {self.timestamp}"
