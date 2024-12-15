@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Authentication status
     const authStatus = JSON.parse(document.getElementById("auth-status").textContent);
     
+    // Message auto scrolling
     const scrollTarget = document.getElementById("scroll-target");
     const scrollToId = scrollTarget ? scrollTarget.getAttribute("data-scroll-to") : null;
     if (scrollToId) {
@@ -11,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
+    // Message editing
     document.querySelectorAll('.edit-btn').forEach(button => {
         button.addEventListener('click', () => {
             const messageId = button.getAttribute('data-message-id');
@@ -163,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+
     // Credential Handling
     const maxCredentials = 7;
     const credentialRowsContainer = document.getElementById("credential-rows-container");
@@ -198,7 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Event delegation for removing existing credentials
+
+    // Remove existing credentials
     credentialRowsContainer.addEventListener("click", (event) => {
         if (event.target.classList.contains("remove-credential")) {
             const row = event.target.closest(".credential-row");
@@ -230,10 +233,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Availability handling
     const availabilityContainer = document.getElementById("availability-rows-container");
     const addAvailabilityButton = document.getElementById("btn-add-availability");
-
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-    // Function to create a new availability row
     const createAvailabilityRow = (day = "", start = "", end = "") => {
         const newRow = document.createElement("div");
         newRow.classList.add("availability-row", "row", "mb-3");
@@ -266,10 +267,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return newRow;
     };
 
-    // Add a new availability row when the button is clicked
+
     addAvailabilityButton.addEventListener("click", () => {
         availabilityContainer.appendChild(createAvailabilityRow());
     });
+
 
     // Attach remove functionality to existing rows
     availabilityContainer.querySelectorAll(".remove-availability").forEach(button => {
@@ -301,4 +303,41 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+
+
+    // Handle following
+    const followButtons = document.querySelectorAll(".follow-btn");
+
+    followButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const tutorId = button.getAttribute("data-tutor-id");
+
+            fetch(`/follow/${tutorId}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken(),  // Ensure CSRF token is included
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.action === "followed") {
+                        button.textContent = "Unfollow";
+                    } else if (data.action === "unfollowed") {
+                        button.textContent = "Follow";
+                    }
+                })
+                .catch((error) => console.error("Error following/unfollowing:", error));
+        });
+    });
+
+    // Helper function for CSRF tokens
+    function getCSRFToken() {
+        const cookieValue = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("csrftoken="))
+            ?.split("=")[1];
+        return cookieValue || "";
+    }
+
 });

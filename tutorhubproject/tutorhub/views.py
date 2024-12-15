@@ -17,9 +17,10 @@ from django.db.models import Q
 
 def index(request):
     query = request.GET.get('q', '').strip()
+    view_type = request.GET.get('view', 'all')
     tutors = User.objects.filter(is_tutor=True)
 
-    if query:
+    if view_type == "search" and query:
         tutors = tutors.filter(
             Q(city__icontains=query) |
             Q(state__icontains=query) |
@@ -28,15 +29,32 @@ def index(request):
             Q(last_name__icontains=query) |
             Q(tutor_subject_grades__grade_levels__icontains=query)
         ).distinct()
+    
+    # Handle following listing
+    elif view_type == "following" and request.user.is_authenticated:
+        tutors = request.user.liked_tutors.all()
 
-    paginator = Paginator(tutors, 10)  # Show 10 tutors per page
+    # Pagination
+    paginator = Paginator(tutors, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'tutorhub/index.html', {'page_obj': page_obj})
+
+    # Determine page title
+    if view_type == "search":
+        page_title = "Search Results"
+    elif view_type == "following":
+        page_title = "Following"
+    else:
+        page_title = "All Tutors"
+
+    return render(request, 'tutorhub/index.html', {
+        'page_obj': page_obj,
+        'page_title': page_title,
+        'view_type': view_type,
+    })
 
 
-
-# authentication
+# Authentication
 def login_view(request):
     if request.method == "POST":
 
@@ -279,6 +297,18 @@ def search_tutors(request):
     ).distinct()
 
     return render(request, 'tutorhub/tutors.html', {'results': results})
+
+
+@login_required
+def follow_tutor(request, tutor_id):
+    tutor = get_object_or_404(User, id=tutor_id, is_tutor=True)
+    if tutor in request.user.liked_tutors.all():
+        request.user.liked_tutors.remove(tutor)
+        action = "unfollowed"
+    else:
+        request.user.liked_tutors.add(tutor)
+        action = "followed"
+    return JsonResponse({"action": action, "tutor_id": tutor.id})
 
 
 @login_required

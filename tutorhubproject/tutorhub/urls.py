@@ -5,13 +5,16 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    # default route
-    path("", views.index, name="index"),
-
-    # authentication
+    # Authentication
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
+    
+    # default route
+    path("", views.index, name="index"),
+
+    # Following
+    path("follow/<int:tutor_id>/", views.follow_tutor, name="follow_tutor"),
 
     # View a user's profile
     path('profile/<int:user_id>/', views.profile, name='profile'),

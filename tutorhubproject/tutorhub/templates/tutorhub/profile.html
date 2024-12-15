@@ -19,6 +19,17 @@
                     {% if is_own_profile %}
                         <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editPictureModal">Edit Picture</button>
                     {% endif %}
+                    <!-- Follow button -->
+                    {% if user.is_authenticated %}
+                        <button class="btn btn-primary follow-btn" data-tutor-id="{{ profile.id }}">
+                            {% if profile in user.liked_tutors.all %}
+                                Unfollow
+                            {% else %}
+                                Follow
+                            {% endif %}
+                        </button>
+                    {% endif %}
+
                 </div>
 
                 <!-- Name -->
