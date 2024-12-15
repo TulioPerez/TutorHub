@@ -1,4 +1,4 @@
-<!-- {% extends "tutorhub/layout.html" %}
+{% extends "tutorhub/layout.html" %}
 {% block body %}
 <div class="container mt-5">
     <h2>Unread Messages</h2>
@@ -6,13 +6,7 @@
         {% for message in unread_messages %}
             <li class="list-group-item">
                 <a href="{% url 'profile' message.sender.id %}?scroll_to={{ message.id }}">
-                    Message from 
-                    {% if message.sender.nickname %}
-                        {{ message.sender.nickname }}
-                    {% else %}
-                        {{ message.sender.email }}
-                    {% endif %}:
-                    "{{ message.content|slice:":50" }}..."
+                    From {{ message.sender.username }}: "{{ message.content|slice:":50" }}..."
                 </a>
             </li>
         {% empty %}
@@ -20,4 +14,4 @@
         {% endfor %}
     </ul>
 </div>
-{% endblock %} -->
+{% endblock %}

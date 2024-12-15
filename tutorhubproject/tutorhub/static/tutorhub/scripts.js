@@ -2,8 +2,35 @@ document.addEventListener("DOMContentLoaded", () => {
     // Authentication status
     const authStatus = JSON.parse(document.getElementById("auth-status").textContent);
 
-    // Handle unread message badge
-    const unreadBadge = document.getElementById("unread-badge");
+    // Meessage handling
+    // const messagesLink = document.getElementById("menu-messages");
+
+    // if (!messagesLink) {
+    //     console.error("Error: #menu-messages element not found.");
+    //     return;
+    // }
+    
+    // fetch("{% url 'unread_messages_count' %}")
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log("Unread count:", data.unread_count);
+    //         if (data.unread_count > 0) {
+    //             messagesLink.classList.add("unread");
+    //             console.log(".unread class added to #menu-messages");
+    //         } else {
+    //             messagesLink.classList.remove("unread");
+    //             console.log(".unread class removed from #menu-messages");
+    //         }
+    //     });
+        
+
+    const scrollToId = "{{ scroll_to }}";
+    if (scrollToId) {
+        const target = document.getElementById(`message-${scrollToId}`);
+        if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
 
     document.querySelectorAll('.edit-btn').forEach(button => {
         button.addEventListener('click', () => {
@@ -86,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Handle row clicks on index page
+    // Handle row clicks
     const clickableRow = document.querySelectorAll(".clickable-row");
     if (clickableRow.length > 0) {
         clickableRow.forEach((row) => {

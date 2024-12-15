@@ -333,8 +333,40 @@ textarea {
 .edited {
     font-style: italic;
     font-size: 0.8em;
-    color: #999;
+    color: #dacedd;
 }
+
+#menu-messagesnav-item {
+    text-decoration: none;
+    transition: color 0.4s ease;
+}
+
+/* Animation for unread messages */
+@keyframes unread-flash {
+    0% {
+        color: #ffffff;
+    }
+    50% {
+        color: #9e9d9d;
+    }
+    100% {
+        color: #ffffff;
+    }
+}
+
+#menu-messages.unread {
+    animation: unread-flash 2s infinite;
+}
+
+/* #unread-badge {
+    font-family: Arial, sans-serif;
+    color: #492654;
+    transition: color 0.3s ease;
+}
+
+#unread-badge.active {
+    color: #ffffff;
+} */
 
 /* Right Column: Availability and Subjects */
 .right-column-section {

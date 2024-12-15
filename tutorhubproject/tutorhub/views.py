@@ -139,17 +139,18 @@ def profile(request, user_id=None):
     credentials = profile_user.credentials.all()
     scroll_to = request.GET.get('scroll_to')
 
-
     messages = Message.objects.filter(
         (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
     ).order_by('timestamp')
 
-    # Scroll to messages if clicked on message hint messages page
+    # Scroll to messages if not read
     if scroll_to:
         try:
-            scroll_to = int(scroll_to)
-        except ValueError:
-            scroll_to = None
+            message_to_mark = messages.get(id=scroll_to, receiver=request.user, read=False)
+            message_to_mark.read = True
+            message_to_mark.save()
+        except Message.DoesNotExist:
+            pass
 
     # Add an `is_image` property to each credential
     for credential in credentials:

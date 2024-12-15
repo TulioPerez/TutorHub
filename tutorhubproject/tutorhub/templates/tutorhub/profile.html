@@ -75,23 +75,18 @@
                 <h4>Conversation</h4>
                 <div class="conversation-box">
                     {% for message in messages %}
-                        <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                        <div id="message-{{ message.id }}" class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
                             <span class="timestamp">{{ message.timestamp|date:"M d, Y H:i" }}</span>
                             <p>{{ message.content }}</p>
                             {% if message.edited %}
                                 <span class="edited">(edited)</span>
                             {% endif %}
-                            {% if message.sender == request.user %}
-                                <button class="btn btn-sm edit-btn" data-message-id="{{ message.id }}">Edit</button>
-                            {% endif %}
                         </div>
-                    {% empty %}
-                        <p>No messages yet.</p>
                     {% endfor %}
                 </div>
-                <form action="{% url 'profile' profile.id %}" method="post" class="message-form">
+                <form action="{% url 'profile' profile.id %}" method="post">
                     {% csrf_token %}
-                    <textarea name="content" rows="3" class="form-control mb-2" placeholder="{% if is_own_profile %}Add a note for yourself...{% else %}Write a message...{% endif %}" required></textarea>
+                    <textarea name="content" rows="3" class="form-control mb-2" required></textarea>
                     <button type="submit" class="btn btn-primary">Send</button>
                 </form>
             </div>

@@ -26,9 +26,7 @@
             <ul class="navbar-nav ms-auto flex-row">
                 {% if user.is_authenticated %}
                     <li class="nav-item px-2"><a class="nav-link" id="menu-username" href="{% url 'my_profile' %}"><strong>{{ user.username }} ⚙️</strong></a></li>
-                    <li class="nav-item px-2"><a class="nav-link" id="menu-messages" href="#">Messages
-                        <span id="unread-badge" class="badge badge-danger" style="display: none;"><i class="fas fa-bell"></i></span></a>
-                    </li>
+                    <li class="nav-item px-2"><a class="nav-link" id="menu-messages" href="{% url 'messages' %}">Messages</a></li>
                 {% endif %}
                 <li class="nav-item px-2"><a class="nav-link" id="menu-all-tutors" href="{% url 'index' %}">All Tutors</a></li>
                 {% if user.is_authenticated %}
@@ -72,6 +70,38 @@
             </div>
         </div>
     </footer>
+
+    <!--  For unread messages -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const messagesLink = document.getElementById("menu-messages");
+
+            if (!messagesLink) {
+                console.error("Error: #menu-messages element not found.");
+                return;
+            }
+
+            // Fetch unread message count
+            fetch("{% url 'unread_messages_count' %}")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Unread count:", data.unread_count);
+                    if (data.unread_count > 0) {
+                        messagesLink.classList.add("unread");
+                        console.log(".unread class added to #menu-messages");
+                    } else {
+                        messagesLink.classList.remove("unread");
+                        console.log(".unread class removed from #menu-messages");
+                    }
+                })
+                .catch(err => console.error("Error fetching unread count:", err));
+        });
+    </script>
     
     <script src="{% static 'tutorhub/scripts.js' %}"></script>
 </html>
