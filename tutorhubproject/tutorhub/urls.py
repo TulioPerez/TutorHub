@@ -14,13 +14,15 @@ urlpatterns = [
     path("register", views.register, name="register"),
 
     # View a user's profile
-    path('profile/<int:user_id>/', views.profile, name='profile'),  # View another user's profile
-    path('delete_credential/<int:credential_id>/', views.delete_credential, name='delete_credential'),
+    path('profile/<int:user_id>/', views.profile, name='profile'),
 
     # View & edit one's own profile
-    path('my-profile/', views.profile, name='my_profile'),  # View your profile
+    path('my-profile/', views.profile, name='my_profile'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('delete_credential/<int:credential_id>/', views.delete_credential, name='delete_credential'),
 
+    # Messaging
+    path('messages/', views.messages, name='messages'),
     path('edit_message/<int:message_id>/', views.edit_message, name='edit_message'),
 
     path('like/<int:tutor_id>/', views.like_tutor, name='like_tutor'),
