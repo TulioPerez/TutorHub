@@ -8,6 +8,9 @@ from .models import User, Message, SubjectGrade, Credential
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.http import JsonResponse
+from django.utils.timezone import now
+import json
 
 
 from django.db.models import Q
@@ -98,8 +101,6 @@ def register(request):
 
         # Handle tutor-specific fields
         if user.is_tutor:
-            # user.availability = request.POST.get("availability", "{}")
-            # user.save()
 
             # Process subjects and grade levels
             subjects = request.POST.getlist("subjects[]")
@@ -134,8 +135,7 @@ def register(request):
 
 @login_required
 def profile(request, user_id=None):
-    profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
-    # profile_user = get_object_or_404(User, id=user_id)
+    profile_user = get_object_or_404(User, id=user_id)
     credentials = profile_user.credentials.all()
 
     messages = Message.objects.filter(
@@ -163,37 +163,6 @@ def profile(request, user_id=None):
         'days_of_week': days_of_week,
         'messages': messages
     })
-
-
-# views.py
-import json
-from django.http import JsonResponse
-from django.utils.timezone import now
-
-@login_required
-def edit_message(request, message_id):
-    message = get_object_or_404(Message, id=message_id, sender=request.user)
-
-    if request.method == "POST":
-        data = json.loads(request.body)
-        action = data.get("action")
-
-        if action == "edit":
-            new_content = data.get("content", "").strip()
-            if new_content:
-                message.content = new_content
-                message.edited = True
-                message.edited_timestamp = now()
-                message.save()
-                return JsonResponse({"status": "success", "content": new_content, "edited": True})
-        elif action == "delete":
-            message.content = "deleted message"
-            message.deleted = True
-            message.save()
-            return JsonResponse({"status": "success", "content": "deleted message", "deleted": True})
-
-    return JsonResponse({"status": "error", "message": "Invalid request"})
-
 
 
 @login_required
@@ -238,6 +207,31 @@ def edit_profile(request):
 
 
 @login_required
+def edit_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        action = data.get("action")
+
+        if action == "edit":
+            new_content = data.get("content", "").strip()
+            if new_content:
+                message.content = new_content
+                message.edited = True
+                message.edited_timestamp = now()
+                message.save()
+                return JsonResponse({"status": "success", "content": new_content, "edited": True})
+        elif action == "delete":
+            message.content = "deleted message"
+            message.deleted = True
+            message.save()
+            return JsonResponse({"status": "success", "content": "deleted message", "deleted": True})
+
+    return JsonResponse({"status": "error", "message": "Invalid request"})
+
+
+@login_required
 def delete_credential(request, credential_id):
     try:
         credential = Credential.objects.get(id=credential_id, user=request.user)
@@ -274,19 +268,3 @@ def like_tutor(request, tutor_id):
 def liked_tutors(request):
     liked = request.user.liked_tutors.all()
     return render(request, 'tutorhub/liked_tutors.html', {'liked': liked})
-
-
-# @login_required
-# def message_list(request):
-#     messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-timestamp')
-#     return render(request, 'tutorhub/messages.html', {'messages': messages})
-
-
-# @login_required
-# def send_message(request, receiver_id):
-#     receiver = get_object_or_404(User, id=receiver_id)
-#     if request.method == "POST":
-#         content = request.POST['content']
-#         Message.objects.create(sender=request.user, receiver=receiver, content=content)
-#         return redirect('message_list')
-#     return render(request, 'tutorhub/send_message.html', {'receiver': receiver})

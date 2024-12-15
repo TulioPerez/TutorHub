@@ -91,7 +91,7 @@
                 </div>
                 <form action="{% url 'profile' profile.id %}" method="post" class="message-form">
                     {% csrf_token %}
-                    <textarea name="content" rows="3" class="form-control mb-2" placeholder="Write a message..." required></textarea>
+                    <textarea name="content" rows="3" class="form-control mb-2" placeholder="{% if is_own_profile %}Add a note for yourself...{% else %}Write a message...{% endif %}" required></textarea>
                     <button type="submit" class="btn btn-primary">Send</button>
                 </form>
             </div>
