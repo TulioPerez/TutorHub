@@ -26,7 +26,7 @@
             <ul class="navbar-nav ms-auto flex-row">
                 {% if user.is_authenticated %}
                     <li class="nav-item px-2"><a class="nav-link" id="menu-username" href="{% url 'my_profile' %}"><strong>{{ user.username }} ⚙️</strong></a></li>
-                    <li class="nav-item px-2"><a class="nav-link" id="menu-messages" href="{% url 'messages' %}">Messages
+                    <li class="nav-item px-2"><a class="nav-link" id="menu-messages" href="#">Messages
                         <span id="unread-badge" class="badge badge-danger" style="display: none;"><i class="fas fa-bell"></i></span></a>
                     </li>
                 {% endif %}
@@ -57,7 +57,7 @@
                         <li><a href="{% url 'index' %}" class="text-white">All Tutors</a></li>
                         <li><a href="#" class="text-white">Following</a></li>
                         <li><a href="{% url 'my_profile' %}" class="text-white">Profile</a></li>
-                        <li><a href="{% url 'messages' %}" class="text-white">Messages</a></li>
+                        <li><a href="#" class="text-white">Messages</a></li>
                     </ul>
                 </div>
                 <!-- col 2 -->

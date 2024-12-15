@@ -135,12 +135,21 @@ def register(request):
 
 @login_required
 def profile(request, user_id=None):
-    profile_user = get_object_or_404(User, id=user_id)
+    profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
     credentials = profile_user.credentials.all()
+    scroll_to = request.GET.get('scroll_to')
+
 
     messages = Message.objects.filter(
         (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
     ).order_by('timestamp')
+
+    # Scroll to messages if clicked on message hint messages page
+    if scroll_to:
+        try:
+            scroll_to = int(scroll_to)
+        except ValueError:
+            scroll_to = None
 
     # Add an `is_image` property to each credential
     for credential in credentials:
@@ -161,7 +170,8 @@ def profile(request, user_id=None):
         'credentials': credentials,
         'is_own_profile': profile_user == request.user,
         'days_of_week': days_of_week,
-        'messages': messages
+        'messages': messages,
+        'scroll_to': scroll_to
     })
 
 
@@ -229,6 +239,22 @@ def edit_message(request, message_id):
             return JsonResponse({"status": "success", "content": "deleted message", "deleted": True})
 
     return JsonResponse({"status": "error", "message": "Invalid request"})
+
+
+@login_required
+def messages(request):
+    # Fetch all unread messages for the logged-in user
+    unread_messages = Message.objects.filter(receiver=request.user, read=False).order_by('-timestamp')
+
+    return render(request, 'tutorhub/messages.html', {
+        'unread_messages': unread_messages
+    })
+
+
+@login_required
+def unread_messages_count(request):
+    unread_count = Message.objects.filter(receiver=request.user, read=False).count()
+    return JsonResponse({"unread_count": unread_count})
 
 
 @login_required

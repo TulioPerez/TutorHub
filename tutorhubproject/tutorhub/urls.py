@@ -22,7 +22,7 @@ urlpatterns = [
     path('delete_credential/<int:credential_id>/', views.delete_credential, name='delete_credential'),
 
     # Messaging
-    path('messages/', views.messages, name='messages'),
+    # path('messages/', views.messages, name='messages'),
     path('edit_message/<int:message_id>/', views.edit_message, name='edit_message'),
 
     path('like/<int:tutor_id>/', views.like_tutor, name='like_tutor'),
