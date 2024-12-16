@@ -9,7 +9,8 @@
                 <form id="editAvailabilityForm" action="{% url 'edit_profile' %}" method="post">
                     {% csrf_token %}
                     <div id="availability-rows-container">
-                        <!-- Existing availability rows -->
+
+                        <!-- Existing availability -->
                         {% for slot in user.availability %}
                         <div class="availability-row row mb-3">
                             <div class="col-md-4">

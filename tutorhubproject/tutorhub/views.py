@@ -11,14 +11,13 @@ from django.http import JsonResponse
 from django.http import JsonResponse
 from django.utils.timezone import now
 import json
-
-
 from django.db.models import Q
+
 
 def index(request):
     query = request.GET.get('q', '').strip()
     view_type = request.GET.get('view', 'all')
-    tutors = User.objects.filter(is_tutor=True)
+    tutors = User.objects.filter(is_tutor=True).order_by('nickname')
 
     if view_type == "search" and query:
         tutors = tutors.filter(
@@ -154,12 +153,14 @@ def profile(request, user_id=None):
     profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
     credentials = profile_user.credentials.all()
     scroll_to = request.GET.get('scroll_to')
+    grade_levels = ['PK / KG', '1 - 5', '6 - 8', '9 - 12', 'Adults']
+    subject_grades = profile_user.tutor_subject_grades.all()
 
     messages = Message.objects.filter(
         (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
     ).order_by('timestamp')
 
-    # Scroll to messages if not read
+    # Auto scroll to unread messages
     if scroll_to:
         try:
             message_to_mark = messages.get(id=scroll_to, receiver=request.user, read=False)
@@ -168,7 +169,7 @@ def profile(request, user_id=None):
         except Message.DoesNotExist:
             pass
 
-    # Add an `is_image` property to each credential
+    # Handle credentials
     for credential in credentials:
         credential.is_image = credential.file.url.lower().endswith(('.jpg', '.jpeg', '.png'))
 
@@ -185,6 +186,8 @@ def profile(request, user_id=None):
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
         'credentials': credentials,
+        'grade_levels': grade_levels,
+        'subject_grades': subject_grades,
         'is_own_profile': profile_user == request.user,
         'days_of_week': days_of_week,
         'messages': messages,
@@ -197,7 +200,17 @@ def edit_profile(request):
     profile = request.user
     
     if request.method == "POST":
-        # Handle availability updates
+
+        # Subjects and grades editing
+        subjects = request.POST.getlist("subjects[]")
+        all_grade_levels = [request.POST.getlist(f"grade_levels_{i}[]") for i in range(len(subjects))]
+
+        profile.subject_grades.all().delete()
+        for subject, grade_levels in zip(subjects, all_grade_levels):
+            if subject and grade_levels:
+                SubjectGrade.objects.create(tutor=profile, subject=subject, grade_levels=grade_levels)
+
+        # Availability editing
         availability_days = request.POST.getlist("availability_days[]")
         availability_start = request.POST.getlist("availability_start[]")
         availability_end = request.POST.getlist("availability_end[]")
@@ -226,11 +239,26 @@ def edit_profile(request):
             for uploaded_file in request.FILES.getlist("credentials[]"):
                 Credential.objects.create(user=profile, file=uploaded_file)
 
-
         # Save changes and redirect to profile page
         profile.save()
         return redirect("my_profile")
     return HttpResponse(status=400)
+
+
+@login_required
+def messages(request):
+    # Fetch all unread messages for the logged-in user
+    unread_messages = Message.objects.filter(receiver=request.user, read=False).order_by('-timestamp')
+
+    return render(request, 'tutorhub/messages.html', {
+        'unread_messages': unread_messages
+    })
+
+
+@login_required
+def unread_messages_count(request):
+    unread_count = Message.objects.filter(receiver=request.user, read=False).count()
+    return JsonResponse({"unread_count": unread_count})
 
 
 @login_required
@@ -256,22 +284,6 @@ def edit_message(request, message_id):
             return JsonResponse({"status": "success", "content": "deleted message", "deleted": True})
 
     return JsonResponse({"status": "error", "message": "Invalid request"})
-
-
-@login_required
-def messages(request):
-    # Fetch all unread messages for the logged-in user
-    unread_messages = Message.objects.filter(receiver=request.user, read=False).order_by('-timestamp')
-
-    return render(request, 'tutorhub/messages.html', {
-        'unread_messages': unread_messages
-    })
-
-
-@login_required
-def unread_messages_count(request):
-    unread_count = Message.objects.filter(receiver=request.user, read=False).count()
-    return JsonResponse({"unread_count": unread_count})
 
 
 @login_required

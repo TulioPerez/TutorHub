@@ -1,21 +1,22 @@
 {% extends "tutorhub/layout.html" %}
 {% load static %}
 {% block body %}
+
 <div class="container mt-5">
     <div class="row">
-        <!-- Left Column: Profile Image, Credentials -->
+        <!-- User info section -->
         <div class="col-md-8">
-            <!-- Profile Header -->
+            <!-- Profile header -->
             <h2>{{ profile.nickname }}'s Profile</h2>
             <div class="profile-header">
-                <!-- Profile Picture -->
+                <!-- Profile picture -->
                 <div id="stack-vertical">
                     {% if profile.profile_image %}
                         <img id="profile-img" src="{{ profile.profile_image.url }}" alt="{{ profile.nickname }}">
                     {% else %}
                         <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
                     {% endif %}
-                    <!-- Edit Link for Profile Picture -->
+                    <!-- Edit profile picture -->
                     {% if is_own_profile %}
                         <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editPictureModal">Edit Picture</button>
                     {% endif %}
@@ -29,21 +30,19 @@
                             {% endif %}
                         </button>
                     {% endif %}
-
                 </div>
-
                 <!-- Name -->
                 <div id="stack-vertical">
                     <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
                     <div>{{ profile.city|default:"City not available" }}, {{ profile.state|default:"State not available" }}</div>
-                    <!-- Edit Link for Profile Info -->
+                    <!-- Edit profile info -->
                     {% if is_own_profile %}
                        <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editInfoModal">Edit Info</button>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Credentials -->
+            <!-- Credentials Section -->
             {% if profile.is_tutor %}
             <div class="credentials-container">
                 <h4>Credentials</h4>
@@ -63,18 +62,18 @@
                         <p>No credentials available.</p>
                     {% endfor %}
                 </div>
-                <!-- Edit Link for Credentials -->
+                <!-- Edit credentials -->
                 {% if is_own_profile %}
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_credentials_modal">Edit Credentials</button>
                 {% endif %}
             </div>
             {% endif %}
 
-            <!-- Bio -->
+            <!-- Bio section -->
             <div class="bio-container">
                 <h4>Bio</h4>
                 <p>{{ profile.bio|default:"No bio available." }}</p>
-                <!-- Edit Link for Bio -->
+                <!-- Edit bio -->
                 {% if is_own_profile %}
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_bio_modal">Edit Bio</button>
                 {% endif %}
@@ -83,7 +82,7 @@
             <!-- Auto scrolling target for new messages -->
             <div id="scroll-target" data-scroll-to="{{ scroll_to }}"></div>
 
-            <!-- Send a Message -->
+            <!-- Messages section -->
             {% if user.is_authenticated %}
             <div class="messages-container">
                 <h4>Conversation</h4>
@@ -142,7 +141,6 @@
                 {% endif %}
             </div>
             {% endif %}
-            
         </div>
     </div>
 </div>

@@ -31,10 +31,6 @@ html, body {
     font-size: medium;
 }
 
-#auth-fields {
-    padding: 20px;
-}
-
 #auth-checkbox-label {
     margin: 0 12px;
 }
@@ -103,16 +99,6 @@ html, body {
     color: black;
 }
 
-/* Likes Container */
-.likes-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 5px;
-}
-
 /* Address Display */
 .address-container {
     display: flex;
@@ -166,52 +152,6 @@ html, body {
     max-height: 50px;
 }
 
-#user-account {
-    padding-left: 5px;
-    font-size: xx-large;
-    font-weight: 100;    
-}
-
-#title-container {
-    padding-left: 15px;
-    font-size: x-large;
-    font-weight: 500;
-}
-
-#content-container {
-    padding: 15px;
-    background-color: rgb(213, 227, 255);
-    border-radius: 10px;
-}
-
-#posts-container {
-    height: auto;
-    border-radius: 5px;
-    background-color: rgb(250, 250, 250);
-    min-height: calc(100vh - 250px);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; 
-}
-
-#compose-form {
-    padding: 15px;
-    background-color: white;
-}
-
-#compose-body {
-    border: none;
-}
-
-#post-body {
-    margin-left: 15px;
-}
-
-#msg-no-posts {
-    text-align: center; 
-    margin-top: 20px
-}
-
 ul {
     list-style: none;
 }
@@ -254,11 +194,6 @@ textarea {
     gap: 20px;
     align-items: center;
 }
-
-/* #credential-thumb {
-    width: 75px;
-    height: 75px;
-} */
 
 /* Credentials Section */
 .credentials-container {
@@ -336,7 +271,7 @@ textarea {
     color: #dacedd;
 }
 
-#menu-messagesnav-item {
+#menu-messages nav-item {
     text-decoration: none;
     transition: color 0.4s ease;
 }
@@ -358,17 +293,7 @@ textarea {
     animation: unread-flash 2s infinite;
 }
 
-/* #unread-badge {
-    font-family: Arial, sans-serif;
-    color: #492654;
-    transition: color 0.3s ease;
-}
-
-#unread-badge.active {
-    color: #ffffff;
-} */
-
-/* Right Column: Availability and Subjects */
+/* Right Column: (Availability and Subjects) */
 .right-column-section {
     padding: 15px;
     border: 1px solid #ddd;
@@ -381,9 +306,6 @@ textarea {
     padding: 0;
     list-style: none;
 }
-
-
-
 
 .footer {
     background-color: #222326;

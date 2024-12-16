@@ -1,9 +1,9 @@
 {% extends "tutorhub/layout.html" %}
 {% load static %}
 {% block body %}
+
 <div class="container mt-5">
     <h1 id="page-title" class="mb-0">{{ page_title }}</h1>
-
     <div id="search-container" class="mb-4 d-flex justify-content-end align-items-center">
         <!-- Search Form -->
         <form id="search-form" action="{% if user.is_authenticated %}{% url 'index' %}{% else %}{% url 'login' %}{% endif %}" method="get" class="d-flex align-items-center">
@@ -12,7 +12,6 @@
             <button type="submit" class="btn btn-primary me-2" {% if not user.is_authenticated %} data-alert="true" {% endif %}>Search</button>            <a href="{% url 'index' %}" class="btn btn-secondary">Clear</a>
         </form>
     </div>
-
     <table class="table table-striped">
         <tbody>
             {% for tutor in page_obj %}
@@ -76,7 +75,6 @@
             {% if page_obj.has_previous %}
                 <a href="?page={{ page_obj.previous_page_number }}"><< previous</a>
             {% endif %}
-
             <span class="current">
                 Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
             </span>

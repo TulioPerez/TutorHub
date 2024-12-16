@@ -6,14 +6,11 @@
     <div class="row justify-content-center">
         <div id="auth-form" class="col-md-6 col-lg-4 text-center">
             <img id="auth-logo" src="{% static '/tutorhub/images/mentor-logo-bull.svg' %}" alt="Mentor Logo">
-
             <p id="auth-form-title" class="text-center">Sign in to your account</>
             <p id="auth-form-blurb" class="text-center">Brilliant teachers just around the corner</p>
-
             {% if message %}
                 <div class="alert alert-danger">{{ message }}</div>
             {% endif %}
-
             <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group mb-3">
@@ -24,10 +21,8 @@
                 </div>
                 <input class="btn btn-primary w-100" type="submit" value="Login">
             </form>
-
             <p class="text-center mt-3">Don't have an account? <a href="{% url 'register' %}">Register here.</a></p>
         </div>
     </div>
 </div>
-
 {% endblock %}

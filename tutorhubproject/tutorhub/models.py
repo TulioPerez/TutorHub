@@ -17,9 +17,9 @@ class User(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     birthdate = models.DateField(blank=True, null=True)
 
-    # for tutors only
-    availability = models.JSONField(default=dict, blank=True, null=True)  # Only used if is_tutor is True
-    subject_grades = models.ManyToManyField('SubjectGrade', blank=True, related_name="users")  # Added field
+    # Tutors-only registration fields
+    availability = models.JSONField(default=dict, blank=True, null=True)
+    subject_grades = models.ManyToManyField('SubjectGrade', blank=True, related_name="users")
     liked_by = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="liked_tutors")
 
     USERNAME_FIELD = "email"

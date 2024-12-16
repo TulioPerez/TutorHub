@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Authentication status
     const authStatus = JSON.parse(document.getElementById("auth-status").textContent);
     
+    
     // Message auto scrolling
     const scrollTarget = document.getElementById("scroll-target");
     const scrollToId = scrollTarget ? scrollTarget.getAttribute("data-scroll-to") : null;
@@ -11,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
             targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
+
 
     // Message editing
     document.querySelectorAll('.edit-btn').forEach(button => {
@@ -54,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         textarea.replaceWith(newMessageElement);
                         saveButton.remove();
                         cancelButton.remove();
-                        button.style.display = "inline-block"; // Show the Edit button again
+                        button.style.display = "inline-block";
                     }
                 });
             });
@@ -66,16 +68,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 textarea.replaceWith(originalMessage);
                 saveButton.remove();
                 cancelButton.remove();
-                button.style.display = "inline-block"; // Show the Edit button again
+                button.style.display = "inline-block";
             });
         });
     });
 
+
     // Toggle tutor-specific fields in the registration form
     const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
     const tutorFields = document.getElementById('tutor-fields');
-   
-    // Toggle visibility of tutor-specific registration fields
     if (userTypeRadios && tutorFields) {
         userTypeRadios.forEach(radio => {
             radio.addEventListener('change', function () {
@@ -83,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
 
     // Search button functionality
     const searchButton = document.querySelector('#search-form button[type="submit"]');
@@ -93,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = searchButton.closest("form").action;
         });
     }
+
 
     // Handle row clicks
     const clickableRow = document.querySelectorAll(".clickable-row");
@@ -134,11 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
     
             newRow.innerHTML = `
                 <div class="col-md-4">
-                    <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
+                    <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" required>
                 </div>
                 <div class="col-md-8">
                     <div class="checkbox-group">
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="PK / KG"> Pre-K / KG</label>
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="PK / KG"> PK / KG</label>
                         <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="1 - 5"> 1 - 5</label>
                         <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="6 - 8"> 6 - 8</label>
                         <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="9 - 12"> 9 - 12</label>
@@ -162,6 +165,16 @@ document.addEventListener("DOMContentLoaded", () => {
     
             subjectCount++;
         });
+
+
+        // Remove Prepopulated Rows
+        document.querySelectorAll(".remove-row").forEach(button => {
+            button.addEventListener("click", function () {
+                this.closest(".subject-row").remove();
+                subjectCount--;
+            });
+        });
+
     }
 
 
@@ -201,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Remove existing credentials
+    // Delete existing credentials
     credentialRowsContainer.addEventListener("click", (event) => {
         if (event.target.classList.contains("remove-credential")) {
             const row = event.target.closest(".credential-row");
@@ -209,7 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Confirm deletion
             if (confirm("Are you sure you want to delete this credential?")) {
-                // Make an AJAX request to delete the credential
                 fetch(`/delete_credential/${credentialId}/`, {
                     method: "POST",
                     headers: {
@@ -259,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `;
 
-        // Add event listener to the "Remove" button
+        // Event listener for "Remove" button
         newRow.querySelector(".remove-availability").addEventListener("click", () => {
             newRow.remove();
         });
@@ -267,13 +279,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return newRow;
     };
 
-
+    // Event listener for "Add availability" button
     addAvailabilityButton.addEventListener("click", () => {
         availabilityContainer.appendChild(createAvailabilityRow());
     });
 
 
-    // Attach remove functionality to existing rows
+    // Remove availability rows
     availabilityContainer.querySelectorAll(".remove-availability").forEach(button => {
         button.addEventListener("click", () => {
             button.closest(".availability-row").remove();
@@ -316,7 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRFToken": getCSRFToken(),  // Ensure CSRF token is included
+                    "X-CSRFToken": getCSRFToken(),
                 },
             })
                 .then((response) => response.json())

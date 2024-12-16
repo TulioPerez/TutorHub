@@ -9,8 +9,48 @@
                 <form id="editInfoForm" action="{% url 'edit_profile' %}" method="post">
                     {% csrf_token %}
 
-                    
+                    <!-- Subjects and Grades Container -->
+                    <div id="subject-rows-container">
+                        {% for subject_grade in user.subject_grades.all %}
+                        <div class="subject-row row mb-3">
+                            <!-- Subject Input -->
+                            <div class="col-md-4">
+                                <input type="text" name="subjects[]" class="form-control" 
+                                       value="{{ subject_grade.subject }}" 
+                                       placeholder="Subject" maxlength="100" required>
+                            </div>
+                            
+                            <!-- Grade Levels Checkboxes -->
+                            <div class="col-md-8">
+                                <div class="checkbox-group">
+                                    {% for grade_level in grade_levels %}
+                                    <label>
+                                        <input type="checkbox" name="grade_levels_{{ forloop.parentloop.counter0 }}[]" 
+                                               value="{{ grade_level }}" 
+                                               {% if grade_level in subject_grade.grade_levels %}checked{% endif %}>
+                                        {{ grade_level }}
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <!-- Remove Button -->
+                            <div class="col-md-12 text-end mt-2">
+                                <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
 
+                    <!-- Add Subject Button -->
+                    <div class="text-end">
+                        <button type="button" id="btn-add-subject" class="btn btn-primary btn-sm">Add Subject</button>
+                    </div>
+
+                    <!-- Save Changes Button -->
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
                 </form>
             </div>
         </div>
