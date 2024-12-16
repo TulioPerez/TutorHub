@@ -29,8 +29,8 @@ urlpatterns = [
     path("unread_messages_count/", views.unread_messages_count, name="unread_messages_count"),
     path('edit_message/<int:message_id>/', views.edit_message, name='edit_message'),
 
-    path('like/<int:tutor_id>/', views.like_tutor, name='like_tutor'),
-    path('liked/', views.liked_tutors, name='liked_tutors'),
+    path('follow/<int:tutor_id>/', views.follow_tutor, name='follow_tutor'),
+    path('followed/', views.followed_tutors, name='followed_tutors'),
 
     path('search/', views.search_tutors, name='search_tutors'),
 ]

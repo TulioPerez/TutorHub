@@ -20,7 +20,7 @@ class User(AbstractUser):
     # Tutors-only registration fields
     availability = models.JSONField(default=dict, blank=True, null=True)
     subject_grades = models.ManyToManyField('SubjectGrade', blank=True, related_name="users")
-    liked_by = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="liked_tutors")
+    followed_by = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="followed_tutors")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]

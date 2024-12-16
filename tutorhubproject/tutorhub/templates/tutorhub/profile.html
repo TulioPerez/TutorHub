@@ -23,7 +23,7 @@
                     <!-- Follow button -->
                     {% if user.is_authenticated %}
                         <button class="btn btn-primary follow-btn" data-tutor-id="{{ profile.id }}">
-                            {% if profile in user.liked_tutors.all %}
+                            {% if profile in user.followed_tutors.all %}
                                 Unfollow
                             {% else %}
                                 Follow

@@ -31,7 +31,7 @@ def index(request):
     
     # Handle following listing
     elif view_type == "following" and request.user.is_authenticated:
-        tutors = request.user.liked_tutors.all()
+        tutors = request.user.followed_tutors.all()
 
     # Pagination
     paginator = Paginator(tutors, 10)
@@ -312,26 +312,16 @@ def search_tutors(request):
 @login_required
 def follow_tutor(request, tutor_id):
     tutor = get_object_or_404(User, id=tutor_id, is_tutor=True)
-    if tutor in request.user.liked_tutors.all():
-        request.user.liked_tutors.remove(tutor)
+    if tutor in request.user.followed_tutors.all():
+        request.user.followed_tutors.remove(tutor)
         action = "unfollowed"
     else:
-        request.user.liked_tutors.add(tutor)
+        request.user.followed_tutors.add(tutor)
         action = "followed"
     return JsonResponse({"action": action, "tutor_id": tutor.id})
 
 
 @login_required
-def like_tutor(request, tutor_id):
-    tutor = get_object_or_404(Tutor, id=tutor_id)
-    if tutor in request.user.liked_tutors.all():
-        request.user.liked_tutors.remove(tutor)
-    else:
-        request.user.liked_tutors.add(tutor)
-    return redirect('liked_tutors')
-
-
-@login_required
-def liked_tutors(request):
-    liked = request.user.liked_tutors.all()
-    return render(request, 'tutorhub/liked_tutors.html', {'liked': liked})
+def followed_tutors(request):
+    followed = request.user.followed_tutors.all()
+    return render(request, 'tutorhub/followed_tutors.html', {'followed': followed})
