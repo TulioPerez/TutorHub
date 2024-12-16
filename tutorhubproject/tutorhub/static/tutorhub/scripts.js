@@ -114,8 +114,55 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 
-    // Subject Editing
+    // Subject Handling
+    const maxSubjects = 10;
+    const subjectRowsContainer = document.getElementById("subject-rows-container");
+    const addSubjectButton = document.getElementById("btn-add-subject");
+    let subjectCount = subjectRowsContainer ? document.querySelectorAll(".subject-row").length : 0;
 
+    if (addSubjectButton) {
+        addSubjectButton.addEventListener("click", function () {
+            console.log("Add Subject Button Clicked");
+    
+            if (subjectCount >= maxSubjects) {
+                alert("You cannot add more than 10 subjects.");
+                return;
+            }
+    
+            const newRow = document.createElement("div");
+            newRow.classList.add("subject-row", "row", "mb-3");
+    
+            newRow.innerHTML = `
+                <div class="col-md-4">
+                    <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50" required>
+                </div>
+                <div class="col-md-8">
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="PK / KG"> Pre-K / KG</label>
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="1 - 5"> 1 - 5</label>
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="6 - 8"> 6 - 8</label>
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="9 - 12"> 9 - 12</label>
+                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="Adults"> Adults</label>
+                    </div>
+                </div>
+                <div class="col-md-12 text-end mt-2">
+                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                </div>
+            `;
+    
+            // Append the new row
+            subjectRowsContainer.appendChild(newRow);
+    
+            // Add event listener to the "Remove" button
+            newRow.querySelector(".remove-row").addEventListener("click", function () {
+                newRow.remove();
+                subjectCount--;
+                console.log("Subject Removed");
+            });
+    
+            subjectCount++;
+        });
+    }
 
 
     // Credential Editing

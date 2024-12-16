@@ -197,11 +197,7 @@ def edit_profile(request):
     profile = request.user
     
     if request.method == "POST":
-
-        # Handle SubjectGrade edits
-
-
-        # Handle availability edits
+        # Handle availability updates
         availability_days = request.POST.getlist("availability_days[]")
         availability_start = request.POST.getlist("availability_start[]")
         availability_end = request.POST.getlist("availability_end[]")
@@ -229,6 +225,7 @@ def edit_profile(request):
         if 'credentials[]' in request.FILES:
             for uploaded_file in request.FILES.getlist("credentials[]"):
                 Credential.objects.create(user=profile, file=uploaded_file)
+
 
         # Save changes and redirect to profile page
         profile.save()
