@@ -39,10 +39,10 @@ class User(AbstractUser):
 class SubjectGrade(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor_subject_grades")
     subject = models.CharField(max_length=100)
-    grade_levels = models.JSONField(default=list)  # Stores grade levels as a list (e.g., ["Elementary", "High School"])
+    grade_levels = models.JSONField(default=list)
 
     class Meta:
-        unique_together = ('tutor', 'subject')  # Each tutor can teach a subject only once.
+        unique_together = ('tutor', 'subject')
 
     def __str__(self):
         grades = ", ".join(self.grade_levels)

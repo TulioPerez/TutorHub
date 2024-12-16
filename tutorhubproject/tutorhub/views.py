@@ -198,6 +198,9 @@ def edit_profile(request):
     
     if request.method == "POST":
 
+        # Handle SubjectGrade edits
+
+
         # Handle availability edits
         availability_days = request.POST.getlist("availability_days[]")
         availability_start = request.POST.getlist("availability_start[]")
