@@ -131,7 +131,6 @@ def register(request):
                         grade_levels=grade_levels
                     )
 
-
             # Process credentials
             credentials = request.FILES.getlist("credentials[]")
             for file in credentials[:7]:
@@ -140,7 +139,6 @@ def register(request):
                         "message": "One or more files exceed the maximum allowed size of 5MB."
                     })
                 Credential.objects.create(user=user, file=file)
-
 
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
@@ -199,7 +197,8 @@ def edit_profile(request):
     profile = request.user
     
     if request.method == "POST":
-        # Handle availability updates
+
+        # Handle availability edits
         availability_days = request.POST.getlist("availability_days[]")
         availability_start = request.POST.getlist("availability_start[]")
         availability_end = request.POST.getlist("availability_end[]")
@@ -227,7 +226,6 @@ def edit_profile(request):
         if 'credentials[]' in request.FILES:
             for uploaded_file in request.FILES.getlist("credentials[]"):
                 Credential.objects.create(user=profile, file=uploaded_file)
-
 
         # Save changes and redirect to profile page
         profile.save()

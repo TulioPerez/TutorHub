@@ -53,9 +53,9 @@
                 <div class="col-md-4 text-center">
                     <ul class="list-unstyled" id="footer-link">
                         <li><a href="{% url 'index' %}" class="text-white">All Tutors</a></li>
-                        <li><a href="#" class="text-white">Following</a></li>
+                        <li><a href="{% url 'index' %}?view=following" class="text-white">Following</a></li>
                         <li><a href="{% url 'my_profile' %}" class="text-white">Profile</a></li>
-                        <li><a href="#" class="text-white">Messages</a></li>
+                        <li><a href="{% url 'messages' %}" class="text-white">Messages</a></li>
                     </ul>
                 </div>
                 <!-- col 2 -->
