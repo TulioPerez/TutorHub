@@ -1,98 +1,80 @@
-+ user registration page 
-    - routing for students and tutors
+Mentor Finder is an application that matches students with tutors in their neighborhoods
 
-+ default page = show all tutors
+Templates:
+    Landing page
+        Mapbox integration
+        Not authenticated:
+            Pinned tutors in most densely populated city
+            Search for a tutor near location
+            Random, highly rated teacher cards above footer
+        Authenticated:
+            Same but near user
 
-+ Tutors and students will submit their profile pages data during the registration process. 
-    ✔ Details will include name, nickname, profile image, address, bio, and availability. 
-    ✔Students will be able to find a tutor via a search, and criteria will include address, subject and grade level. 
-    Profile data will be editable if the user is the owner of the profile page.
-    Students will be able to message tutors and tutors will be able to respond. Conversations with parent (original) and child (response) messages will be shown in list form on a “messages” page. Messaging will be similar to what we have covered in the “Network” project. For tutors and students, if a message exists that has not been read, a notification icon will appear in the navbar.
-    Students will be able to “like” and “unlike” a tutor. 
-    Liked tutors will be displayed in list form on a separate page with the option to message the tutors or check their availability by visiting their profile.
+    Registration
+        teacher / student / parent, name, nickname, email, profile image, address, DOB 
+        Additional, via edit profile modal bio, and availability 
+
+    Tutor lists: Search results / All tutors / Liked
+
+    User dashboard
+
+    User profile
+        Profile image
+        Address (show to all is optional)
+        Credentials
+        Bio
+        Stats
+            Lessons taken / taught
+            Upcoming lessons
+            Stars / Rating
+            Written reviews
+        Availability
+        Subjects being taught / learned
+        Venues:
+            Tutor's home
+            Student's home
+            Learning Center
+            Virtual
+            (Choose a location - cafe, etc)
+        Conversation between logged in user and user in profile being visited
+            Row color == read or not
+        'Like' the user
+        'Follow' user
+        User reviews
+        User posts
+
+    Marketplace (tutor's products)
+        Use TPT conventions for image sizes, pages, etc
+
+    Booking System
+        Google / outlook calendar integration
+
+    Tutoring platform
+        Features: 
+            Customizable sound board
+            Stars
+            Stickers
+            Reward animations
+            Canvas
+            Timers
+            Alerts
+                Current lesson (user-set) ex, 10, 5, 1 minute remaining in lesson
+                Next lesson (user-set)
 
 Navbar:
-    ✔+ Login / Register / Account
-    ✔    + Profile
-        + Messages
-    + Bell notification if message or reply not read
-
-TEMPLATES:
-    ✔+ Tutors list
-    ✔    + show all 
-        + show Liked
-        + show in vicinity
-    ✔    + search results (criteria: location, subject, grade, name (first, last, nickname))
-
-    + Profile page
-        + Tutors
-    ✔        First, Lastly
-    ✔        Nickname
-            (DOB)
-    ✔        Address
-            Phone
-    ✔        Email
-            Website
-            Availability
-    ✔        Profile Image
-    ✔        Credentials?
-            (Venues):
-                Tutor's home
-                Student's home
-                Learning Center
-                Cafe
-                Virtual
-                (Choose a location)
+    ✔  Login / Register / Account
+    ✔  Profile
+            Messages (link flashes when new message now read)
 
 
+Additional Features:
+    User security
+        block user
+        report user
+        follow / unfollow
+        user posts
+        liked posts
+        user ads   
 
-        + Students 
-    ✔        Nickname
-    ✔        First, Lastly
-            (DOB) 
-                If < 18, hide name, address, contact
-    ✔        Bio
-    ✔        Address
-            Phone
-            Email
-            Website
-    ✔        Profile Image / Avatar
-
-    + Messages page
-        + Display messages in rev chrono order
-        + Row color == read or not
-
-Good Outcome:
-    + A registration page and routing for students to a default search results page showing teachers in their neighborhood.
-    + Tutors and students will submit their profile page data during the registration process. 
-        Details will include name, nickname, profile image, address, bio, and availability. 
-        This data will be editable if the user is the owner of the profile page.
-    + Students will be able to find a tutor via a search, and criteria will include address, subject and grade level. 
-    + Students will be able to message tutors and tutors will be able to respond. 
-        Conversations with parent (original) and child (response) messages will be shown in list form on a “messages” page. 
-        Messaging will be similar to what we have covered in the “Network” project. 
-        For tutors and students, if a message exists that has not been read, a notification icon will appear in the navbar.
-    + Students will be able to “like” and “unlike” a tutor. 
-        Liked tutors will be displayed in list form on a separate page with the option to message the tutors
-        or check their availability by visiting their profile.
-
-Better Outcome: 
-In addition to the “good” outcomes, I would like to implement either the Google Maps or Mapbox API for location proximity searching. 
-
-Search criteria will also include the lesson venue - tutors and students will provide lesson preferences that the application will use in the matching process. Lesson venues can include a learning center, a café, student’s home, tutor’s home, virtual, etc.
-
-
-
-Best Outcome:
-In addition to the "better" outcomes, I would like to include a booking system and a learning / teaching platform. 
-
-The platform will include:
-•	Digital “stickers” that would be displayed when tutors wish to reward students.
-•	A customizable soundboard for teacher – student interactions during lessons. Default sounds will indicate success, try again, etc. 
-•	Customizable timers to alert teachers and students about the remaining time in the lesson.
-
-A Tutor’s availability will be reflected in the booking system’s available slots. These slots will become greyed out (unavailable) when booked or when a teacher has made that time period unavailable.
-
-Teacher and student profiles will display lessons completed, lessons remaining and upcoming lessons.
-
-Lastly, for the comfort of both parties, I would like to provide the option for switching between light & dark UI display modes.
+    Dark / light mode
+    Custom themes - shareable

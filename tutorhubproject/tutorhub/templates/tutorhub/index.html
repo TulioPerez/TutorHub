@@ -5,6 +5,7 @@
 <div class="container mt-5">
     <h1 id="page-title" class="mb-0">{{ page_title }}</h1>
     <div id="search-container" class="mb-4 d-flex justify-content-end align-items-center">
+
         <!-- Search Form -->
         <form id="search-form" action="{% if user.is_authenticated %}{% url 'index' %}{% else %}{% url 'login' %}{% endif %}" method="get" class="d-flex align-items-center">
             <input type="hidden" name="view" value="search">
@@ -31,7 +32,7 @@
                     </div>
                 </td>
 
-                <!-- Address (Only for Logged-In Users) -->
+                <!-- Address (for Logged-In users) -->
                 {% if user.is_authenticated %}
                 <td>
                     <div class="address-container">
