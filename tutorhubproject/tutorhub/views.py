@@ -24,7 +24,7 @@ def index(request):
             Q(nickname__icontains=query) |
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
-            Q(tutor_subject_grades__grade_levels__icontains=query)
+            Q(subject_levels__subject__icontains=query)
         ).distinct()
     
     # Handle following listing
@@ -125,7 +125,7 @@ def register(request):
             # Process subjects and grade levels
             subjects = request.POST.getlist("subjects[]")
             for i, subject in enumerate(subjects):
-                levels = request.POST.getlist(f"grade_levels_{i}[]")
+                levels = request.POST.getlist(f"levels_{i}[]")
                 if levels:
                     user.subject_levels.add(
                         *Level.objects.filter(name__in=levels),
@@ -210,10 +210,8 @@ def edit_profile(request):
         profile.subject_levels.clear()
         for subject, levels in zip(subjects, all_levels):
             if subject and levels:
-                profile.subject_levels.add(
-                    *Level.objects.filter(name__in=levels),
-                    through_defaults={'subject': subject}
-                )
+                subject_level = SubjectLevel.objects.create(tutor=profile, subject=subject)
+                subject_level.levels.set(Level.objects.filter(name__in=levels))
 
         # Availability editing
         availability_days = request.POST.getlist("availability_days[]")

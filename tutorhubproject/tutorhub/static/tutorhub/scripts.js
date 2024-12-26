@@ -141,12 +141,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="col-md-8">
                     <div class="checkbox-group">
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="PK / KG"> PK / KG</label>
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="1 - 5"> 1 - 5</label>
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="6 - 8"> 6 - 8</label>
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="9 - 12"> 9 - 12</label>
-                        <label><input type="checkbox" name="grade_levels_${subjectCount}[]" value="Adults"> Adults</label>
+                        ${levels.map(level => `
+                            <label><input type="checkbox" name="levels_${subjectCount}[]" value="${level.name}"> ${level.name}</label>
+                        `).join('')}
                     </div>
+                </div>
                 </div>
                 <div class="col-md-12 text-end mt-2">
                     <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>

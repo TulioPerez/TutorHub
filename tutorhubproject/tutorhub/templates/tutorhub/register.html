@@ -100,11 +100,11 @@
 
                                     <div class="col-md-8">
                                         <span class="d-flex justify-content-center">
-                                            <label id="auth-checkbox-label"><input type="checkbox" name="grade_levels_0[]" value="PK / KG"> Pre-K / KG</label>
-                                            <label id="auth-checkbox-label"><input type="checkbox" name="grade_levels_0[]" value="1 - 5"> 1 - 5</label>
-                                            <label id="auth-checkbox-label"><input type="checkbox" name="grade_levels_0[]" value="6 - 8"> 6 - 8</label>
-                                            <label id="auth-checkbox-label"><input type="checkbox" name="grade_levels_0[]" value="9 - 12"> 9 - 12</label>
-                                            <label id="auth-checkbox-label"><input type="checkbox" name="grade_levels_0[]" value="Adults"> Adults</label>
+                                            {% for level in levels %}
+                                                <label id="auth-checkbox-label">
+                                                    <input type="checkbox" name="levels_0[]" value="{{ level.name }}"> {{ level.name }}
+                                                </label>
+                                            {% endfor %}
                                         </span>
                                     </div>
                                 </div>

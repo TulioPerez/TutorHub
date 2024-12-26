@@ -33,8 +33,8 @@ class Address(models.Model):
 class User(AbstractUser):
     nickname = models.CharField(max_length=50, blank=True, null=True)
     role = models.CharField(max_length=10, choices=UserRoles.choices, default=UserRoles.STUDENT)
-    phone_number = PhoneNumberField(blank=False, null=False)
-    birthdate = models.DateField(blank=False, null=False)
+    phone_number = PhoneNumberField(blank=True, null=True)
+    birthdate = models.DateField(blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
     show_address = models.BooleanField(default=False)
