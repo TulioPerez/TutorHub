@@ -68,13 +68,15 @@ Navbar:
 
 
 Additional Features:
+    Language
+    RTL language support
     User security
         block user
         report user
         follow / unfollow
         user posts
         liked posts
-        user ads   
+        user ads
 
     Dark / light mode
     Custom themes - shareable

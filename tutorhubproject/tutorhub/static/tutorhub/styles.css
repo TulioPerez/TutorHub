@@ -13,8 +13,9 @@ html, body {
     border-radius: 15px;
     border-color: aliceblue;
     border-style: solid;
-    width: fit-content;
-    padding: 25px 45px 25px 45px;
+    width: 100%;
+    max-width: 450px;
+    padding: 50px 40px;
     background-color: #222937;
 }
 
@@ -53,6 +54,26 @@ html, body {
 #auth-form-section {
     margin: 25px 0;
     text-align: center;
+}
+
+.form-control {
+    width: 100%;
+    max-width: none;
+}
+
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.col-md-6, .col-md-3 {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* create space between fields in the same row */
+.row > div:not(:last-child) {
+    padding-right: 10px;
 }
 
 #btn-login {

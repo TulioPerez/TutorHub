@@ -4,14 +4,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .models import User, Message, SubjectGrade, Credential
+from .models import Level, User, Message, SubjectLevel, Credential
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from django.http import JsonResponse
 from django.utils.timezone import now
 import json
-from django.db.models import Q
 
 
 def index(request):
@@ -34,9 +32,9 @@ def index(request):
         tutors = request.user.followed_tutors.all()
 
     # Pagination
-    paginator = Paginator(tutors, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    # paginator = Paginator(tutors, 10)
+    # page_number = request.GET.get('page')
+    page_obj = paginate_queryset(tutors, request.GET.get('page'))
 
     # Determine page title
     if view_type == "search":
@@ -51,6 +49,11 @@ def index(request):
         'page_title': page_title,
         'view_type': view_type,
     })
+
+
+def paginate_queryset(queryset, page_number, per_page=10):
+    paginator = Paginator(queryset, per_page)
+    return paginator.get_page(page_number)
 
 
 # Authentication
@@ -122,12 +125,11 @@ def register(request):
             # Process subjects and grade levels
             subjects = request.POST.getlist("subjects[]")
             for i, subject in enumerate(subjects):
-                grade_levels = request.POST.getlist(f"grade_levels_{i}[]")
-                if grade_levels:
-                    SubjectGrade.objects.create(
-                        tutor=user,
-                        subject=subject,
-                        grade_levels=grade_levels
+                levels = request.POST.getlist(f"grade_levels_{i}[]")
+                if levels:
+                    user.subject_levels.add(
+                        *Level.objects.filter(name__in=levels),
+                        through_defaults={'subject': subject}
                     )
 
             # Process credentials
@@ -142,9 +144,9 @@ def register(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
 
-    subject_grades = SubjectGrade.objects.all()
+    levels = Level.objects.all()
     return render(request, "tutorhub/register.html", {
-        "subject_grades": subject_grades,
+        "levels": levels,
     })
 
 
@@ -153,8 +155,8 @@ def profile(request, user_id=None):
     profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
     credentials = profile_user.credentials.all()
     scroll_to = request.GET.get('scroll_to')
-    grade_levels = ['PK / KG', '1 - 5', '6 - 8', '9 - 12', 'Adults']
-    subject_grades = profile_user.tutor_subject_grades.all()
+    levels = Level.objects.all()
+    subject_levels = profile_user.subject_levels.all()
 
     messages = Message.objects.filter(
         (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
@@ -186,8 +188,8 @@ def profile(request, user_id=None):
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
         'credentials': credentials,
-        'grade_levels': grade_levels,
-        'subject_grades': subject_grades,
+        'levels': levels,
+        'subject_levels': subject_levels,
         'is_own_profile': profile_user == request.user,
         'days_of_week': days_of_week,
         'messages': messages,
@@ -203,12 +205,15 @@ def edit_profile(request):
 
         # Subjects and grades editing
         subjects = request.POST.getlist("subjects[]")
-        all_grade_levels = [request.POST.getlist(f"grade_levels_{i}[]") for i in range(len(subjects))]
+        all_levels = [request.POST.getlist(f"levels_{i}[]") for i in range(len(subjects))]
 
-        profile.subject_grades.all().delete()
-        for subject, grade_levels in zip(subjects, all_grade_levels):
-            if subject and grade_levels:
-                SubjectGrade.objects.create(tutor=profile, subject=subject, grade_levels=grade_levels)
+        profile.subject_levels.clear()
+        for subject, levels in zip(subjects, all_levels):
+            if subject and levels:
+                profile.subject_levels.add(
+                    *Level.objects.filter(name__in=levels),
+                    through_defaults={'subject': subject}
+                )
 
         # Availability editing
         availability_days = request.POST.getlist("availability_days[]")
@@ -222,7 +227,13 @@ def edit_profile(request):
             ]
 
         if 'profile_image' in request.FILES:
-            profile.profile_image = request.FILES['profile_image']
+            profile_image = request.FILES.get('profile_image')
+            
+            if profile_image and profile_image.size > 5 * 1024 * 1024:
+                return render(request, "tutorhub/edit_profile.html", {
+                    "message": "Profile image exceeds the maximum size of 5MB."
+                })
+            
         if 'nickname' in request.POST:
             profile.nickname = request.POST.get('nickname', profile.nickname)
         if 'first_name' in request.POST:
@@ -301,7 +312,7 @@ def search_tutors(request):
     query = request.GET.get('q', '')
     results = User.objects.filter(
         Q(nickname__icontains=query) |
-        Q(tutor_subject_grades__subject__icontains=query) |
+        Q(subject_levels__subject__icontains=query) |
         Q(city__icontains=query),
         is_tutor=True,
     ).distinct()
@@ -325,3 +336,82 @@ def follow_tutor(request, tutor_id):
 def followed_tutors(request):
     followed = request.user.followed_tutors.all()
     return render(request, 'tutorhub/followed_tutors.html', {'followed': followed})
+
+
+# @login_required
+# def create_thread(request):
+#     # Extract data from the POST request
+#     participants = request.POST.getlist("participants")
+#     admin_user_id = request.POST.get("admin")
+#     name = request.POST.get("name", "Unnamed Thread").strip()
+
+#     # Error handling
+#     if not participants:
+#         return JsonResponse({"error": "Participants are required."}, status=400)
+#     if not admin_user_id:
+#         return JsonResponse({"error": "Admin user ID is required."}, status=400)
+#     if admin_user_id not in participants:
+#         return JsonResponse({"error": "Admin must be one of the participants."}, status=400)
+
+#     # Determine if the thread is a group
+#     is_group = len(participants) > 2
+
+#     # Create the thread
+#     thread = Thread.objects.create(name=name, is_group=is_group)
+
+#     # Add participants with roles
+#     for user_id in participants:
+#         role = "ADMIN" if str(user_id) == admin_user_id else "MEMBER"
+#         ThreadParticipant.objects.create(thread=thread, user_id=user_id, role=role)
+
+#     # Redirect to thread detail view
+#     return redirect("thread_detail", thread_id=thread.id)
+
+
+# @login_required
+# def remove_participant(request, thread_id, user_id):
+#     try:
+#         thread = Thread.objects.get(id=thread_id)
+#     except Thread.DoesNotExist:
+#         return JsonResponse({"error": "Thread not found."}, status=404)
+
+#     current_user_role = ThreadParticipant.objects.filter(thread=thread, user=request.user).first()
+
+#     if not current_user_role or current_user_role.role != "ADMIN":
+#         return JsonResponse({"error": "Permission denied."}, status=403)
+
+#     try:
+#         participant = ThreadParticipant.objects.get(thread=thread, user_id=user_id)
+#         participant.delete()
+#         return JsonResponse({"status": "success"})
+#     except ThreadParticipant.DoesNotExist:
+#         return JsonResponse({"error": "Participant not found."}, status=404)
+
+
+# @login_required
+# def thread_detail(request, thread_id):
+#     thread = get_object_or_404(Thread, id=thread_id)
+#     messages = thread.messages.order_by("timestamp")
+
+#     paginator = Paginator(messages, 20)  # 20 messages per page
+#     page_obj = paginator.get_page(request.GET.get('page'))
+#     return render(request, "thread_detail.html", {"thread": thread, "messages": page_obj})
+
+
+# @login_required
+# def send_message(request, thread_id):
+#     thread = get_object_or_404(Thread, id=thread_id)
+#     content = request.POST.get("content", "").strip()
+
+#     if not content:
+#         return JsonResponse({"error": "Message content cannot be empty."}, status=400)
+
+#     Message.objects.create(thread=thread, sender=request.user, content=content)
+#     return redirect("thread_detail", thread_id=thread.id)
+
+
+# @login_required
+# def get_thread_with_permissions(thread_id, user):
+#     thread = get_object_or_404(Thread, id=thread_id)
+#     participant_role = ThreadParticipant.objects.filter(thread=thread, user=user).first()
+#     return thread, participant_role
