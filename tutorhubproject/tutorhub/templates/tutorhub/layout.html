@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+    <!-- HEAD -->
     <head>
         <title>{% block title %}Mentor{% endblock %}</title>
         <link rel="icon" type="image/svg+xml" href="{% static 'tutorhub/images/mentor-logo-bull.svg' %}">
@@ -9,7 +10,7 @@
         <link rel="stylesheet" href="{% static 'tutorhub/styles.css' %}">
     </head>
     <body>
-    <!-- Navbar -->
+    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <a class="navbar-brand" href="{% url 'index' %}">
             <!-- Navbar branding -->
@@ -21,8 +22,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Links -->
+            <!-- Navbar Links -->
             <ul class="navbar-nav ms-auto flex-row">
+                <li class="nav-item px-2"><a class="nav-link" id="menu-language" href="{% url 'my_profile' %}"><strong>{{ user.username }} ⚙️</strong></a></li>
                 {% if user.is_authenticated %}
                     <li class="nav-item px-2"><a class="nav-link" id="menu-username" href="{% url 'my_profile' %}"><strong>{{ user.username }} ⚙️</strong></a></li>
                     <li class="nav-item px-2"><a class="nav-link" id="menu-messages" href="{% url 'messages' %}">Messages</a></li>
@@ -43,28 +45,69 @@
         {% endblock %}
     </div>
     </body>
-    <!-- Footer -->
-    <footer class="bg-dark text-white mt-auto py-3">
-        <div class="container" id="footer-title">
+    <!-- FOOTER -->
+    <footer class="footer bg-dark text-white mt-auto py-3">
+        <div class="container footer-title">
+            <div class="text-center mb-4">
+                <div style="font-weight: bold;">MENTOR FINDER</div>
+                <div>Connecting Creative Minds across the world -=)</div>
+            </div>
             <div class="row">
                 <!-- col 1 -->
-                <div class="col-md-4 text-center">
-                    <ul class="list-unstyled" id="footer-link">
-                        <li><a href="{% url 'index' %}" class="text-white">All Tutors</a></li>
-                        <li><a href="{% url 'index' %}?view=following" class="text-white">Following</a></li>
-                        <li><a href="{% url 'my_profile' %}" class="text-white">Profile</a></li>
-                        <li><a href="{% url 'messages' %}" class="text-white">Messages</a></li>
+                <div class="col-md-3 text-center">
+                    <ul class="list-unstyled footer-links">
+                        <li style="margin: 10px 0;"><a href="https://play.google.com/store/apps/details?id=your.app.id" target="_blank"><img src="{% static 'tutorhub/images/social_media_links/google_play.png' %}" alt="Get it on Google Play" width="120"></a></li>
+                        <li style="margin: 10px 0;"><a href="https://play.google.com/store/apps/details?id=your.app.id" target="_blank"><img src="{% static 'tutorhub/images/social_media_links/app_store.png' %}" alt="Download on the App Store" width="120"></a></li>
+                        <li style="margin: 10px 0;">
+                            <img src="{% static 'tutorhub/images/social_media_links/facebook.png' %}" alt="Facebook" height="30" style="margin: 0 10px;">
+                            <img src="{% static 'tutorhub/images/social_media_links/instagram.png' %}" alt="Instagram" height="30" style="margin: 0 10px;">
+                            <img src="{% static 'tutorhub/images/social_media_links/x.png' %}" alt="X" height="30" style="margin: 0 10px;">
+                            <img src="{% static 'tutorhub/images/social_media_links/youtube.png' %}" alt="youtube" height="30" style="margin: 0 10px;">
+                        </li>
                     </ul>
                 </div>
                 <!-- col 2 -->
-                <div class="col-md-4 text-center">
-                    <span class="mb-0" id="footer-link">© {% now "Y" %} Mentor Finder. All rights reserved.</u>
-                    <p id="footer-link">Connecting minds and masters, worldwide.</p>
+                <div class="col-md-3 text-center">
+                    <div>
+                        <ul class="list-unstyled footer-links">
+                            <li>Support</li>
+                            <li>Become a tutor</li>
+                            <li>Get Certified</li>
+                            <li>External Job Board</li>
+                            <li>Help Center</li>
+                        </ul>
+                    </div>
                 </div>
                 <!-- col 3 -->
-                <div class="col-md-4 text-center">
-                    <p id="footer-link">Email: support@mentorfinder.com</p>
+                <div class="col-md-3 text-center">
+                    <div>
+                        <ul class="list-unstyled footer-links">
+                            <li>Company</li>
+                            <li>About us</li>
+                            <li>Our offerings</li>
+                            <li>Careers at Mentor Finder</li>
+                            <li>Newsroom</li>
+                            <li>Investors</li>
+                        </ul>
+                    </div>
                 </div>
+                <!-- col 4 -->
+                <div class="col-md-3 text-center">
+                    <div>
+                        <ul class="list-unstyled footer-links">
+                            <li>Services</li>
+                            <li>Private Lessons</li>
+                            <li>Courses</li>
+                            <li>Learning Resources</li>
+                            <li>Teaching Resources</li>
+                            <li>Administrative Resources</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <div>© {% now "Y" %} Mentor Finder. All rights reserved.</div>
+                <div>Email: support@mentorfinder.com</div>
             </div>
         </div>
     </footer>
