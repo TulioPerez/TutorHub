@@ -4,25 +4,37 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div id="auth-form" class="col-md-6 col-lg-4 text-center">
-            <img id="auth-logo" src="{% static '/tutorhub/images/mentor-logo-bull.svg' %}" alt="Mentor Logo">
-            <p id="auth-form-title" class="text-center">Sign in to your account</>
-            <p id="auth-form-blurb" class="text-center">Brilliant teachers, just around the corner</p>
+        <div id="auth-form" class="col-md-6 col-lg-4">
+            <div id="auth-logo-container">
+                <img id="auth-logo" src="{% static '/tutorhub/images/mentor-logo-bull.svg' %}" alt="Mentor Logo">
+                <div id="auth-form-title">Sign in to your account</div>
+                <p id="auth-form-blurb" class="text-center">Brilliant teachers, just around the corner</p>
+            </div>
+
             {% if message %}
-                <div class="alert alert-danger">{{ message }}</div>
+            <div class="alert alert-danger">{{ message }}</div>
             {% endif %}
+
             <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
-                <div class="form-group mb-3">
-                    <input id="auth-field" autofocus class="form-control" type="email" name="email" placeholder="Email">
+
+                <!-- EMAIL -->
+                <div class="form-group">
+                    <label for="email" id="auth-label">Email Address:</label>
+                    <input class="form-control" type="email" name="email" id="email" placeholder="Email Address" autofocus required>
                 </div>
-                <div class="form-group mb-3">
-                    <input class="form-control" type="password" name="password" placeholder="Password">
+
+                <!-- PASSWORD -->
+                <div class="form-group">
+                    <label id="auth-label" for="password">Password:</label>
+                    <input class="form-control" type="password" name="password" id="password" placeholder="Password" required>
                 </div>
-                <input class="btn btn-primary w-100" type="submit" value="Login">
+
+                <input class="btn btn-primary mt-3 d-block mx-auto" type="submit" value="Login">
+                <div class="text-center" id="auth-label">Don't have an account? <a href="{% url 'register' %}">Sign up</a></div>
             </form>
-            <p id="auth-form-section" class="text-center mt-3">Don't have an account? <a href="{% url 'register' %}">Sign up</a></p>
         </div>
     </div>
 </div>
+
 {% endblock %}

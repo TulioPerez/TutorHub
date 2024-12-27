@@ -28,9 +28,8 @@ html, body {
 }
 
 #auth-form-blurb {
-    font-weight: 100;
-    color: #ffffff;
-    font-size: medium;
+    color: #979797;
+    font-size:  medium;
 }
 
 #auth-checkbox-label {
@@ -48,13 +47,24 @@ html, body {
     margin: 5px 0 10px 0;
 }
 
-#auth-label, #auth-form-section, #auth-checkbox-label {
+#auth-label {
+    color: #979797;
+    font-size:  medium;
+    margin-top: 15px;
+}
+
+#auth-form-section, #auth-checkbox-label {
     color: white;
 }
 
 #auth-form-section {
     margin: 25px 0;
     text-align: center;
+    border-color: #979797;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 1px;
+    padding: 10px 0;
 }
 
 .form-control {

@@ -12,27 +12,19 @@
             </div>
 
             {% if message %}
-                <div>{{ message }}</div>
+            <div>{{ message }}</div>
             {% endif %}
 
             <form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <div id="auth-label" class="form-group">
+                <!-- EMAIL -->
+                <div class="form-group">
                     <label for="email" id="auth-label">Email Address:</label>
                     <input class="form-control" type="email" name="email" id="email" placeholder="Email Address" maxlength="100" required>
                 </div>
-                
-                <div class="form-group">
-                    <label id="auth-label" for="password">Password:</label>
-                    <input class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="100" required>
-                </div>
 
-                <p class="form-group">
-                    <label id="auth-label" for="confirmation">Confirm Password:</label>
-                    <input class="form-control" type="password" name="confirmation" id="confirmation" placeholder="Confirm Password" maxlength="100" required>
-                </p>
-
+                <!-- NAME -->
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-6">
@@ -45,96 +37,37 @@
                         </div>
                     </div>
                 </div>
-                <p class="form-group">
-                    <label id="auth-label" for="nickname">Nickname:</label>
-                    <input class="form-control" type="text" name="nickname" id="nickname" placeholder="Nickname" maxlength="50">
-                </p>
-                <h4 id="auth-label">Address</h4>
+
+                <!-- PASSWORD -->
                 <div class="form-group">
-                    <label id="auth-label" for="street_address">Street Address:</label>
-                    <input class="form-control" type="text" name="street_address" id="street_address" placeholder="Street Address" maxlength="100" required>
+                    <label id="auth-label" for="password">Password:</label>
+                    <input class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="100" required>
                 </div>
+
+                <!-- CONFIRM -->
                 <div class="form-group">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label id="auth-label" for="city">City:</label>
-                            <input class="form-control" type="text" name="city" id="city" placeholder="City" maxlength="50" required>
+                    <label id="auth-label" for="confirmation">Confirm Password:</label>
+                    <input class="form-control" type="password" name="confirmation" id="confirmation" placeholder="Confirm Password" maxlength="100" required>
+                </div>
+
+                <!-- USER TYPE -->
+                <div class="form-group d-flex justify-content-center" id="auth-form-section">
+                    <label class="me-3 mb-0">I am a: </label>
+                    <div class="d-flex">
+                        <div class="form-check form-check-inline me-3">
+                            <input class="form-check-input" type="radio" name="user_type" id="student" value="student">
+                            <label class="form-check-label" for="student">Student</label>
                         </div>
-                        <div class="col-md-3">
-                            <label id="auth-label" for="state">State:</label>
-                            <input class="form-control" type="text" name="state" id="state" placeholder="State" maxlength="50" required>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="user_type" id="tutor" value="tutor">
+                            <label class="form-check-label" for="tutor">Tutor</label>
                         </div>
-                        <p class="col-md-3">
-                            <label id="auth-label" for="zip_code">Zip Code:</label>
-                            <input class="form-control" type="number" name="zip_code" id="zip_code" placeholder="Zip Code" maxlength="10" required>
-                        </p>
                     </div>
                 </div>
 
-                <p class="form-group">
-                    <label id="auth-label" for="bio">Bio:</label>
-                    <textarea class="form-control" name="bio" id="bio" placeholder="Tell us about yourself" rows="4" maxlength="500"></textarea>
-                </p>
-
-                <p class="form-group">
-                    <label id="auth-label" for="profile_image">Profile Image:</label>
-                    <input class="form-control" type="file" name="profile_image" id="profile_image" accept="image/*">
-                </p>
-
-                <p class="form-group" id="auth-form-section">
-                    <label>User Type:</label><br>
-                    <input type="radio" name="user_type" value="student" checked> Student
-                    <input type="radio" name="user_type" value="tutor"> Tutor
-                </p>
-
-
-                <div id="tutor-fields" style="display: none;">
-                    <div id="subject-grade-section">
-                        <h4 id="auth-label">Subjects and Grade Levels</h4>
-                        <div id="auth-label" class="form-group">
-                            <div id="subject-rows-container">
-                                <div class="subject-row row mb-3">
-                                    <div class="col-md-4">
-                                        <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="50">
-                                    </div>
-
-                                    <div class="col-md-8">
-                                        <span class="d-flex justify-content-center">
-                                            {% for level in levels %}
-                                                <label id="auth-checkbox-label">
-                                                    <input type="checkbox" name="levels_0[]" value="{{ level.name }}"> {{ level.name }}
-                                                </label>
-                                            {% endfor %}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <button type="button" id="btn-add-subject" class="btn btn-secondary btn-sm mt-2">Add Subject</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <p id="credentials-section">
-                        <h4 id="auth-label">Upload Credentials</h4>
-                        <div id="credential-rows-container">
-                            <div class="credential-row row mb-3">
-                                <div class="col-md-12">
-                                    <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="button" id="btn-add-credential" class="btn btn-secondary btn-sm mt-2">Add Credential</button>
-                        </div>
-                    </p>
-                </div>
-                <!-- <input class="btn btn-primary mt-3" type="submit" value="Register"> -->
                 <input class="btn btn-primary mt-3 d-block mx-auto" type="submit" value="Register">
+                <div class="text-center" id="auth-label">Already have an account? <a href="{% url 'login' %}">Sign in</a></div>
             </form>
-
-            <div id="auth-form-section">Already have an account? <a href="{% url 'login' %}">Sign in</a></div>
-
         </div>
     </div>
 </div>
