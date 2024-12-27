@@ -351,4 +351,24 @@ document.addEventListener("DOMContentLoaded", () => {
         return cookieValue || "";
     }
 
+
+    // Language selection handling
+    const languageButtons = document.querySelectorAll('.language-select');
+    languageButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const language = this.getAttribute('data-language');
+            // Here, implement your language change logic
+            console.log('Changing language to:', language);
+            
+            // Close the modal
+            const modal = document.getElementById('languageModal');
+            const bootstrapModal = bootstrap.Modal.getInstance(modal);
+            bootstrapModal.hide();
+
+            // You might want to reload the page or update the UI here
+            // For example:
+            // window.location.href = `/?lang=${language}`;
+        });
+    });
+
 });
