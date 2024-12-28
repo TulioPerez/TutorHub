@@ -7,7 +7,8 @@
         <!-- User info section -->
         <div class="col-md-8">
             <!-- Profile header -->
-            <h2>{{ profile.nickname }}'s Profile</h2>
+            <h2>{{ possessive_name }} Profile</h2>
+
             <div class="profile-header">
                 <!-- Profile picture -->
                 <div id="stack-vertical">
@@ -59,7 +60,7 @@
                             </div>
                         </a>
                     {% empty %}
-                        <p>No credentials available.</p>
+                        <p>Add some credentials, such as certificates, diplomas or a resume with your experience.</p>
                     {% endfor %}
                 </div>
                 <!-- Edit credentials -->
@@ -72,7 +73,7 @@
             <!-- Bio section -->
             <div class="bio-container">
                 <h4>Bio</h4>
-                <p>{{ profile.bio|default:"No bio available." }}</p>
+                <p>{{ profile.bio|default:"Tell students about yourself. Share what you like about teaching along with some interesting facts about yourself to spark their interest!" }}</p>
                 <!-- Edit bio -->
                 {% if is_own_profile %}
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_bio_modal">Edit Bio</button>
@@ -117,7 +118,7 @@
                         <strong>{{ slot.day|title }}:</strong> {{ slot.start }} - {{ slot.end }}
                     </li>
                     {% empty %}
-                    <p>Availability not provided.</p>
+                    <p>Add your availability so that potential students can know when you're open for business!</p>
                     {% endfor %}
                 </ul>
                 {% if is_own_profile %}
@@ -133,7 +134,7 @@
                     {% for subject_grade in profile.tutor_subject_grades.all %}
                         <li><strong>{{ subject_grade.subject }}:</strong> {{ subject_grade.grade_levels|join:", " }}</li>
                     {% empty %}
-                        <p>No subjects available.</p>
+                        <p>Add subjects and courses, along with corresponding levels that you're interested in teaching. These terms allow students to find you when searching.</p>
                     {% endfor %}
                 </ul>
                 {% if is_own_profile %}

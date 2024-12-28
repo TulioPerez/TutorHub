@@ -185,6 +185,11 @@ def profile(request, user_id=None):
     # List of days to pass to the template
     days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+    # Determine the display name and its possessive form
+    display_name = profile_user.nickname or profile_user.first_name or "User"
+    possessive_name = f"{display_name}'s" if not display_name.endswith('s') else f"{display_name}'"
+
+
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
         'credentials': credentials,
@@ -193,7 +198,8 @@ def profile(request, user_id=None):
         'is_own_profile': profile_user == request.user,
         'days_of_week': days_of_week,
         'messages': messages,
-        'scroll_to': scroll_to
+        'scroll_to': scroll_to,
+        'possessive_name': possessive_name,
     })
 
 
@@ -335,6 +341,12 @@ def followed_tutors(request):
     followed = request.user.followed_tutors.all()
     return render(request, 'tutorhub/followed_tutors.html', {'followed': followed})
 
+
+# Helper functions
+def get_possessive_name(name):
+    if not name:
+        return "User's"
+    return f"{name}'s" if not name.endswith('s') else f"{name}'"
 
 # @login_required
 # def create_thread(request):
