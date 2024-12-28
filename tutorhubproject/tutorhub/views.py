@@ -15,7 +15,7 @@ import json
 def index(request):
     query = request.GET.get('q', '').strip()
     view_type = request.GET.get('view', 'all')
-    tutors = User.objects.filter(is_tutor=True).order_by('nickname')
+    tutors = User.objects.filter(is_tutor=True).order_by('nickname', 'first_name', 'username')
 
     if view_type == "search" and query:
         tutors = tutors.filter(
@@ -32,8 +32,6 @@ def index(request):
         tutors = request.user.followed_tutors.all()
 
     # Pagination
-    # paginator = Paginator(tutors, 10)
-    # page_number = request.GET.get('page')
     page_obj = paginate_queryset(tutors, request.GET.get('page'))
 
     # Determine page title

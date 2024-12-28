@@ -60,7 +60,7 @@
                             </div>
                         </a>
                     {% empty %}
-                        <p>Add some credentials, such as certificates, diplomas or a resume with your experience.</p>
+                        <p>Add credentials, such as certificates, diplomas or a resume.</p>
                     {% endfor %}
                 </div>
                 <!-- Edit credentials -->
@@ -118,7 +118,7 @@
                         <strong>{{ slot.day|title }}:</strong> {{ slot.start }} - {{ slot.end }}
                     </li>
                     {% empty %}
-                    <p>Add your availability so that potential students can know when you're open for business!</p>
+                    <p>Add your availability so that potential students can know when you're open for business.</p>
                     {% endfor %}
                 </ul>
                 {% if is_own_profile %}
@@ -134,7 +134,7 @@
                     {% for subject_grade in profile.tutor_subject_grades.all %}
                         <li><strong>{{ subject_grade.subject }}:</strong> {{ subject_grade.grade_levels|join:", " }}</li>
                     {% empty %}
-                        <p>Add subjects and courses, along with corresponding levels that you're interested in teaching. These terms allow students to find you when searching.</p>
+                        <p>Add subjects and courses, along with corresponding levels that you're interested in teaching. These terms allow students to find you in searches.</p>
                     {% endfor %}
                 </ul>
                 {% if is_own_profile %}

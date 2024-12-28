@@ -64,6 +64,10 @@ class User(AbstractUser):
     # USERNAME_FIELD = "email"
     # REQUIRED_FIELDS = ["username"]
 
+    # For index page name display
+    def get_display_name(self):
+        return self.nickname or self.first_name
+
     @property # calculated on the fly but accessible as if it's an attribute
     def age(self):
         if self.birthdate:
