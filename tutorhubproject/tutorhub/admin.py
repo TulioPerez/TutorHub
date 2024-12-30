@@ -24,11 +24,15 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = ('street_address', 'city', 'state_region', 'postal_code', 'country')
     search_fields = ('street_address', 'city', 'state_region', 'postal_code', 'country')
 
-# SubjectLevel Admin
 class SubjectLevelAdmin(admin.ModelAdmin):
-    list_display = ('tutor', 'subject')
-    list_filter = ('tutor', 'subject')
-    filter_horizontal = ('levels',)
+    list_display = ('tutor', 'subject', 'level')
+    list_filter = ('tutor', 'subject', 'level')
+    search_fields = ('tutor__username', 'tutor__email', 'subject')
+
+    def display_levels(self, obj):
+        return obj.level
+    display_levels.short_description = 'Levels'
+
 
 # Credential Admin
 class CredentialAdmin(admin.ModelAdmin):
@@ -74,7 +78,6 @@ admin.site.register(SubjectLevel, SubjectLevelAdmin)
 admin.site.register(Credential, CredentialAdmin)
 admin.site.register(FollowRelation, FollowRelationAdmin)
 admin.site.register(Review, ReviewAdmin)
-admin.site.register(Level, LevelAdmin)
 admin.site.register(Thread, ThreadAdmin)
 admin.site.register(ThreadParticipant, ThreadParticipantAdmin)
 admin.site.register(Message, MessageAdmin)

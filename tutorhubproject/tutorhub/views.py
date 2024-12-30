@@ -10,6 +10,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.utils.timezone import now
 from django_countries import countries
+from django.utils.safestring import mark_safe
 import json
 
 
@@ -99,17 +100,7 @@ def register(request):
             user.nickname = request.POST.get("nickname", "")
             user.first_name = request.POST.get("first_name", "")
             user.last_name = request.POST.get("last_name", "")
-            user.street_address = request.POST.get("street_address", "")
-            user.city = request.POST.get("city", "")
-            user.state = request.POST.get("state", "")
-            user.zip_code = request.POST.get("zip_code", "")
-            user.bio = request.POST.get("bio", "")
             user.is_tutor = (user_type == "tutor")
-
-            # Handle profile image
-            if 'profile_image' in request.FILES:
-                user.profile_image = request.FILES['profile_image']
-                user.save()
 
             user.save()
         except IntegrityError as e:
@@ -118,139 +109,35 @@ def register(request):
                 "message": "Email address already taken."
             })
 
-        # Handle tutor-specific fields
-        if user.is_tutor:
-
-            # Process subjects and grade levels
-            subjects = request.POST.getlist("subjects[]")
-            for i, subject in enumerate(subjects):
-                levels = request.POST.getlist(f"levels_{i}[]")
-                if levels:
-                    user.subject_levels.add(
-                        *Level.objects.filter(name__in=levels),
-                        through_defaults={'subject': subject}
-                    )
-
-            # Process credentials
-            credentials = request.FILES.getlist("credentials[]")
-            for file in credentials[:7]:
-                if file.size > 5 * 1024 * 1024:
-                    return render(request, "tutorhub/register.html", {
-                        "message": "One or more files exceed the maximum allowed size of 5MB."
-                    })
-                Credential.objects.create(user=user, file=file)
 
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
 
-    levels = Level.objects.all()
     return render(request, "tutorhub/register.html", {
-        "levels": levels,
     })
 
 
 @login_required
 def profile(request, user_id=None):
     profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
-    credentials = profile_user.credentials.all()
-    scroll_to = request.GET.get('scroll_to')
-    levels = Level.objects.all()
-    subject_levels = profile_user.subject_levels.all()
 
-    # Days of the week for sorting
-    day_order = {
-        "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3,
-        "Friday": 4, "Saturday": 5, "Sunday": 6
-    }
+    if request.method == "POST" and profile_user == request.user:
 
-    # Sort availability data
-    availability = profile_user.availability
-    sorted_availability = sorted(
-        availability,
-        key=lambda slot: (day_order.get(slot['day'], 7), slot['start'])
-    )
+        # Update profile logic (edit_profile functionality)
+        profile_user.nickname = request.POST.get('nickname', '')
+        profile_user.bio = request.POST.get('bio', '')
 
-    # Check if the profile has missing details
-    missing_details = not all([
-        profile_user.nickname,
-        profile_user.bio,
-        profile_user.profile_image,
-        sorted_availability,
-        profile_user.availability,
-        subject_levels.exists()
-    ])
+        # Address
+        if not profile_user.address:
+            profile_user.address = Address.objects.create()
+        profile_user.address.street_address = request.POST.get('street_address', '')
+        profile_user.address.city = request.POST.get('city', '')
+        profile_user.address.state_region = request.POST.get('state', '')
+        profile_user.address.postal_code = request.POST.get('postal_code', '')
+        profile_user.address.country = request.POST.get('country', '')
+        profile_user.address.save()
 
-    messages = Message.objects.filter(
-        (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
-    ).order_by('timestamp')
-
-    # Auto scroll to unread messages
-    if scroll_to:
-        try:
-            message_to_mark = messages.get(id=scroll_to, receiver=request.user, read=False)
-            message_to_mark.read = True
-            message_to_mark.save()
-        except Message.DoesNotExist:
-            pass
-        
-    # Add countries to the context
-    countries_list = list(countries)
-
-    # Handle credentials
-    for credential in credentials:
-        credential.is_image = credential.file.url.lower().endswith(('.jpg', '.jpeg', '.png'))
-
-    # Handle messaging
-    if request.method == "POST":
-        content = request.POST.get('content')
-        if content:
-            Message.objects.create(sender=request.user, receiver=profile_user, content=content)
-        return redirect('profile', user_id=user_id)
-
-    # List of days to pass to the template
-    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-
-    # Determine the display name and its possessive form
-    display_name = profile_user.nickname or profile_user.first_name or "User"
-    possessive_name = f"{display_name}'s" if not display_name.endswith('s') else f"{display_name}'"
-
-
-    return render(request, 'tutorhub/profile.html', {
-        'profile': profile_user,
-        'credentials': credentials,
-        'levels': levels,
-        'subject_levels': subject_levels,
-        'countries': countries_list,
-        'is_own_profile': profile_user == request.user,
-        'days_of_week': days_of_week,
-        'messages': messages,
-        'scroll_to': scroll_to,
-        'missing_details': missing_details,
-        'possessive_name': possessive_name,
-        'sorted_availability': sorted_availability,
-    })
-
-
-@login_required
-def edit_profile(request):
-    if request.method == "POST":
-        profile = request.user
-        
-        # Handle basic fields
-        profile.nickname = request.POST.get('nickname', '')
-        profile.bio = request.POST.get('bio', '')
-
-        # Handle address
-        if not profile.address:
-            profile.address = Address.objects.create()
-        profile.address.street_address = request.POST.get('street_address', '')
-        profile.address.city = request.POST.get('city', '')
-        profile.address.state_region = request.POST.get('state', '')
-        profile.address.postal_code = request.POST.get('postal_code', '')
-        profile.address.country = request.POST.get('country', '')
-        profile.address.save()
-
-        # Handle availability
+        # Availability
         availability_days = request.POST.getlist('availability_days[]')
         availability_start = request.POST.getlist('availability_start[]')
         availability_end = request.POST.getlist('availability_end[]')
@@ -262,31 +149,101 @@ def edit_profile(request):
                 'start': start,
                 'end': end
             })
-        profile.availability = availability
-        profile.save()
+        profile_user.availability = availability
 
-        # Handle subjects and levels
-        profile.subject_levels.all().delete()
-        subjects = request.POST.getlist('subjects[]')
-        for i, subject in enumerate(subjects):
-            levels = request.POST.getlist(f'levels[{i}][]')
-            if subject and levels:
-                subject_level = SubjectLevel.objects.create(tutor=profile, subject=subject)
-                subject_level.levels.set(Level.objects.filter(name__in=levels))
+        # Clear existing subject levels
+        profile_user.subject_levels.all().delete()
 
-        # Handle profile image
+        subjects = request.POST.getlist("subjects[]")
+        levels = request.POST.getlist("levels[]")
+
+        for index, subject in enumerate(subjects):
+            if subject:
+                selected_levels = request.POST.getlist(f"levels_{index}[]")
+                for level in selected_levels:
+                    SubjectLevel.objects.create(tutor=profile_user, subject=subject, level=level)
+
+        # Profile image
         if 'profile_image' in request.FILES:
-            profile.profile_image = request.FILES['profile_image']
+            profile_user.profile_image = request.FILES['profile_image']
 
-        # Handle credentials
+        # Credentials
         if 'credentials[]' in request.FILES:
             for file in request.FILES.getlist('credentials[]'):
-                Credential.objects.create(user=profile, file=file)
+                Credential.objects.create(user=profile_user, file=file)
 
-        profile.save()
+        profile_user.save()
         return JsonResponse({"success": True, "message": "Profile updated successfully."})
 
-    return JsonResponse({"error": "Invalid request method."}, status=400)
+    # Display profile logic (profile functionality)
+    credentials = profile_user.credentials.all()
+
+    # Retrieve levels from the TextChoices class
+    levels = [{'value': value, 'display': display} for value, display in Level.choices]
+    levels_json = mark_safe(json.dumps(levels))
+
+    day_order = {
+        "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3,
+        "Friday": 4, "Saturday": 5, "Sunday": 6
+    }
+    availability = profile_user.availability
+    sorted_availability = sorted(
+        availability,
+        key=lambda slot: (day_order.get(slot['day'], 7), slot['start'])
+    )
+
+    missing_details = not all([
+        profile_user.nickname,
+        profile_user.profile_image,
+        profile_user.bio,
+        sorted_availability,
+        profile_user.availability,
+    ])
+
+    messages = Message.objects.filter(
+        (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
+    ).order_by('timestamp')
+
+    scroll_to = request.GET.get('scroll_to')
+    if scroll_to:
+        try:
+            message_to_mark = messages.get(id=scroll_to, receiver=request.user, read=False)
+            message_to_mark.read = True
+            message_to_mark.save()
+        except Message.DoesNotExist:
+            pass
+
+    countries_list = list(countries)
+    for credential in credentials:
+        credential.is_image = credential.file.url.lower().endswith(('.jpg', '.jpeg', '.png'))
+
+    display_name = profile_user.nickname or profile_user.first_name or "User"
+    possessive_name = f"{display_name}'s" if not display_name.endswith('s') else f"{display_name}'"
+
+    return render(request, 'tutorhub/profile.html', {
+        'profile': profile_user,
+        'is_own_profile': profile_user == request.user,
+        'credentials': credentials,
+        'days_of_week': list(day_order.keys()),
+        "levels_json": levels_json,
+        "subject_levels": profile_user.subject_levels.all(),
+        'countries': countries_list,
+        'messages': messages,
+        'scroll_to': scroll_to,
+        'missing_details': missing_details,
+        'possessive_name': possessive_name,
+        'sorted_availability': sorted_availability,
+    })
+
+
+@login_required
+def delete_credential(request, credential_id):
+    try:
+        credential = Credential.objects.get(id=credential_id, user=request.user)
+        credential.delete()
+        return JsonResponse({"success": True})
+    except Credential.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Credential not found."}, status=404)
 
 
 @login_required
@@ -328,16 +285,6 @@ def edit_message(request, message_id):
             return JsonResponse({"status": "success", "content": "deleted message", "deleted": True})
 
     return JsonResponse({"status": "error", "message": "Invalid request"})
-
-
-@login_required
-def delete_credential(request, credential_id):
-    try:
-        credential = Credential.objects.get(id=credential_id, user=request.user)
-        credential.delete()
-        return JsonResponse({"success": True})
-    except Credential.DoesNotExist:
-        return JsonResponse({"success": False, "error": "Credential not found."}, status=404)
 
 
 @login_required

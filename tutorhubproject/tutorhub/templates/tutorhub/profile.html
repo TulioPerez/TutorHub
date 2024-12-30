@@ -147,7 +147,7 @@
                         </div>
                     {% endfor %}
                 </div>
-                <form action="{% url 'profile' profile.id %}" method="post">
+                <form action="{% url 'profile' user_id=request.user.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <textarea name="content" rows="3" class="form-control mb-2" required></textarea>
                     <button type="submit" class="btn btn-primary">Send</button>
@@ -181,10 +181,10 @@
             <div class="right-column-section">
                 <h4>Subjects</h4>
                 <ul>
-                    {% for subject_grade in profile.tutor_subject_grades.all %}
-                        <li><strong>{{ subject_grade.subject }}:</strong> {{ subject_grade.grade_levels|join:", " }}</li>
+                    {% for subject_level in subject_levels %}
+                        <li><strong>{{ subject_level.subject }}</strong>: {{ subject_level.level }}</li>
                     {% empty %}
-                        <p>Add subjects and courses, along with corresponding levels that you're interested in teaching. These terms allow students to find you in searches.</p>
+                        <p>Add subjects and levels to appear in search results.</p>
                     {% endfor %}
                 </ul>
                 <!-- {% if is_own_profile %}

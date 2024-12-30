@@ -4,10 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 from timezone_field import TimeZoneField
-import os
-import json
-from django.conf import settings
-
+from django.contrib.postgres.fields import ArrayField
 
 # DOUBLE CHECK REQUIRED FIELDS FOR REGISTRATION
 #   DIVIDE BY REGISTRATION REQUIRED AND UPDATED PROFILE 
@@ -61,9 +58,6 @@ class User(AbstractUser):
     availability = models.JSONField(default=dict, blank=True, null=True)
     subject_levels = models.ManyToManyField('SubjectLevel', blank=True, related_name="users")
 
-    # USERNAME_FIELD = "email"
-    # REQUIRED_FIELDS = ["username"]
-
     # For index page name display
     def get_display_name(self):
         return self.nickname or self.first_name
@@ -102,40 +96,38 @@ class Review(models.Model):
 
 
 # Levels
-class Level(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    order = models.IntegerField(unique=True)
-
-    class Meta:
-        ordering = ['order']
-
-    def __str__(self):
-        return self.name
-
-    @classmethod
-    def load_levels(cls):
-        file_path = os.path.join(settings.BASE_DIR, 'tutorhub', 'static', 'tutorhub', 'levels.json')
-        with open(file_path, 'r') as file:
-            levels_data = json.load(file)
-        
-        for level in levels_data:
-            cls.objects.get_or_create(
-                name=level['name'],
-                defaults={'order': level['order']}
-            )
+class Level(models.TextChoices):
+    EARLY_CHILDHOOD = "Early Childhood", "Early Childhood"
+    PRESCHOOL = "Preschool", "Preschool"
+    PRE_KINDERGARTEN = "Pre-Kindergarten", "Pre-Kindergarten"
+    KINDERGARTEN = "Kindergarten", "Kindergarten"
+    ELEMENTARY_1 = "Elementary 1", "Elementary 1"
+    ELEMENTARY_2 = "Elementary 2", "Elementary 2"
+    ELEMENTARY_3 = "Elementary 3", "Elementary 3"
+    ELEMENTARY_4 = "Elementary 4", "Elementary 4"
+    ELEMENTARY_5 = "Elementary 5", "Elementary 5"
+    MIDDLE_SCHOOL_1 = "Middle School 1", "Middle School 1"
+    MIDDLE_SCHOOL_2 = "Middle School 2", "Middle School 2"
+    MIDDLE_SCHOOL_3 = "Middle School 3", "Middle School 3"
+    HIGH_SCHOOL_1 = "High School 1", "High School 1"
+    HIGH_SCHOOL_2 = "High School 2", "High School 2"
+    HIGH_SCHOOL_3 = "High School 3", "High School 3"
+    HIGH_SCHOOL_4 = "High School 4", "High School 4"
+    UNIVERSITY_1 = "University 1", "University 1"
+    UNIVERSITY_2 = "University 2", "University 2"
+    UNIVERSITY_3 = "University 3", "University 3"
+    UNIVERSITY_4 = "University 4", "University 4"
+    GRADUATE = "Graduate", "Graduate"
+    ADULT_EDUCATION = "Adult Education", "Adult Education"
 
 
 class SubjectLevel(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor_subject_levels")
     subject = models.CharField(max_length=100)
-    levels = models.ManyToManyField(Level)
-
-    class Meta:
-        unique_together = ('tutor', 'subject')
+    level = models.CharField(max_length=50, choices=Level.choices)
 
     def __str__(self):
-        levels_str = ", ".join(level.name for level in self.levels.all())
-        return f"{self.subject} ({levels_str})"
+        return f"{self.subject} ({self.level})"
 
 
 class Credential(models.Model):

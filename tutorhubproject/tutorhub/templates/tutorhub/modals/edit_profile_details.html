@@ -7,7 +7,7 @@
                 <h5 class="modal-title" id="editProfileDetailsModalLabel">Complete Your Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{% url 'edit_profile' %}" method="post" enctype="multipart/form-data">
+            <form action="{% url 'profile' user_id=profile.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-body">
                     <p class="text-muted">Complete your profile so that students can find you in search results.</p>
@@ -91,17 +91,21 @@
                             {% for subject_grade in subject_levels %}
                                 <div class="subject-row row mb-3">
                                     <div class="col-md-4">
-                                        <input type="text" name="subjects[]" class="form-control" value="{{ subject_grade.subject }}">
+                                        <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" required>
                                     </div>
                                     <div class="col-md-8">
                                         <div class="checkbox-group">
-                                            {% for level in levels %}
-                                                <label>
-                                                    <input type="checkbox" name="levels_{{ forloop.counter }}[]" value="{{ level.name }}" {% if level in subject_grade.levels.all %}checked{% endif %}>
-                                                    {{ level.name }}
+                                            {% for value, display in levels %}
+                                                <label class="form-check-label me-3">
+                                                    <input type="checkbox" name="levels_{{ forloop.counter0 }}[]" value="{{ value }}"
+                                                        {% if subject_grade.level == value %}checked{% endif %}>
+                                                    {{ display }}
                                                 </label>
                                             {% endfor %}
                                         </div>
+                                    </div>
+                                    <div class="col-md-12 text-end mt-2">
+                                        <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -134,4 +138,5 @@
             </form>
         </div>
     </div>
+    <script id="level-options" type="application/json">{{ levels_json }}</script>
 </div>

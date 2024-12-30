@@ -74,18 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // Toggle tutor-specific fields in the registration form
-    // const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
-    // const tutorFields = document.getElementById('tutor-fields');
-    // if (userTypeRadios && tutorFields) {
-    //     userTypeRadios.forEach(radio => {
-    //         radio.addEventListener('change', function () {
-    //             tutorFields.style.display = this.value === 'tutor' ? 'block' : 'none';
-    //         });
-    //     });
-    // }
-
-
     // Search button functionality
     const searchButton = document.querySelector('#search-form button[type="submit"]');
     if (searchButton && searchButton.dataset.alert) {
@@ -116,55 +104,50 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("No clickable rows found.");
     }
     
-
-    // Subject Handling
-    const maxSubjects = 10;
+    // ******************************************************
+    // ******************************************************
+    // ******************************************************
+    // Handle Subjects
     const subjectRowsContainer = document.getElementById("subject-rows-container");
     const addSubjectButton = document.getElementById("btn-add-subject");
-    let subjectCount = subjectRowsContainer ? document.querySelectorAll(".subject-row").length : 0;
 
-    if (addSubjectButton) {
-        addSubjectButton.addEventListener("click", function () {
-            console.log("Add Subject Button Clicked");
+    // Ensure `levels` data is available
+    const levels = JSON.parse(document.getElementById("level-options").textContent);
+
+    // Add a new subject row
+    addSubjectButton.addEventListener("click", function () {
+        const subjectIndex = subjectRowsContainer.children.length; // Get current row index
+        const newRow = document.createElement("div");
+        newRow.classList.add("subject-row", "row", "mb-3");
     
-            if (subjectCount >= maxSubjects) {
-                alert("You cannot add more than 10 subjects.");
-                return;
-            }
-    
-            const newRow = document.createElement("div");
-            newRow.classList.add("subject-row", "row", "mb-3");
-    
-            newRow.innerHTML = `
-                <div class="col-md-4">
-                    <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" required>
+        newRow.innerHTML = `
+            <div class="col-md-4">
+                <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" required>
+            </div>
+            <div class="col-md-8">
+                <div class="checkbox-group">
+                    ${levels.map(level => `
+                        <label class="form-check-label me-3">
+                            <input type="checkbox" name="levels_${subjectIndex}[]" value="${level.value}">
+                            ${level.display}
+                        </label>
+                    `).join("")}
                 </div>
-                <div class="col-md-8">
-                    <div class="checkbox-group">
-                        ${levels.map(level => `
-                            <label><input type="checkbox" name="levels_${subjectCount}[]" value="${level.name}"> ${level.name}</label>
-                        `).join('')}
-                    </div>
-                </div>
-                </div>
-                <div class="col-md-12 text-end mt-2">
-                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
-                </div>
-            `;
+            </div>
+            <div class="col-md-12 text-end mt-2">
+                <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+            </div>
+        `;
     
-            // Append the new row
-            subjectRowsContainer.appendChild(newRow);
+        subjectRowsContainer.appendChild(newRow);
     
-            // Add event listener to the "Remove" button
-            newRow.querySelector(".remove-row").addEventListener("click", function () {
-                newRow.remove();
-                subjectCount--;
-                console.log("Subject Removed");
-            });
-    
-            subjectCount++;
+        // Add "Remove" functionality
+        newRow.querySelector(".remove-row").addEventListener("click", function () {
+            newRow.remove();
         });
-    }
+    });
+
+    // ******************************************************
 
 
     // Credential Editing
@@ -282,7 +265,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // Modal functionality for profile editing
+    // ******************************************************
+    // ******************************************************
+    // ******************************************************
+    // EDIT PROFILE Modal
     const modalForms = document.querySelectorAll(".modal form");
     modalForms.forEach(form => {
         form.addEventListener("submit", async (event) => {
@@ -301,15 +287,15 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             // Handle subjects and levels
-            const subjectRows = form.querySelectorAll('.subject-row');
-            formData.delete('subjects[]');
-            subjectRows.forEach((row, index) => {
+            form.querySelectorAll('.subject-row').forEach((row, index) => {
                 const subject = row.querySelector('[name="subjects[]"]').value;
-                formData.append(`subjects[${index}]`, subject);
-                const levels = Array.from(row.querySelectorAll(`[name^="levels_"]`))
-                    .filter(checkbox => checkbox.checked)
-                    .map(checkbox => checkbox.value);
-                levels.forEach(level => formData.append(`levels[${index}][]`, level));
+                formData.append(`subjects[]`, subject);
+    
+                row.querySelectorAll(`[name="levels_${index}[]"]`).forEach(checkbox => {
+                    if (checkbox.checked) {
+                        formData.append(`levels_${index}[]`, checkbox.value);
+                    }
+                });
             });
 
             try {
@@ -337,7 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-
+// ******************************************************
 
     // Handle following
     const followButtons = document.querySelectorAll(".follow-btn");
