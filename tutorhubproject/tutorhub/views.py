@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.utils.timezone import now
+from django_countries import countries
 import json
 
 
@@ -178,6 +179,9 @@ def profile(request, user_id=None):
             message_to_mark.save()
         except Message.DoesNotExist:
             pass
+        
+    # Add countries to the context
+    countries_list = list(countries)
 
     # Handle credentials
     for credential in credentials:
@@ -203,6 +207,7 @@ def profile(request, user_id=None):
         'credentials': credentials,
         'levels': levels,
         'subject_levels': subject_levels,
+        'countries': countries_list,
         'is_own_profile': profile_user == request.user,
         'days_of_week': days_of_week,
         'messages': messages,

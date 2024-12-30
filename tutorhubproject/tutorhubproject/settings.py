@@ -71,6 +71,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "tutorhubproject.wsgi.application"
 
+COUNTRIES_OVERRIDE = {
+    'PS': 'Palestine',  # Override 'State of Palestine' with 'Palestine'
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

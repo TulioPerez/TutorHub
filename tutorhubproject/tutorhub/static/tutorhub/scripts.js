@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Toggle tutor-specific fields in the registration form
-    const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
+    // const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
     // const tutorFields = document.getElementById('tutor-fields');
     // if (userTypeRadios && tutorFields) {
     //     userTypeRadios.forEach(radio => {

@@ -33,8 +33,10 @@
                         <input type="text" class="form-control mt-2" name="postal_code" placeholder="Postal Code" value="{{ profile.address.postal_code }}">
                         <select class="form-select mt-2" name="country">
                             <option value="">Select Country</option>
-                            {% for country_code, country_name in countries %}
-                                <option value="{{ country_code }}" {% if country_code == profile.address.country %}selected{% endif %}>{{ country_name }}</option>
+                            {% for code, name in countries %}
+                                <option value="{{ code }}" {% if profile.address and profile.address.country == code %}selected{% endif %}>
+                                    {{ name }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>

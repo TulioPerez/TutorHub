@@ -20,6 +20,29 @@
             {% if is_own_profile and missing_details %}
             <div class="alert alert-info text-center">
                 Some profile details are missing. Completing all sections increases your profile's visibility in search results.
+                <ul class="text-danger">
+                    {% if not profile.nickname %}
+                        <li>Nickname</li>
+                    {% endif %}
+                    {% if not profile.bio %}
+                        <li>Bio</li>
+                    {% endif %}
+                    {% if not profile.credentials.exists %}
+                        <li>Credentials</li>
+                    {% endif %}
+                    {% if not profile.profile_image %}
+                        <li>Profile Image</li>
+                    {% endif %}
+                    {% if not profile.address or not profile.address.street_address or not profile.address.city or not profile.address.state_region or not profile.address.postal_code or not profile.address.country %}
+                        <li>Complete Address (Street Address, City, State, Postal Code, and Country)</li>
+                    {% endif %}
+                    {% if not profile.availability %}
+                        <li>Availability</li>
+                    {% endif %}
+                    {% if not profile.subject_levels.exists %}
+                        <li>Subjects and Levels</li>
+                    {% endif %}
+                </ul>
             </div>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
@@ -52,16 +75,15 @@
                         </button>
                     {% endif %}
                 </div>
-                <!-- Name -->
+                <!-- Name & Address -->
                 <div id="stack-vertical">
                     <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
-                    <div>{{ profile.city|default:"City not available" }}, {{ profile.state|default:"State not available" }}</div>
                     {% if profile.address %}
-                    <div>{{ profile.address.street_address }}</div>
-                    <div>{{ profile.address.city }}, {{ profile.address.state_region }} {{ profile.address.postal_code }}</div>
-                    <div>{{ profile.address.country.name }}</div>
+                        <div>{{ profile.address.street_address }}</div>
+                        <div>{{ profile.address.city }}, {{ profile.address.state_region }} {{ profile.address.postal_code }}</div>
+                        <div>{{ profile.address.country.name }}</div>
                     {% else %}
-                    <div>Address not available</div>
+                        <div>Address not available</div>
                     {% endif %}
                     <!-- Edit profile info -->
                     <!-- {% if is_own_profile %}
