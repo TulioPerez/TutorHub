@@ -163,12 +163,12 @@
             <div class="right-column-section">
                 <h4>Availability</h4>
                 <ul>
-                    {% for slot in profile.availability %}
-                    <li>
-                        <strong>{{ slot.day|title }}:</strong> {{ slot.start }} - {{ slot.end }}
-                    </li>
+                    {% for slot in sorted_availability %}
+                        <li>
+                            <strong>{{ slot.day|title }}:</strong> {{ slot.start }} - {{ slot.end }}
+                        </li>
                     {% empty %}
-                    <p>Add your availability so that potential students can know when you're open for business.</p>
+                        <p>Add your availability so that potential students can know when you're open for business.</p>
                     {% endfor %}
                 </ul>
                 <!-- {% if is_own_profile %}

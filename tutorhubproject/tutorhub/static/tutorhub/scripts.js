@@ -294,10 +294,10 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.delete('availability_days[]');
             formData.delete('availability_start[]');
             formData.delete('availability_end[]');
-            availabilityRows.forEach((row, index) => {
-                formData.append(`availability[${index}][day]`, row.querySelector('[name="availability_days[]"]').value);
-                formData.append(`availability[${index}][start]`, row.querySelector('[name="availability_start[]"]').value);
-                formData.append(`availability[${index}][end]`, row.querySelector('[name="availability_end[]"]').value);
+            availabilityRows.forEach(row => {
+                formData.append('availability_days[]', row.querySelector('[name="availability_days[]"]').value);
+                formData.append('availability_start[]', row.querySelector('[name="availability_start[]"]').value);
+                formData.append('availability_end[]', row.querySelector('[name="availability_end[]"]').value);
             });
 
             // Handle subjects and levels

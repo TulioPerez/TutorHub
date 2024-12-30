@@ -157,12 +157,25 @@ def profile(request, user_id=None):
     levels = Level.objects.all()
     subject_levels = profile_user.subject_levels.all()
 
+    # Days of the week for sorting
+    day_order = {
+        "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3,
+        "Friday": 4, "Saturday": 5, "Sunday": 6
+    }
+
+    # Sort availability data
+    availability = profile_user.availability
+    sorted_availability = sorted(
+        availability,
+        key=lambda slot: (day_order.get(slot['day'], 7), slot['start'])
+    )
+
     # Check if the profile has missing details
     missing_details = not all([
         profile_user.nickname,
         profile_user.bio,
         profile_user.profile_image,
-        profile_user.address,
+        sorted_availability,
         profile_user.availability,
         subject_levels.exists()
     ])
@@ -214,6 +227,7 @@ def profile(request, user_id=None):
         'scroll_to': scroll_to,
         'missing_details': missing_details,
         'possessive_name': possessive_name,
+        'sorted_availability': sorted_availability,
     })
 
 
@@ -237,14 +251,19 @@ def edit_profile(request):
         profile.address.save()
 
         # Handle availability
+        availability_days = request.POST.getlist('availability_days[]')
+        availability_start = request.POST.getlist('availability_start[]')
+        availability_end = request.POST.getlist('availability_end[]')
+
         availability = []
-        for i in range(len(request.POST.getlist('availability[0][day]'))):
+        for day, start, end in zip(availability_days, availability_start, availability_end):
             availability.append({
-                'day': request.POST.getlist(f'availability[{i}][day]')[0],
-                'start': request.POST.getlist(f'availability[{i}][start]')[0],
-                'end': request.POST.getlist(f'availability[{i}][end]')[0]
+                'day': day,
+                'start': start,
+                'end': end
             })
         profile.availability = availability
+        profile.save()
 
         # Handle subjects and levels
         profile.subject_levels.all().delete()
