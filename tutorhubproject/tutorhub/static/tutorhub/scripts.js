@@ -76,14 +76,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Toggle tutor-specific fields in the registration form
     const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
-    const tutorFields = document.getElementById('tutor-fields');
-    if (userTypeRadios && tutorFields) {
-        userTypeRadios.forEach(radio => {
-            radio.addEventListener('change', function () {
-                tutorFields.style.display = this.value === 'tutor' ? 'block' : 'none';
-            });
-        });
-    }
+    // const tutorFields = document.getElementById('tutor-fields');
+    // if (userTypeRadios && tutorFields) {
+    //     userTypeRadios.forEach(radio => {
+    //         radio.addEventListener('change', function () {
+    //             tutorFields.style.display = this.value === 'tutor' ? 'block' : 'none';
+    //         });
+    //     });
+    // }
 
 
     // Search button functionality
@@ -164,16 +164,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
             subjectCount++;
         });
-
-
-        // Remove Prepopulated Rows
-        document.querySelectorAll(".remove-row").forEach(button => {
-            button.addEventListener("click", function () {
-                this.closest(".subject-row").remove();
-                subjectCount--;
-            });
-        });
-
     }
 
 
@@ -298,18 +288,51 @@ document.addEventListener("DOMContentLoaded", () => {
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
             const formData = new FormData(form);
+
+            // Handle availability
+            const availabilityRows = form.querySelectorAll('.availability-row');
+            formData.delete('availability_days[]');
+            formData.delete('availability_start[]');
+            formData.delete('availability_end[]');
+            availabilityRows.forEach((row, index) => {
+                formData.append(`availability[${index}][day]`, row.querySelector('[name="availability_days[]"]').value);
+                formData.append(`availability[${index}][start]`, row.querySelector('[name="availability_start[]"]').value);
+                formData.append(`availability[${index}][end]`, row.querySelector('[name="availability_end[]"]').value);
+            });
+
+            // Handle subjects and levels
+            const subjectRows = form.querySelectorAll('.subject-row');
+            formData.delete('subjects[]');
+            subjectRows.forEach((row, index) => {
+                const subject = row.querySelector('[name="subjects[]"]').value;
+                formData.append(`subjects[${index}]`, subject);
+                const levels = Array.from(row.querySelectorAll(`[name^="levels_"]`))
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                levels.forEach(level => formData.append(`levels[${index}][]`, level));
+            });
+
             try {
                 const response = await fetch(form.action, {
                     method: "POST",
                     body: formData,
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                    },
                 });
                 if (response.ok) {
-                    alert("Changes saved successfully!");
-                    window.location.reload();
+                    const data = await response.json();
+                    if (data.success) {
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        alert(data.error || "An error occurred. Please try again.");
+                    }
                 } else {
                     alert("An error occurred. Please try again.");
                 }
             } catch (error) {
+                console.error('Error:', error);
                 alert("Failed to save changes. Check your connection.");
             }
         });
@@ -342,6 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    
     // Helper function for CSRF tokens
     function getCSRFToken() {
         const cookieValue = document.cookie

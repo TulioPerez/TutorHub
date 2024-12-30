@@ -2,12 +2,32 @@
 {% load static %}
 {% block body %}
 
+{% include 'tutorhub/modals/edit_profile_details.html' %}
+
+
 <div class="container mt-5">
     <div class="row">
         <!-- User info section -->
         <div class="col-md-8">
             <!-- Profile header -->
-            <h2>{{ possessive_name }} Profile</h2>
+            <h2 style="display: inline-block; margin: 0;">{{ possessive_name }} Profile</h2>
+            {% if is_own_profile %}
+                <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editProfileDetailsModal" style="display: inline-block;">
+                    Edit Profile
+                </button>
+            {% endif %}
+            
+            {% if is_own_profile and missing_details %}
+            <div class="alert alert-info text-center">
+                Some profile details are missing. Completing all sections increases your profile's visibility in search results.
+            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var modal = new bootstrap.Modal(document.getElementById('editProfileDetailsModal'), {});
+                    modal.show();
+                });
+            </script>
+            {% endif %}
 
             <div class="profile-header">
                 <!-- Profile picture -->
@@ -18,9 +38,9 @@
                         <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
                     {% endif %}
                     <!-- Edit profile picture -->
-                    {% if is_own_profile %}
+                    <!-- {% if is_own_profile %}
                         <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editPictureModal">Edit Picture</button>
-                    {% endif %}
+                    {% endif %} -->
                     <!-- Follow button -->
                     {% if user.is_authenticated %}
                         <button class="btn btn-primary follow-btn" data-tutor-id="{{ profile.id }}">
@@ -36,10 +56,17 @@
                 <div id="stack-vertical">
                     <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
                     <div>{{ profile.city|default:"City not available" }}, {{ profile.state|default:"State not available" }}</div>
-                    <!-- Edit profile info -->
-                    {% if is_own_profile %}
-                       <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editInfoModal">Edit Info</button>
+                    {% if profile.address %}
+                    <div>{{ profile.address.street_address }}</div>
+                    <div>{{ profile.address.city }}, {{ profile.address.state_region }} {{ profile.address.postal_code }}</div>
+                    <div>{{ profile.address.country.name }}</div>
+                    {% else %}
+                    <div>Address not available</div>
                     {% endif %}
+                    <!-- Edit profile info -->
+                    <!-- {% if is_own_profile %}
+                       <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editInfoModal">Edit Info</button>
+                    {% endif %} -->
                 </div>
             </div>
 
@@ -64,9 +91,9 @@
                     {% endfor %}
                 </div>
                 <!-- Edit credentials -->
-                {% if is_own_profile %}
+                <!-- {% if is_own_profile %}
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_credentials_modal">Edit Credentials</button>
-                {% endif %}
+                {% endif %} -->
             </div>
             {% endif %}
 
@@ -75,9 +102,9 @@
                 <h4>Bio</h4>
                 <p>{{ profile.bio|default:"Tell students about yourself. Share what you like about teaching along with some interesting facts about yourself to spark their interest!" }}</p>
                 <!-- Edit bio -->
-                {% if is_own_profile %}
+                <!-- {% if is_own_profile %}
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_bio_modal">Edit Bio</button>
-                {% endif %}
+                {% endif %} -->
             </div>
 
             <!-- Auto scrolling target for new messages -->
@@ -109,6 +136,7 @@
 
         <!-- Right Column (Availability and Subjects) -->
         <div class="col-md-4">
+
             <!-- Availability -->
             <div class="right-column-section">
                 <h4>Availability</h4>
@@ -121,9 +149,9 @@
                     <p>Add your availability so that potential students can know when you're open for business.</p>
                     {% endfor %}
                 </ul>
-                {% if is_own_profile %}
+                <!-- {% if is_own_profile %}
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_availability_modal">Edit Availability</button>
-                {% endif %}
+                {% endif %} -->
             </div>
 
             <!-- Subjects -->
@@ -137,21 +165,13 @@
                         <p>Add subjects and courses, along with corresponding levels that you're interested in teaching. These terms allow students to find you in searches.</p>
                     {% endfor %}
                 </ul>
-                {% if is_own_profile %}
+                <!-- {% if is_own_profile %}
                     <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#edit_subjects_modal">Edit Subjects</button>
-                {% endif %}
+                {% endif %} -->
             </div>
             {% endif %}
         </div>
     </div>
 </div>
-
-<!-- Modals for profile data editing -->
-{% include 'tutorhub/modals/edit_picture_modal.html' %}
-{% include 'tutorhub/modals/edit_info_modal.html' %}
-{% include 'tutorhub/modals/edit_bio_modal.html' %}
-{% include 'tutorhub/modals/edit_credentials_modal.html' %}
-{% include 'tutorhub/modals/edit_availability_modal.html' %}
-{% include 'tutorhub/modals/edit_subjects_modal.html' %}
 
 {% endblock %}

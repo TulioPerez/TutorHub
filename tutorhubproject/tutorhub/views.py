@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .models import Level, User, Message, SubjectLevel, Credential
+from .models import Level, User, Message, SubjectLevel, Credential, Address
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -156,6 +156,16 @@ def profile(request, user_id=None):
     levels = Level.objects.all()
     subject_levels = profile_user.subject_levels.all()
 
+    # Check if the profile has missing details
+    missing_details = not all([
+        profile_user.nickname,
+        profile_user.bio,
+        profile_user.profile_image,
+        profile_user.address,
+        profile_user.availability,
+        subject_levels.exists()
+    ])
+
     messages = Message.objects.filter(
         (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
     ).order_by('timestamp')
@@ -197,65 +207,62 @@ def profile(request, user_id=None):
         'days_of_week': days_of_week,
         'messages': messages,
         'scroll_to': scroll_to,
+        'missing_details': missing_details,
         'possessive_name': possessive_name,
     })
 
 
 @login_required
 def edit_profile(request):
-    profile = request.user
-    
     if request.method == "POST":
+        profile = request.user
+        
+        # Handle basic fields
+        profile.nickname = request.POST.get('nickname', '')
+        profile.bio = request.POST.get('bio', '')
 
-        # Subjects and grades editing
-        subjects = request.POST.getlist("subjects[]")
-        all_levels = [request.POST.getlist(f"levels_{i}[]") for i in range(len(subjects))]
+        # Handle address
+        if not profile.address:
+            profile.address = Address.objects.create()
+        profile.address.street_address = request.POST.get('street_address', '')
+        profile.address.city = request.POST.get('city', '')
+        profile.address.state_region = request.POST.get('state', '')
+        profile.address.postal_code = request.POST.get('postal_code', '')
+        profile.address.country = request.POST.get('country', '')
+        profile.address.save()
 
-        profile.subject_levels.clear()
-        for subject, levels in zip(subjects, all_levels):
+        # Handle availability
+        availability = []
+        for i in range(len(request.POST.getlist('availability[0][day]'))):
+            availability.append({
+                'day': request.POST.getlist(f'availability[{i}][day]')[0],
+                'start': request.POST.getlist(f'availability[{i}][start]')[0],
+                'end': request.POST.getlist(f'availability[{i}][end]')[0]
+            })
+        profile.availability = availability
+
+        # Handle subjects and levels
+        profile.subject_levels.all().delete()
+        subjects = request.POST.getlist('subjects[]')
+        for i, subject in enumerate(subjects):
+            levels = request.POST.getlist(f'levels[{i}][]')
             if subject and levels:
                 subject_level = SubjectLevel.objects.create(tutor=profile, subject=subject)
                 subject_level.levels.set(Level.objects.filter(name__in=levels))
 
-        # Availability editing
-        availability_days = request.POST.getlist("availability_days[]")
-        availability_start = request.POST.getlist("availability_start[]")
-        availability_end = request.POST.getlist("availability_end[]")
-        
-        if availability_days and availability_start and availability_end:
-            profile.availability = [
-                {"day": day, "start": start, "end": end}
-                for day, start, end in zip(availability_days, availability_start, availability_end)
-            ]
-
+        # Handle profile image
         if 'profile_image' in request.FILES:
-            profile_image = request.FILES.get('profile_image')
-            
-            if profile_image and profile_image.size > 5 * 1024 * 1024:
-                return render(request, "tutorhub/edit_profile.html", {
-                    "message": "Profile image exceeds the maximum size of 5MB."
-                })
-            
-        if 'nickname' in request.POST:
-            profile.nickname = request.POST.get('nickname', profile.nickname)
-        if 'first_name' in request.POST:
-            profile.first_name = request.POST.get('first_name', profile.first_name)
-        if 'last_name' in request.POST:
-            profile.last_name = request.POST.get('last_name', profile.last_name)
-        if 'bio' in request.POST:
-            profile.bio = request.POST.get('bio', profile.bio)
-        if 'city' in request.POST:
-            profile.city = request.POST.get('city', profile.city)
-        if 'state' in request.POST:
-            profile.state = request.POST.get('state', profile.state)
-        if 'credentials[]' in request.FILES:
-            for uploaded_file in request.FILES.getlist("credentials[]"):
-                Credential.objects.create(user=profile, file=uploaded_file)
+            profile.profile_image = request.FILES['profile_image']
 
-        # Save changes and redirect to profile page
+        # Handle credentials
+        if 'credentials[]' in request.FILES:
+            for file in request.FILES.getlist('credentials[]'):
+                Credential.objects.create(user=profile, file=file)
+
         profile.save()
-        return redirect("my_profile")
-    return HttpResponse(status=400)
+        return JsonResponse({"success": True, "message": "Profile updated successfully."})
+
+    return JsonResponse({"error": "Invalid request method."}, status=400)
 
 
 @login_required
