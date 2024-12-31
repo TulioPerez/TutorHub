@@ -56,7 +56,7 @@ class User(AbstractUser):
     # Tutors-specific registration fields
     is_tutor = models.BooleanField(default=False)
     availability = models.JSONField(default=dict, blank=True, null=True)
-    subject_levels = models.ManyToManyField('SubjectLevel', blank=True, related_name="users")
+    # subject_levels = models.ManyToManyField('SubjectLevel', blank=True, related_name="users")
 
     # For index page name display
     def get_display_name(self):

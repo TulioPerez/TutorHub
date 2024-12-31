@@ -152,11 +152,9 @@ def profile(request, user_id=None):
         profile_user.availability = availability
 
         # Clear existing subject levels
-        profile_user.subject_levels.all().delete()
+        SubjectLevel.objects.filter(tutor=profile_user).delete()
 
         subjects = request.POST.getlist("subjects[]")
-        levels = request.POST.getlist("levels[]")
-
         for index, subject in enumerate(subjects):
             if subject:
                 selected_levels = request.POST.getlist(f"levels_{index}[]")
@@ -226,7 +224,7 @@ def profile(request, user_id=None):
         'credentials': credentials,
         'days_of_week': list(day_order.keys()),
         "levels_json": levels_json,
-        "subject_levels": profile_user.subject_levels.all(),
+        "subject_levels": SubjectLevel.objects.filter(tutor=profile_user),
         'countries': countries_list,
         'messages': messages,
         'scroll_to': scroll_to,
