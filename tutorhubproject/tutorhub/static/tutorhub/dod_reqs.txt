@@ -80,3 +80,11 @@ Additional Features:
 
     Dark / light mode
     Custom themes - shareable
+
+
+******************************************
+*************PRE PRODUCTION:**************
+******************************************
+
++ SET DEBUG = FALSE IN SETTINGS.PY
+

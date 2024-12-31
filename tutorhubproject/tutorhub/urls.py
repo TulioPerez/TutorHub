@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
 
 
 urlpatterns = [
@@ -9,6 +10,8 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
+
+    path('favicon.ico', RedirectView.as_view(url='/static/tutorhub/images/mentor-logo-bull.svg', permanent=True)),
     
     # default route
     path("", views.index, name="index"),
