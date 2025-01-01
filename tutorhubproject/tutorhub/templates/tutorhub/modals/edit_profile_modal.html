@@ -1,11 +1,11 @@
 {% load static %}
 
-<div class="modal fade" id="editProfileDetailsModal" tabindex="-1" aria-labelledby="editProfileDetailsModalLabel"
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editProfileDetailsModalLabel">Complete Your Profile</h5>
+                <h5 class="modal-title" id="editProfileModalLabel">Complete Your Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{% url 'profile' user_id=profile.id %}" method="post" enctype="multipart/form-data">
