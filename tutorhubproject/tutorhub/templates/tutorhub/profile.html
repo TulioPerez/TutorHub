@@ -121,7 +121,12 @@
             <!-- Messages section -->
             {% if user.is_authenticated %}
             <div class="messages-container">
-                <h4>Conversation</h4>
+                <!-- set title -->
+                {% if is_own_profile %}
+                    <h4>Personal notes</h4>
+                {% else %}
+                    <h4>Conversation</h4>
+                {% endif %}
                 <div class="conversation-box">
                     {% for message in messages %}
                         <div id="message-{{ message.id }}" class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
@@ -131,13 +136,21 @@
                                 <span class="edited">(edited)</span>
                             {% endif %}
                         </div>
+                    <!-- set message if empty -->
+                    {% empty %}
+                        {% if is_own_profile %}
+                            <p>This is your personal space. Go ahead - leave note for yourself below.</p>
+                        {% else %}
+                            <p>There is no conversation yet between yourself and this user. Start a conversation below.</p>
+                        {% endif %}
                     {% endfor %}
                 </div>
                 <form action="{% url 'profile' user_id=request.user.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <textarea name="content" rows="3" class="form-control mb-2" required></textarea>
-                    <button type="submit" class="btn btn-primary">Send</button>
-                </form>
+                    <div class="submit-button-container d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>                </form>
             </div>
             {% endif %}
         </div>
