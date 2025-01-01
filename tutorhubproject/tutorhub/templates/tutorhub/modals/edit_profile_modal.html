@@ -64,7 +64,7 @@
                     <div class="mb-3">
                         <label class="form-label">Availability</label>
                         <div id="availability-rows-container">
-                            {% for slot in profile.availability %}
+                            {% for slot in sorted_availability %}
                             <div class="availability-row row mb-3">
                                 <div class="col-md-4">
                                     <select name="availability_days[]" class="form-select"> 
