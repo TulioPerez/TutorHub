@@ -149,6 +149,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ******************************************************
 
+    // Profile image handling
+    const profileImageSelection = document.getElementById("profile_image");
+    const profileImagePreview = document.querySelector("#profile_image + img");
+
+    if (profileImageSelection && profileImagePreview) {
+        profileImageSelection.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profileImagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
 
     // Credential Editing
     const maxCredentials = 7;
@@ -252,8 +269,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Event listener for "Add availability" button
-    addAvailabilityButton.addEventListener("click", () => {
-        availabilityContainer.appendChild(createAvailabilityRow());
+    addAvailabilityButton.addEventListener("click", () => { 
+        availabilityContainer.appendChild(createAvailabilityRow()); 
     });
 
 
