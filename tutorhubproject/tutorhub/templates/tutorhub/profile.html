@@ -112,7 +112,7 @@
             <!-- Bio section -->
             <div class="bio-container">
                 <h4>Bio</h4>
-                <p>{{ profile.bio|default:"Tell students about yourself. Share what you like about teaching along with some interesting facts about yourself to spark their interest!" }}</p>
+                <p>{{ profile.bio|linebreaks|default:"Tell students about yourself. Share what you like about teaching along with some interesting facts about yourself to spark their interest!" }}</p>
             </div>
 
             <!-- Auto scrolling target for new messages -->
