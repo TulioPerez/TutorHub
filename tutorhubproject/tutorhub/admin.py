@@ -7,17 +7,24 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'username', 'first_name', 'last_name', 'is_staff', 'is_tutor')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'is_tutor', 'role')
     fieldsets = UserAdmin.fieldsets + (
-        ('Additional Info', {'fields': ('nickname', 'role', 'phone_number', 'birthdate', 'bio', 'profile_image', 'is_tutor', 'show_address', 'show_phone_number')}),
+        ('Additional Info', {
+            'fields': ('nickname', 'role', 'phone_number', 'birthdate', 'bio', 'profile_image', 'is_tutor', 
+                       'show_address', 'show_phone_number')
+        }),
         ('Localization', {'fields': ('preferred_language', 'time_zone')}),
         ('Address', {'fields': ('address',)}),
-        ('Tutor Specific', {'fields': ('availability', 'subject_levels')}),
+        ('Tutor Specific', {'fields': ('availability',)}),  # Removed subject_levels
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Additional Info', {'fields': ('nickname', 'role', 'phone_number', 'birthdate', 'bio', 'profile_image', 'is_tutor', 'show_address', 'show_phone_number')}),
+        ('Additional Info', {
+            'fields': ('nickname', 'role', 'phone_number', 'birthdate', 'bio', 'profile_image', 'is_tutor', 
+                       'show_address', 'show_phone_number')
+        }),
         ('Localization', {'fields': ('preferred_language', 'time_zone')}),
         ('Address', {'fields': ('address',)}),
-        ('Tutor Specific', {'fields': ('availability', 'subject_levels')}),
+        ('Tutor Specific', {'fields': ('availability',)}),  # Removed subject_levels
     )
+
 
 # Address Admin
 class AddressAdmin(admin.ModelAdmin):
