@@ -1,77 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Authentication status
     const authStatus = JSON.parse(document.getElementById("auth-status").textContent);
+
     
-    
-    // Message auto scrolling
-    const scrollTarget = document.getElementById("scroll-target");
-    const scrollToId = scrollTarget ? scrollTarget.getAttribute("data-scroll-to") : null;
-    if (scrollToId) {
-        const targetElement = document.getElementById(`message-${scrollToId}`);
-        if (targetElement) {
-            targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+    // ****************************
+    // ***** Helper Functions *****
+    // ****************************
+
+    // Get CSRF token
+    function getCSRFToken() {
+        const cookieValue = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("csrftoken="))
+            ?.split("=")[1];
+        return cookieValue || "";
     }
-
-
-    // Message editing
-    document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const messageId = button.getAttribute('data-message-id');
-            const messageElement = button.parentElement.querySelector('p');
-            const originalContent = messageElement.textContent;
-
-            const textarea = document.createElement('textarea');
-            textarea.value = originalContent;
-            textarea.style.width = "100%";
-            textarea.style.marginBottom = "5px";
-            messageElement.replaceWith(textarea);
-
-            const saveButton = document.createElement('button');
-            saveButton.textContent = 'Save';
-            saveButton.classList.add("btn", "btn-success", "btn-sm");
-
-            const cancelButton = document.createElement("button");
-            cancelButton.textContent = "Cancel";
-            cancelButton.classList.add("btn", "btn-secondary", "btn-sm");
-            cancelButton.style.marginLeft = "5px";
-
-            button.after(saveButton, cancelButton);
-            button.style.display = "none";
-
-            saveButton.addEventListener("click", () => {
-                fetch(`/edit_message/${messageId}/`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
-                    },
-                    body: JSON.stringify({ action: "edit", content: textarea.value })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        const newMessageElement = document.createElement("p");
-                        newMessageElement.textContent = data.content;
-                        textarea.replaceWith(newMessageElement);
-                        saveButton.remove();
-                        cancelButton.remove();
-                        button.style.display = "inline-block";
-                    }
-                });
-            });
-
-            // Cancel edit
-            cancelButton.addEventListener("click", () => {
-                const originalMessage = document.createElement("p");
-                originalMessage.textContent = originalContent;
-                textarea.replaceWith(originalMessage);
-                saveButton.remove();
-                cancelButton.remove();
-                button.style.display = "inline-block";
-            });
-        });
-    });
 
 
     // Search button functionality
@@ -103,10 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.warn("No clickable rows found.");
     }
-    
-    // ******************************************************
-    // ******************************************************
-    // ******************************************************
+
+
+    // **************************************
+    // ***** Profile Component Handling *****
+    // **************************************
+
     // Handle Subjects
     const subjectRowsContainer = document.getElementById("subject-rows-container");
     const addSubjectButton = document.getElementById("btn-add-subject");
@@ -147,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // ******************************************************
 
     // Profile image handling
     const profileImageSelection = document.getElementById("profile_image");
@@ -167,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Credential Editing
+    // Credential handling
     const maxCredentials = 7;
     const credentialRowsContainer = document.getElementById("credential-rows-container");
     const addCredentialButton = document.getElementById("btn-add-credential");
@@ -282,10 +226,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // ******************************************************
-    // ******************************************************
-    // ******************************************************
-    // EDIT PROFILE Modal
+    // ******************************
+    // ***** Edit Profile Modal *****
+    // ******************************
+
     const modalForms = document.querySelectorAll(".modal form");
     modalForms.forEach(form => {
         form.addEventListener("submit", async (event) => {
@@ -340,7 +284,88 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-// ******************************************************
+    
+
+    // *********************
+    // ***** Messaging *****
+    // *********************
+
+
+    // Message editing
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const messageId = button.getAttribute('data-message-id');
+            const messageElement = button.parentElement.querySelector('p');
+            const originalContent = messageElement.textContent;
+
+            const textarea = document.createElement('textarea');
+            textarea.value = originalContent;
+            textarea.style.width = "100%";
+            textarea.style.marginBottom = "5px";
+            messageElement.replaceWith(textarea);
+
+            const saveButton = document.createElement('button');
+            saveButton.textContent = 'Save';
+            saveButton.classList.add("btn", "btn-success", "btn-sm");
+
+            const cancelButton = document.createElement("button");
+            cancelButton.textContent = "Cancel";
+            cancelButton.classList.add("btn", "btn-secondary", "btn-sm");
+            cancelButton.style.marginLeft = "5px";
+
+            button.after(saveButton, cancelButton);
+            button.style.display = "none";
+
+            saveButton.addEventListener("click", () => {
+                fetch(`/edit_message/${messageId}/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                    },
+                    body: JSON.stringify({ action: "edit", content: textarea.value })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        const newMessageElement = document.createElement("p");
+                        newMessageElement.textContent = data.content;
+                        textarea.replaceWith(newMessageElement);
+                        saveButton.remove();
+                        cancelButton.remove();
+                        button.style.display = "inline-block";
+                    }
+                });
+            });
+
+            // Cancel message edit
+            cancelButton.addEventListener("click", () => {
+                const originalMessage = document.createElement("p");
+                originalMessage.textContent = originalContent;
+                textarea.replaceWith(originalMessage);
+                saveButton.remove();
+                cancelButton.remove();
+                button.style.display = "inline-block";
+            });
+        });
+    });
+        
+        
+    // Message auto scrolling
+    const scrollTarget = document.getElementById("scroll-target");
+    const scrollToId = scrollTarget ? scrollTarget.getAttribute("data-scroll-to") : null;
+    if (scrollToId) {
+        const targetElement = document.getElementById(`message-${scrollToId}`);
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+
+    // *********************
+    // ***** Following *****
+    // *********************
+
 
     // Handle following
     const followButtons = document.querySelectorAll(".follow-btn");
@@ -368,15 +393,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    
-    // Helper function for CSRF tokens
-    function getCSRFToken() {
-        const cookieValue = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("csrftoken="))
-            ?.split("=")[1];
-        return cookieValue || "";
-    }
+
+    // ******************************
+    // ***** Langiage Selection *****
+    // ******************************
 
 
     // Language selection handling

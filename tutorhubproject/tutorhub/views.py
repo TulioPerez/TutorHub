@@ -14,6 +14,11 @@ from django.utils.safestring import mark_safe
 import json
 
 
+# ***************************
+# ***** Templates Views *****
+# ***************************
+
+
 def index(request):
     query = request.GET.get('q', '').strip()
     view_type = request.GET.get('view', 'all')
@@ -49,11 +54,6 @@ def index(request):
         'page_title': page_title,
         'view_type': view_type,
     })
-
-
-def paginate_queryset(queryset, page_number, per_page=10):
-    paginator = Paginator(queryset, per_page)
-    return paginator.get_page(page_number)
 
 
 # Authentication
@@ -121,11 +121,25 @@ def register(request):
 def profile(request, user_id=None):
     profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
 
+# todo
+    # Add AJAX for form submission - no need for full profile page refreshing
+    # Need case logic for
+    #   POST messages if 
+    #       is own profile 
+    #       if not
+    #   Is tutor
+    #   Is student
+
+    # Handle profile updating
     if request.method == "POST" and profile_user == request.user:
 
-        # Update profile logic (edit_profile functionality)
+        # Nickname & Bio (first, last cannot be changed)
         profile_user.nickname = request.POST.get('nickname', '')
         profile_user.bio = request.POST.get('bio', '')
+
+        # Profile image
+        if 'profile_image' in request.FILES:
+            profile_user.profile_image = request.FILES['profile_image']
 
         # Address
         if not profile_user.address:
@@ -151,19 +165,15 @@ def profile(request, user_id=None):
             })
         profile_user.availability = availability
 
+        # todo if is tutor
         # Clear existing subject levels
         SubjectLevel.objects.filter(tutor=profile_user).delete()
-
         subjects = request.POST.getlist("subjects[]")
         for index, subject in enumerate(subjects):
             if subject:
                 selected_levels = request.POST.getlist(f"levels_{index}[]")
                 for level in selected_levels:
                     SubjectLevel.objects.create(tutor=profile_user, subject=subject, level=level)
-
-        # Profile image
-        if 'profile_image' in request.FILES:
-            profile_user.profile_image = request.FILES['profile_image']
 
         # Credentials
         if 'credentials[]' in request.FILES:
@@ -234,6 +244,11 @@ def profile(request, user_id=None):
     })
 
 
+# *****************************
+# ***** Template Handling *****
+# *****************************
+
+
 @login_required
 def delete_credential(request, credential_id):
     try:
@@ -285,6 +300,11 @@ def edit_message(request, message_id):
     return JsonResponse({"status": "error", "message": "Invalid request"})
 
 
+# ****************************
+# ***** Helper Functions *****
+# ****************************
+
+
 @login_required
 def search_tutors(request):
     query = request.GET.get('q', '')
@@ -321,6 +341,12 @@ def get_possessive_name(name):
     if not name:
         return "User's"
     return f"{name}'s" if not name.endswith('s') else f"{name}'"
+
+
+def paginate_queryset(queryset, page_number, per_page=10):
+    paginator = Paginator(queryset, per_page)
+    return paginator.get_page(page_number)
+
 
 # @login_required
 # def create_thread(request):
