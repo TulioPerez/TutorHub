@@ -214,20 +214,6 @@ textarea {
     background-color: #f0f0f0;
 }
 
-#stack-vertical {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px; 
-}
-
-/* Profile Header */
-.profile-header {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
-
 /* Credentials Section */
 .credentials-container, .edit-profile-modal-section {
     margin-top: 20px;
@@ -262,12 +248,26 @@ textarea {
 }
 
 /* Bio Section */
-.bio-container {
-    margin-top: 20px;
+.left-column-container {
+    margin-bottom: 20px;
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #f9f9f9;
+}
+
+#stack-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; 
+}
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
 }
 
 /* Messaging */

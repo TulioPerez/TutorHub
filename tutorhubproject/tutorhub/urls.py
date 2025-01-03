@@ -22,6 +22,7 @@ urlpatterns = [
     # View a user's profile
     path('profile/<int:user_id>/', views.profile, name='profile'),
     path('my-profile/', views.profile, name='my_profile'),
+    path('remove_profile_image/', views.remove_profile_image, name='remove_profile_image'),
     path('delete_credential/<int:credential_id>/', views.delete_credential, name='delete_credential'),
 
     # Messaging

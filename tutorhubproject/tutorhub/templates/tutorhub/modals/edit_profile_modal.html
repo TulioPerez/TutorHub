@@ -13,6 +13,24 @@
                 <div class="modal-body">
                     <p class="text-muted">Complete your profile so that students can find you in search results.</p>
 
+                    <!-- Profile Image -->
+                    <div class="edit-profile-modal-section">
+                        <label for="profile_image" class="form-label me-2">Profile Image</label>
+                        <div class="mb-3 d-flex align-items-center">
+                            <div class="d-flex flex-grow-1 align-items-center">
+                                <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
+                                {% if profile.profile_image %}
+                                <button type="button" class="btn btn-danger btn-sm ms-2 remove-profile-image">X</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mt-3 text-center">
+                            {% if profile.profile_image %}
+                            <img src="{{ profile.profile_image.url }}" alt="Profile Image" id="profile-img" class="img-thumbnail" style="max-width: 150px;">
+                            {% endif %}
+                        </div>
+                    </div>
+
                     <!-- Nickname -->
                     <div class="edit-profile-modal-section">
                         <div class="mb-3">
@@ -54,24 +72,6 @@
                         <div class="mb-3">
                             <label for="bio" class="form-label">Bio</label>
                             <textarea class="form-control" id="bio" name="bio" rows="4">{{ profile.bio }}</textarea>
-                        </div>
-                    </div>
-
-                    <!-- Profile Image -->
-                     <div class="edit-profile-modal-section">
-                        <label for="profile_image" class="form-label me-2">Profile Image</label>
-                        <div class="mb-3 d-flex align-items-center">
-                            <div class="d-flex flex-grow-1 align-items-center">
-                                <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
-                                {% if profile.profile_image %}
-                                <button type="button" class="btn btn-danger btn-sm ms-2 remove-profile-image">X</button>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="mt-3 text-center">
-                            {% if profile.profile_image %}
-                            <img src="{{ profile.profile_image.url }}" alt="Profile Image" id="profile-img" class="img-thumbnail" style="max-width: 150px;">
-                            {% endif %}
                         </div>
                     </div>
 

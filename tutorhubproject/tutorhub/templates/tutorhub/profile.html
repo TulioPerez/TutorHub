@@ -8,85 +8,91 @@
     <div class="row">
         <!-- User info section -->
         <div class="col-md-8">
-            <!-- Profile header -->
-            <h2 style="display: inline-block; margin: 0;">{{ possessive_name }} Profile</h2>
-            {% if is_own_profile %}
-                <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editProfileModal" style="display: inline-block;">
-                    Edit Profile
-                </button>
-            {% endif %}
             
-            {% if is_own_profile and missing_details %}
-            <div class="alert alert-info text-center">
-                Some profile details are missing. Completing all sections increases your profile's visibility in search results.
-                <ul class="text-danger">
-                    {% if not profile.nickname %}
-                        <li>Nickname</li>
-                    {% endif %}
-                    {% if not profile.bio %}
-                        <li>Bio</li>
-                    {% endif %}
-                    {% if not profile.credentials.exists %}
-                        <li>Credentials</li>
-                    {% endif %}
-                    {% if not profile.profile_image %}
-                        <li>Profile Image</li>
-                    {% endif %}
-                    {% if not profile.address or not profile.address.street_address or not profile.address.city or not profile.address.state_region or not profile.address.postal_code or not profile.address.country %}
-                        <li>Complete Address (Street Address, City, State, Postal Code, and Country)</li>
-                    {% endif %}
-                    {% if not profile.availability %}
-                        <li>Availability</li>
-                    {% endif %}
-                    {% if not profile.subject_levels.exists %}
-                        <li>Subjects and Levels</li>
-                    {% endif %}
-                </ul>
-            </div>
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    var modal = new bootstrap.Modal(document.getElementById('editProfileModal'), {});
-                    modal.show();
-                });
-            </script>
-            {% endif %}
-
-            <div class="profile-header">
-                <!-- Profile picture -->
-                <div id="stack-vertical">
-                    {% if profile.profile_image %}
-                        <img id="profile-img" src="{{ profile.profile_image.url }}" alt="{{ profile.nickname }}">
-                    {% else %}
-                        <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
-                    {% endif %}
-
-                    <!-- Follow button -->
-                    {% if user.is_authenticated %}
-                        <button class="btn btn-primary follow-btn" data-tutor-id="{{ profile.id }}">
-                            {% if profile in user.followed_tutors.all %}
-                                Unfollow
-                            {% else %}
-                                Follow
-                            {% endif %}
-                        </button>
-                    {% endif %}
+            <!-- Profile header -->
+            <div class="left-column-container">
+                <h2 style="display: inline-block; margin: 0;">{{ possessive_name }} Profile</h2>
+                {% if is_own_profile %}
+                    <button class="btn btn-sm btn-link" data-bs-toggle="modal" data-bs-target="#editProfileModal" style="display: inline-block;">
+                        Edit Profile
+                    </button>
+                {% endif %}
+            
+                {% if is_own_profile and missing_details %}
+                <div class="alert alert-info text-center">
+                    Some profile details are missing. Completing all sections increases your profile's visibility in search results.
+                    <ul class="text-danger">
+                        {% if not profile.nickname %}
+                            <li>Nickname</li>
+                        {% endif %}
+                        {% if not profile.bio %}
+                            <li>Bio</li>
+                        {% endif %}
+                        {% if not profile.credentials.exists %}
+                            <li>Credentials</li>
+                        {% endif %}
+                        {% if not profile.profile_image %}
+                            <li>Profile Image</li>
+                        {% endif %}
+                        {% if not profile.address or not profile.address.street_address or not profile.address.city or not profile.address.state_region or not profile.address.postal_code or not profile.address.country %}
+                            <li>Complete Address (Street Address, City, State, Postal Code, and Country)</li>
+                        {% endif %}
+                        {% if not profile.availability %}
+                            <li>Availability</li>
+                        {% endif %}
+                        {% if not profile.subject_levels.exists %}
+                            <li>Subjects and Levels</li>
+                        {% endif %}
+                    </ul>
                 </div>
-                
-                <!-- Name & Address -->
-                <div id="stack-vertical">
-                    <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
-                    {% if profile.address %}
-                        <div>{{ profile.address.street_address }}</div>
-                        <div>{{ profile.address.city }}, {{ profile.address.state_region }} {{ profile.address.postal_code }}</div>
-                        <div>{{ profile.address.country.name }}</div>
-                    {% else %}
-                        <div>Address not available</div>
-                    {% endif %}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        var modal = new bootstrap.Modal(document.getElementById('editProfileModal'), {});
+                        modal.show();
+                    });
+                </script>
+                {% endif %}
+                <div class="profile-header">
+                    <!-- Profile picture -->
+                    <div id="stack-vertical">
+                        {% if profile.profile_image %}
+                            <img id="profile-img" src="{{ profile.profile_image.url }}" alt="{{ profile.nickname }}">
+                        {% else %}
+                            <img id="profile-img" src="{% static 'tutorhub/images/mentor-logo-bull.svg' %}" alt="Default Logo">
+                        {% endif %}
+
+                        <!-- Follow button -->
+                        {% if user.is_authenticated and profile.id != user.id %}
+                            <button class="btn btn-primary follow-btn" data-tutor-id="{{ profile.id }}">
+                                {% if profile in user.followed_tutors.all %}
+                                    Unfollow
+                                {% else %}
+                                    Follow
+                                {% endif %}
+                            </button>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Name & Address -->
+                    <div id="stack-vertical">
+                        <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
+                        {% if profile.address %}
+                            <div>{{ profile.address.street_address }}</div>
+                            <div>{{ profile.address.city }}, {{ profile.address.state_region }} {{ profile.address.postal_code }}</div>
+                            <div>{{ profile.address.country.name }}</div>
+                        {% else %}
+                            <div>Address not available</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+
+
+
+            
 
             <!-- Bio section -->
-            <div class="bio-container">
+            <div class="left-column-container">
                 <h4>Bio</h4>
                 <p>{{ profile.bio|linebreaks|default:"Tell students about yourself. Share what you like about teaching along with some interesting facts about yourself to spark their interest!" }}</p>
             </div>

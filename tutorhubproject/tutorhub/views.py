@@ -250,6 +250,20 @@ def profile(request, user_id=None):
 
 
 @login_required
+def remove_profile_image(request):
+    if request.method == "POST":
+        user = request.user
+        if user.profile_image:
+            # Delete the image file
+            user.profile_image.delete()
+            user.profile_image = None
+            user.save()
+            return JsonResponse({"success": True, "message": "Profile image removed successfully."})
+        return JsonResponse({"success": False, "error": "No profile image to remove."}, status=400)
+    return JsonResponse({"success": False, "error": "Invalid request method."}, status=405)
+
+
+@login_required
 def delete_credential(request, credential_id):
     try:
         credential = Credential.objects.get(id=credential_id, user=request.user)

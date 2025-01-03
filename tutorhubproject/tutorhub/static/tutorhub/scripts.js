@@ -123,21 +123,32 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!confirmRemoval) return;
 
             try {
-                const response = await fetch("/remove-profile-image/", {
+                const response = await fetch("/remove_profile_image/", {
                     method: "POST",
                     headers: {
                         "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
                     },
                 });
-
+    
+                // todo fix bugs: image persists in modal and profile after deletion until page refresh
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
                         alert("Profile image removed successfully.");
-                        profileImagePreview.style.display = "none"; // Hide the preview
-                        removeImageButton.style.display = "none"; // Hide the remove button
-                        profileImageSelection.value = ""; // Reset file input
+    
+                        // Dynamically update the modal to remove the image
+                        if (profileImagePreview) {
+                            profileImagePreview.src = ""; // Clear the image source
+                            profileImagePreview.style.display = "none"; // Hide the preview
+                        }
+                        if (removeImageButton) {
+                            removeImageButton.style.display = "none"; // Hide the remove button
+                        }
+                        if (profileImageSelection) {
+                            profileImageSelection.value = ""; // Reset file input
+                        }
                     } else {
+                        // If success = false, show the error from the response
                         alert(data.error || "Failed to remove profile image.");
                     }
                 } else {
