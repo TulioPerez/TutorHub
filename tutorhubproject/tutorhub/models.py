@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 from timezone_field import TimeZoneField
-from django.contrib.postgres.fields import ArrayField
 
 # DOUBLE CHECK REQUIRED FIELDS FOR REGISTRATION
 #   DIVIDE BY REGISTRATION REQUIRED AND UPDATED PROFILE 

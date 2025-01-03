@@ -4,7 +4,6 @@
 
 {% include 'tutorhub/modals/edit_profile_modal.html' %}
 
-
 <div class="container mt-5">
     <div class="row">
         <!-- User info section -->
@@ -86,29 +85,6 @@
                 </div>
             </div>
 
-            <!-- Credentials Section -->
-            {% if profile.is_tutor %}
-            <div class="credentials-container">
-                <h4>Credentials</h4>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    {% for credential in credentials %}
-                        <a href="{{ credential.file.url }}" target="_blank">
-                            <div class="credential-box">
-                                {% if credential.is_image %}
-                                    <img src="{{ credential.file.url }}" alt="Credential Image">
-                                {% else %}
-                                    <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Credential Icon">
-                                {% endif %}
-                                <div>View</div>
-                            </div>
-                        </a>
-                    {% empty %}
-                        <p>Add credentials, such as certificates, diplomas or a resume.</p>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-
             <!-- Bio section -->
             <div class="bio-container">
                 <h4>Bio</h4>
@@ -183,6 +159,29 @@
                         <p>Add subjects and levels to appear in search results.</p>
                     {% endfor %}
                 </ul>
+            </div>
+            {% endif %}
+
+            <!-- Credentials Section -->
+            {% if profile.is_tutor %}
+            <div class="credentials-container">
+                <h4>Credentials</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    {% for credential in credentials %}
+                        <a href="{{ credential.file.url }}" target="_blank">
+                            <div class="credential-box">
+                                {% if credential.is_image %}
+                                    <img src="{{ credential.file.url }}" alt="Credential Image">
+                                {% else %}
+                                    <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Credential Icon">
+                                {% endif %}
+                                <div>View</div>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <p>Add credentials, such as certificates, diplomas or a resume.</p>
+                    {% endfor %}
+                </div>
             </div>
             {% endif %}
         </div>
