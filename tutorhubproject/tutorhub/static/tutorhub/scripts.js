@@ -96,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Profile image handling
     const profileImageSelection = document.getElementById("profile_image");
     const profileImagePreview = document.querySelector("#profile_image + img");
+    const removeImageButton = document.querySelector(".remove-profile-image");
 
     if (profileImageSelection && profileImagePreview) {
         profileImageSelection.addEventListener("change", (event) => {
@@ -104,8 +105,47 @@ document.addEventListener("DOMContentLoaded", () => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     profileImagePreview.src = e.target.result;
+                    profileImagePreview.style.display = "block"; // Ensure the preview is visible
+                    if (removeImageButton) {
+                        removeImageButton.style.display = "inline-block"; // Show remove button if hidden
+                    }
                 };
                 reader.readAsDataURL(file);
+            }
+        });
+    }
+
+
+    // Remove profile image functionality
+    if (removeImageButton) {
+        removeImageButton.addEventListener("click", async () => {
+            const confirmRemoval = confirm("Are you sure you want to remove the profile image?");
+            if (!confirmRemoval) return;
+
+            try {
+                const response = await fetch("/remove-profile-image/", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        alert("Profile image removed successfully.");
+                        profileImagePreview.style.display = "none"; // Hide the preview
+                        removeImageButton.style.display = "none"; // Hide the remove button
+                        profileImageSelection.value = ""; // Reset file input
+                    } else {
+                        alert(data.error || "Failed to remove profile image.");
+                    }
+                } else {
+                    alert("An error occurred while removing the profile image. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Failed to remove the profile image. Check your internet connection.");
             }
         });
     }

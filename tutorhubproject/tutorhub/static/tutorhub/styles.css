@@ -229,12 +229,17 @@ textarea {
 }
 
 /* Credentials Section */
-.credentials-container {
+.credentials-container, .edit-profile-modal-section {
     margin-top: 20px;
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #f9f9f9;
+}
+
+.edit-profile-modal-section {
+    margin: 20px 0;
+    background-color: #ffffff;
 }
 
 .credential-box {
