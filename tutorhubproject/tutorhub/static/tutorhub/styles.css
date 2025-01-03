@@ -9,6 +9,34 @@ html, body {
     flex-direction: column;
 }
 
+#main-content {
+    background-color: white;
+    /* background-color: rgb(93, 88, 97); */
+    margin: 0 30px;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 20px 50px 20px;
+}
+
+/* navbar */
+.navbar {
+    background-color: #522A5E;
+    padding: 10 30px 10px 30px;
+}
+
+/* logo */
+.navbar-brand {
+    font-size: xx-large
+}
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+    max-height: 50px;
+}
+
 /* Auth form styling */
 #auth-form {
     border-radius: 15px;
@@ -155,34 +183,6 @@ html, body {
     text-align: center;
     min-width: 120px; 
     margin-bottom: 15px;
-}
-
-#main-content {
-    background-color: white;
-    /* background-color: rgb(93, 88, 97); */
-    margin: 0 30px;
-    width: auto;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: 20px;
-}
-
-/* navbar */
-.navbar {
-    background-color: #522A5E;
-    padding: 10 30px 10px 30px;
-}
-
-/* logo */
-.navbar-brand {
-    font-size: xx-large
-}
-
-.navbar-logo {
-    height: 40px;
-    width: auto;
-    max-height: 50px;
 }
 
 ul {
@@ -374,5 +374,4 @@ textarea {
 
 .footer-links li:first-child {
     font-weight: bold;
-    /* margin-bottom: 5px; */
 }

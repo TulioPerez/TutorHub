@@ -5,7 +5,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editProfileModalLabel">Complete Your Profile</h5>
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Your Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{% url 'profile' user_id=profile.id %}" method="post" enctype="multipart/form-data">
@@ -156,8 +156,7 @@
                                 </div>
                                 {% endfor %}
                             </div>
-                            <button type="button" class="btn btn-sm btn-secondary" id="btn-add-credential">Add
-                                Credential</button>
+                            <button type="button" class="btn btn-sm btn-secondary" id="btn-add-credential">Add Credential</button>
                         </div>
                     </div>
                 </div>
