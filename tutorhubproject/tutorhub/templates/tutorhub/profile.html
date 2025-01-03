@@ -121,7 +121,11 @@
                     <!-- set message if empty -->
                     {% empty %}
                         {% if is_own_profile %}
-                            <p>This is your personal space. Go ahead - leave note for yourself below.</p>
+                            {% if messages|length == 0%}
+                                <p>This is your personal space. Go ahead - leave yourself a note below.</p>
+                            {% else %}
+                                <p>Personal space</p>
+                            {% endif %}
                         {% else %}
                             <p>There is no conversation yet between yourself and this user. Start a conversation below.</p>
                         {% endif %}
