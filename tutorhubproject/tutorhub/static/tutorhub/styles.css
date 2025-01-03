@@ -214,6 +214,11 @@ textarea {
     background-color: #f0f0f0;
 }
 
+.edit-profile-modal-section {
+    margin: 20px 0;
+    background-color: #ffffff;
+}
+
 /* Credentials Section */
 .credentials-container, .edit-profile-modal-section {
     margin-top: 20px;
@@ -223,16 +228,10 @@ textarea {
     background-color: #f9f9f9;
 }
 
-.edit-profile-modal-section {
-    margin: 20px 0;
-    background-color: #ffffff;
-}
-
-.credential-box {
+.credential-item-container {
     border: 1px solid #ddd;
-    padding: 10px;
+    background-color: #ffffff;
     text-align: center;
-    border-radius: 5px;
     width: 100px;
     height: 100px;
     display: flex;
@@ -241,7 +240,7 @@ textarea {
     align-items: center;
 }
 
-.credential-box img {
+.credential-item-container img {
     max-width: 75px;
     max-height: 75px;
     object-fit: fill;

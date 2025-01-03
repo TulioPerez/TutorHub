@@ -175,13 +175,12 @@
                 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                     {% for credential in credentials %}
                         <a href="{{ credential.file.url }}" target="_blank">
-                            <div class="credential-box">
+                            <div class="credential-item-container">
                                 {% if credential.is_image %}
                                     <img src="{{ credential.file.url }}" alt="Credential Image">
                                 {% else %}
                                     <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Credential Icon">
                                 {% endif %}
-                                <div>View</div>
                             </div>
                         </a>
                     {% empty %}

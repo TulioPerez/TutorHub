@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Credential handling
-    const maxCredentials = 7;
+    const maxCredentials = 5;
     const credentialRowsContainer = document.getElementById("credential-rows-container");
     const addCredentialButton = document.getElementById("btn-add-credential");
 
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const credentialCount = document.querySelectorAll(".credential-row").length;
 
             if (credentialCount >= maxCredentials) {
-                alert("You cannot add more than 7 credentials.");
+                alert(`You cannot add more than ${maxCredentials} credentials.`);
                 return;
             }
 
