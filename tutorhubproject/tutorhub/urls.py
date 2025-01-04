@@ -32,8 +32,6 @@ urlpatterns = [
 
     path('follow/<int:tutor_id>/', views.follow_tutor, name='follow_tutor'),
     path('followed/', views.followed_tutors, name='followed_tutors'),
-
-    path('search/', views.search_tutors, name='search_tutors'),
 ]
 
 # For image uploading 

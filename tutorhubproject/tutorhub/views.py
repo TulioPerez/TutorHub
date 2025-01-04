@@ -24,18 +24,22 @@ def index(request):
     view_type = request.GET.get('view', 'all')
     tutors = User.objects.filter(is_tutor=True).order_by('nickname', 'first_name', 'username')
 
+    # Search Functionality
     if view_type == "search" and query:
         tutors = tutors.filter(
-            Q(city__icontains=query) |
-            Q(state__icontains=query) |
             Q(nickname__icontains=query) |
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
-            Q(subject_levels__subject__icontains=query)
+            Q(address__street_address__icontains=query) |
+            Q(address__city__icontains=query) |
+            Q(address__postal_code__icontains=query) |
+            Q(address__state_region__icontains=query)
+            # Q(subject_levels__subject__icontains=query)
         ).distinct()
-    
+
+
     # Handle following listing
-    elif view_type == "following" and request.user.is_authenticated:
+    if view_type == "following" and request.user.is_authenticated:
         tutors = request.user.followed_tutors.all()
 
     # Pagination
@@ -122,7 +126,7 @@ def profile(request, user_id=None):
     profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
 
 # todo
-    # Add AJAX for form submission - no need for full profile page refreshing
+    # Add AJAX for form submission? - no need for full profile page refreshing
     # Need case logic for
     #   POST messages if 
     #       is own profile 
@@ -317,19 +321,6 @@ def edit_message(request, message_id):
 # ****************************
 # ***** Helper Functions *****
 # ****************************
-
-
-@login_required
-def search_tutors(request):
-    query = request.GET.get('q', '')
-    results = User.objects.filter(
-        Q(nickname__icontains=query) |
-        Q(subject_levels__subject__icontains=query) |
-        Q(city__icontains=query),
-        is_tutor=True,
-    ).distinct()
-
-    return render(request, 'tutorhub/tutors.html', {'results': results})
 
 
 @login_required

@@ -71,28 +71,6 @@ class User(AbstractUser):
         return self.email
 
 
-# Relationships
-class FollowRelation(models.Model):
-    follower = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
-    followee = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
-    is_blocked = models.BooleanField(default=False)
-
-    class Meta:
-        unique_together = ('follower', 'followee')
-
-    def __str__(self):
-        return f"{self.follower} follows {self.followee}"
-
-
-# Rating System
-class Review(models.Model):
-    tutor = models.ForeignKey(User, related_name="reviews", on_delete=models.CASCADE)
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.IntegerField()  # Scale of 1–5
-    comment = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-
 # Levels
 class Level(models.TextChoices):
     EARLY_CHILDHOOD = "Early Childhood", "Early Childhood"
@@ -145,6 +123,28 @@ class Credential(models.Model):
 
     def __str__(self):
         return f"{self.credential_type} for {self.user}"
+    
+
+# Relationships
+class FollowRelation(models.Model):
+    follower = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
+    followee = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
+    is_blocked = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('follower', 'followee')
+
+    def __str__(self):
+        return f"{self.follower} follows {self.followee}"
+
+
+# Rating System
+class Review(models.Model):
+    tutor = models.ForeignKey(User, related_name="reviews", on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField()  # Scale of 1–5
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
 
 # for group messages
