@@ -88,9 +88,6 @@
             </div>
 
 
-
-            
-
             <!-- Bio section -->
             <div class="left-column-container">
                 <h4>Bio</h4>
@@ -164,7 +161,7 @@
                 <h4>Subjects</h4>
                 <ul>
                     {% for subject_level in subject_levels %}
-                        <li><strong>{{ subject_level.subject }}</strong>: {{ subject_level.level }}</li>
+                        <li><strong>{{ subject_level.subject }}</strong>: {{ subject_level.levels|join:", " }}</li>
                     {% empty %}
                         <p>Add subjects and levels to appear in search results.</p>
                     {% endfor %}

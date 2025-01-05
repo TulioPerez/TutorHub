@@ -50,8 +50,11 @@
                         {% for subject_level in tutor.tutor_subject_levels.all %}
                             <div id="subject-grade">
                                 <strong>{{ subject_level.subject }}</strong>
-                                <div>{{ subject_level.level }}</div>
-                            </div>
+                                <div>
+                                    {% for level in subject_level.levels %}
+                                        <span class="badge bg-secondary">{{ level }}</span>
+                                    {% endfor %}
+                                </div>                            </div>
                         {% empty %}
                             <div>No subjects available.</div>
                         {% endfor %}

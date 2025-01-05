@@ -5,7 +5,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import Level, User, Message, SubjectLevel, Credential, Address
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.utils.timezone import now
@@ -22,7 +22,12 @@ import json
 def index(request):
     query = request.GET.get('q', '').strip()
     view_type = request.GET.get('view', 'all')
-    tutors = User.objects.filter(is_tutor=True).order_by('nickname', 'first_name', 'username')
+    subject_levels_prefetch = Prefetch(
+        'tutor_subject_levels',
+        queryset=SubjectLevel.objects.all()
+    )
+    tutors = User.objects.filter(is_tutor=True).prefetch_related(subject_levels_prefetch).order_by('nickname', 'first_name', 'username')
+    # tutors = User.objects.filter(is_tutor=True).order_by('nickname', 'first_name', 'username')
 
     # Search Functionality
     if view_type == "search" and query:
@@ -60,6 +65,11 @@ def index(request):
     })
 
 
+# ************************************
+# ********** LOGIN - LOGOUT **********
+# ************************************
+
+
 # Authentication
 def login_view(request):
     if request.method == "POST":
@@ -85,6 +95,9 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
+# ******************************
+# ********** REGISTER **********
+# ******************************
 
 def register(request):
     if request.method == "POST":
@@ -120,6 +133,9 @@ def register(request):
     return render(request, "tutorhub/register.html", {
     })
 
+# *****************************
+# ********** PROFILE **********
+# *****************************
 
 @login_required
 def profile(request, user_id=None):
@@ -169,15 +185,22 @@ def profile(request, user_id=None):
             })
         profile_user.availability = availability
 
-        # todo if is tutor
-        # Clear existing subject levels
-        SubjectLevel.objects.filter(tutor=profile_user).delete()
         subjects = request.POST.getlist("subjects[]")
         for index, subject in enumerate(subjects):
-            if subject:
+            if subject.strip():
                 selected_levels = request.POST.getlist(f"levels_{index}[]")
-                for level in selected_levels:
-                    SubjectLevel.objects.create(tutor=profile_user, subject=subject, level=level)
+
+                # Ensure levels are unique
+                unique_levels = list(set(selected_levels))  
+
+                if unique_levels:
+                    # Update or create a single entry for the subject with multiple levels
+                    SubjectLevel.objects.update_or_create(
+                        tutor=profile_user,
+                        subject=subject.strip(),
+                        defaults={"levels": unique_levels},  # Store levels
+                    )
+
 
         # Credentials
         if 'credentials[]' in request.FILES:
@@ -231,14 +254,18 @@ def profile(request, user_id=None):
 
     display_name = profile_user.nickname or profile_user.first_name or "User"
     possessive_name = f"{display_name}'s" if not display_name.endswith('s') else f"{display_name}'"
+    subject_levels = SubjectLevel.objects.filter(tutor=profile_user)
+    levels = [{'value': value, 'display': display} for value, display in Level.choices]
+
 
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
         'is_own_profile': profile_user == request.user,
         'credentials': credentials,
         'days_of_week': list(day_order.keys()),
+        "subject_levels": subject_levels,
+        "levels": levels,
         "levels_json": levels_json,
-        "subject_levels": SubjectLevel.objects.filter(tutor=profile_user),
         'countries': countries_list,
         'messages': messages,
         'scroll_to': scroll_to,

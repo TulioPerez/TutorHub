@@ -32,12 +32,12 @@ class AddressAdmin(admin.ModelAdmin):
     search_fields = ('street_address', 'city', 'state_region', 'postal_code', 'country')
 
 class SubjectLevelAdmin(admin.ModelAdmin):
-    list_display = ('tutor', 'subject', 'level')
-    list_filter = ('tutor', 'subject', 'level')
+    list_display = ('tutor', 'subject', 'display_levels')
+    list_filter = ('tutor', 'subject')
     search_fields = ('tutor__username', 'tutor__email', 'subject')
 
     def display_levels(self, obj):
-        return obj.level
+        return ", ".join(obj.levels) if obj.levels else "No levels"
     display_levels.short_description = 'Levels'
 
 

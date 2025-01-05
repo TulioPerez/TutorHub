@@ -1,9 +1,11 @@
 from datetime import date
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 from timezone_field import TimeZoneField
+
 
 # DOUBLE CHECK REQUIRED FIELDS FOR REGISTRATION
 #   DIVIDE BY REGISTRATION REQUIRED AND UPDATED PROFILE 
@@ -100,10 +102,10 @@ class Level(models.TextChoices):
 class SubjectLevel(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor_subject_levels")
     subject = models.CharField(max_length=100)
-    level = models.CharField(max_length=50, choices=Level.choices)
+    levels = ArrayField(models.CharField(max_length=50), blank=True, default=list)
 
     def __str__(self):
-        return f"{self.subject} ({self.level})"
+        return f"{self.subject} ({', '.join(self.levels)})"
 
 
 class Credential(models.Model):

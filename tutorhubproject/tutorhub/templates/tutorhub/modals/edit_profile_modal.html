@@ -113,20 +113,30 @@
                         <div class="mb-3">
                             <label class="form-label">Subjects</label>
                             <div id="subject-rows-container">
-                                {% for subject_grade in subject_levels %}
+                                {% for item in subject_levels %}
                                 <div class="subject-row row mb-3">
+                                    
+                                    <!-- Prefilled subjects -->
                                     <div class="col-md-4">
-                                        <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" required>
+                                        <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" value="{{ item.subject }}">
                                     </div>
+                                    
+                                    <!-- Prefilled checkboxes -->
                                     <div class="col-md-8">
                                         <div class="checkbox-group">
-                                            {% for value, display in levels %}
+                                            {% for level in levels %}
                                             <label class="form-check-label me-3">
-                                                <input type="checkbox" name="levels_{{ forloop.counter0 }}[]" value="{{ value }}" {% if subject_grade.level == value %}checked{% endif %}> {{ display }}
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="levels_{{ forloop.counter0 }}[]" 
+                                                    value="{{ level.value }}" 
+                                                    {% if level.value in item.levels %}checked{% endif %}>
+                                                {{ level.display }}
                                             </label>
                                             {% endfor %}
                                         </div>
                                     </div>
+                                    
                                     <div class="col-md-12 text-end mt-2">
                                         <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
                                     </div>

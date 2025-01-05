@@ -48,9 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // **************************************
-    // ***** Profile Component Handling *****
-    // **************************************
+    // ************************
+    // ***** Edit Profile *****
+    // ************************
 
     // Handle Subjects
     const subjectRowsContainer = document.getElementById("subject-rows-container");
