@@ -167,6 +167,54 @@
                             <button type="button" class="btn btn-sm btn-secondary" id="btn-add-credential">Add Credential</button>
                         </div>
                     </div>
+                    <!-- Toggle profile data visibility -->
+                    <div class="edit-profile-modal-section">
+                        <div class="mb-3">
+                            <label class="form-label">Visibility Settings</label>
+                            
+                            <!-- Full Name Visibility -->
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showFullName" name="show_full_name" 
+                                    {% if profile.show_full_name %}checked{% endif %}>
+                                <label class="form-check-label" for="showFullName">Make full name visible to other users</label>
+                            </div>
+
+                            <!-- Birthdate Visibility -->
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showBirthdate" name="show_birthdate" 
+                                    {% if profile.show_birthdate %}checked{% endif %}>
+                                <label class="form-check-label" for="showBirthdate">Make birthdate visible to other users</label>
+                            </div>
+
+                            <!-- Phone Number Visibility -->
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showPhoneNumber" name="show_phone_number" 
+                                    {% if profile.show_phone_number %}checked{% endif %}>
+                                <label class="form-check-label" for="showPhoneNumber">Make phone number visible to other users</label>
+                            </div>
+
+                            <!-- Email Visibility -->
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showEmail" name="show_email" 
+                                    {% if profile.show_email %}checked{% endif %}>
+                                <label class="form-check-label" for="showEmail">Make email visible to other users</label>
+                            </div>
+
+                            <!-- Address Visibility -->
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showAddress" name="show_address" 
+                                    {% if profile.show_address %}checked{% endif %}>
+                                <label class="form-check-label" for="showAddress">Make address visible to other users</label>
+                            </div>
+
+                            <!-- Missing Profile Data Alert -->
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="missingProfileDataAlert" name="missing_profile_data_alert" 
+                                    {% if profile.missing_profile_data_alert %}checked{% endif %}>
+                                <label class="form-check-label" for="missingProfileDataAlert">Alert me about missing profile details</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

@@ -18,31 +18,14 @@
                     </button>
                 {% endif %}
             
-                {% if is_own_profile and missing_details %}
+                <!-- Alert user to blank data in profile -->
+                {% if is_own_profile and missing_details and profile.missing_profile_data_alert %}
                 <div class="alert alert-info text-center">
                     Some profile details are missing. Completing all sections increases your profile's visibility in search results.
                     <ul class="text-danger">
-                        {% if not profile.nickname %}
-                            <li>Nickname</li>
-                        {% endif %}
-                        {% if not profile.bio %}
-                            <li>Bio</li>
-                        {% endif %}
-                        {% if not profile.credentials.exists %}
-                            <li>Credentials</li>
-                        {% endif %}
-                        {% if not profile.profile_image %}
-                            <li>Profile Image</li>
-                        {% endif %}
-                        {% if not profile.address or not profile.address.street_address or not profile.address.city or not profile.address.state_region or not profile.address.postal_code or not profile.address.country %}
-                            <li>Complete Address (Street Address, City, State, Postal Code, and Country)</li>
-                        {% endif %}
-                        {% if not profile.availability %}
-                            <li>Availability</li>
-                        {% endif %}
-                        {% if not profile.subject_levels.exists %}
-                            <li>Subjects and Levels</li>
-                        {% endif %}
+                        {% for detail in missing_details %}
+                        <li>{{ detail }}</li>
+                        {% endfor %}
                     </ul>
                 </div>
                 <script>
@@ -73,16 +56,39 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Name & Address -->
                     <div id="stack-vertical">
-                        <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
-                        {% if profile.address %}
+                        <!-- Name -->
+                        {% if profile.show_full_name %}
+                        <div id="stack-vertical">
+                            <strong>{{ profile.first_name }} {{ profile.last_name }}</strong>
+                        </div>
+                        {% endif %}
+
+                        <!-- Address -->
+                        {% if profile.show_address and profile.address %}
+                        <div id="stack-vertical"> 
+                            Address:
                             <div>{{ profile.address.street_address }}</div>
                             <div>{{ profile.address.city }}, {{ profile.address.state_region }} {{ profile.address.postal_code }}</div>
                             <div>{{ profile.address.country.name }}</div>
-                        {% else %}
-                            <div>Address not available</div>
+                        </div>
                         {% endif %}
+                    </div>
+
+                    <div id="stack-vertical">
+                        <!-- Phone Number -->
+                        <span>
+                            {% if profile.show_phone_number and profile.phone_number %}
+                            Phone Number: {{ profile.phone_number }}
+                            {% endif %}
+                        </span>
+                        
+                        <!-- Email -->
+                         <span>
+                             {% if profile.show_email %}
+                             Email: {{ profile.email }}
+                             {% endif %}
+                        </span>
                     </div>
                 </div>
             </div>

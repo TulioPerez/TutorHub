@@ -42,6 +42,7 @@ class User(AbstractUser):
     show_phone_number = models.BooleanField(default=False)
     show_email = models.BooleanField(default=False)
     show_address = models.BooleanField(default=False)
+    missing_profile_data_alert = models.BooleanField(default=False)
     allow_spotlight = models.BooleanField(default=True)
 
     # localization

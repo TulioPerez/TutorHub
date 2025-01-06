@@ -176,6 +176,7 @@ def profile(request, user_id=None):
             })
         profile_user.availability = availability
 
+        # Subjects & levels
         subjects = request.POST.getlist("subjects[]")
         for index, subject in enumerate(subjects):
             if subject.strip():
@@ -198,6 +199,18 @@ def profile(request, user_id=None):
             for file in request.FILES.getlist('credentials[]'):
                 Credential.objects.create(user=profile_user, file=file)
 
+        # Handle alerts for missing profile data alerts 
+        profile_user.missing_profile_data_alert = request.POST.get('missing_profile_data_alert') == 'on'
+
+        # Handle profile data visibility toggles
+        profile_user.show_full_name = 'show_full_name' in request.POST
+        profile_user.show_birthdate = 'show_birthdate' in request.POST
+        profile_user.show_phone_number = 'show_phone_number' in request.POST
+        profile_user.show_email = 'show_email' in request.POST
+        profile_user.show_address = 'show_address' in request.POST
+        profile_user.missing_profile_data_alert = 'missing_profile_data_alert' in request.POST
+
+
         profile_user.save()
         return JsonResponse({"success": True, "message": "Profile updated successfully."})
 
@@ -218,13 +231,35 @@ def profile(request, user_id=None):
         key=lambda slot: (day_order.get(slot['day'], 7), slot['start'])
     )
 
-    missing_details = not all([
-        profile_user.nickname,
-        profile_user.profile_image,
-        profile_user.bio,
-        sorted_availability,
-        profile_user.availability,
-    ])
+    # For alerting user about missing profile data
+    missing_details_list = []
+
+    if not profile_user.nickname:
+        missing_details_list.append("Nickname")
+
+    if not profile_user.bio:
+        missing_details_list.append("Bio")
+
+    if not profile_user.credentials.exists():
+        missing_details_list.append("Credentials")
+
+    if not profile_user.profile_image:
+        missing_details_list.append("Profile Image")
+
+    if not profile_user.address or not all([
+        profile_user.address.street_address,
+        profile_user.address.city,
+        profile_user.address.state_region,
+        profile_user.address.country
+        # profile_user.address.postal_code,
+    ]):
+        missing_details_list.append("Complete Address (Street Address, City, State, and Country)")
+
+    if not profile_user.availability:
+        missing_details_list.append("Availability")
+
+    if not SubjectLevel.objects.filter(tutor=profile_user).exists():
+        missing_details_list.append("Subjects and Levels")
 
     messages = Message.objects.filter(
         (Q(sender=request.user, receiver=profile_user) | Q(sender=profile_user, receiver=request.user))
@@ -246,8 +281,6 @@ def profile(request, user_id=None):
     display_name = profile_user.nickname or profile_user.first_name or "User"
     possessive_name = f"{display_name}'s" if not display_name.endswith('s') else f"{display_name}'"
     subject_levels = SubjectLevel.objects.filter(tutor=profile_user)
-    levels = [{'value': value, 'display': display} for value, display in Level.choices]
-
 
     return render(request, 'tutorhub/profile.html', {
         'profile': profile_user,
@@ -260,7 +293,7 @@ def profile(request, user_id=None):
         'countries': countries_list,
         'messages': messages,
         'scroll_to': scroll_to,
-        'missing_details': missing_details,
+        'missing_details': missing_details_list,
         'possessive_name': possessive_name,
         'sorted_availability': sorted_availability,
     })
