@@ -6,7 +6,7 @@
 
 <div class="container mt-5">
     <div class="row">
-        <!-- User info section -->
+        <!-- Left column - User info section -->
         <div class="col-md-8">
             
             <!-- Profile header -->
@@ -19,6 +19,7 @@
                 {% endif %}
             
                 <!-- Alert user to blank data in profile -->
+                 <!-- todo check if this aligns with setting in edit_profile_modal -->
                 {% if is_own_profile and missing_details and profile.missing_profile_data_alert %}
                 <div class="alert alert-info text-center">
                     Some profile details are missing. Completing all sections increases your profile's visibility in search results.
@@ -35,6 +36,7 @@
                     });
                 </script>
                 {% endif %}
+                
                 <div class="profile-header">
                     <!-- Profile picture -->
                     <div id="stack-vertical">
