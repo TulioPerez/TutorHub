@@ -27,7 +27,6 @@ def index(request):
         queryset=SubjectLevel.objects.all()
     )
     tutors = User.objects.filter(is_tutor=True).prefetch_related(subject_levels_prefetch).order_by('nickname', 'first_name', 'username')
-    # tutors = User.objects.filter(is_tutor=True).order_by('nickname', 'first_name', 'username')
 
     # Search Functionality
     if view_type == "search" and query:
@@ -40,6 +39,7 @@ def index(request):
             Q(address__postal_code__icontains=query) |
             Q(address__state_region__icontains=query)
             # Q(subject_levels__subject__icontains=query)
+            # TODO ADD SEARCH FILTERS: by name, city, state, subject, level, bio content
         ).distinct()
 
 
@@ -140,15 +140,6 @@ def register(request):
 @login_required
 def profile(request, user_id=None):
     profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
-
-# todo
-    # Add AJAX for form submission? - no need for full profile page refreshing
-    # Need case logic for
-    #   POST messages if 
-    #       is own profile 
-    #       if not
-    #   Is tutor
-    #   Is student
 
     # Handle profile updating
     if request.method == "POST" and profile_user == request.user:
@@ -302,6 +293,18 @@ def delete_credential(request, credential_id):
         return JsonResponse({"success": True})
     except Credential.DoesNotExist:
         return JsonResponse({"success": False, "error": "Credential not found."}, status=404)
+    
+
+@login_required
+def delete_subject_level(request, subject_level_id):
+    if request.method == "POST":
+        try:
+            subject_level = SubjectLevel.objects.get(id=subject_level_id, tutor=request.user)
+            subject_level.delete()
+            return JsonResponse({"success": True, "message": "Subject deleted successfully."})
+        except SubjectLevel.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Subject not found."})
+    return JsonResponse({"success": False, "error": "Invalid request method."})
 
 
 @login_required

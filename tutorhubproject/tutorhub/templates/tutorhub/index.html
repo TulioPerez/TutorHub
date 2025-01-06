@@ -12,6 +12,7 @@
             <input type="text" name="q" id="search-input" class="form-control me-2" placeholder="Search by city, state, grade, name" value="{{ request.GET.q|default:'' }}">
             <button type="submit" class="btn btn-primary me-2" {% if not user.is_authenticated %} data-alert="true" {% endif %}>Search</button>            
             <a href="{% url 'index' %}" class="btn btn-secondary">Clear</a>
+            <!-- TODO ADD SEARCH FILTERS: by name, city, state, subject, level, bio content -->
         </form>
     </div>
     <table class="table table-striped">

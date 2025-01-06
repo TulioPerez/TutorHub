@@ -52,47 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ***** Edit Profile *****
     // ************************
 
-    // Handle Subjects
-    const subjectRowsContainer = document.getElementById("subject-rows-container");
-    const addSubjectButton = document.getElementById("btn-add-subject");
-
-    // Ensure `levels` data is available
-    const levels = JSON.parse(document.getElementById("level-options").textContent);
-
-    // Add a new subject row
-    addSubjectButton.addEventListener("click", function () {
-        const subjectIndex = subjectRowsContainer.children.length; // Get current row index
-        const newRow = document.createElement("div");
-        newRow.classList.add("subject-row", "row", "mb-3");
-    
-        newRow.innerHTML = `
-            <div class="col-md-4">
-                <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" required>
-            </div>
-            <div class="col-md-8">
-                <div class="checkbox-group">
-                    ${levels.map(level => `
-                        <label class="form-check-label me-3">
-                            <input type="checkbox" name="levels_${subjectIndex}[]" value="${level.value}">
-                            ${level.display}
-                        </label>
-                    `).join("")}
-                </div>
-            </div>
-            <div class="col-md-12 text-end mt-2">
-                <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
-            </div>
-        `;
-    
-        subjectRowsContainer.appendChild(newRow);
-    
-        // Add "Remove" functionality
-        newRow.querySelector(".remove-row").addEventListener("click", function () {
-            newRow.remove();
-        });
-    });
-
-
     // Profile image handling
     const profileImageSelection = document.getElementById("profile_image");
     const profileImagePreview = document.querySelector("#profile_image + img");
@@ -116,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Remove profile image functionality
+    // Remove profile image
     if (removeImageButton) {
         removeImageButton.addEventListener("click", async () => {
             const confirmRemoval = confirm("Are you sure you want to remove the profile image?");
@@ -198,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Delete existing credentials
+    // Remove existing credential row
     credentialRowsContainer.addEventListener("click", (event) => {
         if (event.target.classList.contains("remove-credential")) {
             const row = event.target.closest(".credential-row");
@@ -226,7 +185,88 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+    // Handle Subjects & Levels
+    const subjectRowsContainer = document.getElementById("subject-rows-container");
+    const addSubjectButton = document.getElementById("btn-add-subject");
+    const levels = JSON.parse(document.getElementById("level-options").textContent);
+
+    // Add a new subject row
+    addSubjectButton.addEventListener("click", function () {
+        const subjectIndex = subjectRowsContainer.children.length; // Get current row index
+        const newRow = document.createElement("div");
+        newRow.classList.add("subject-row", "row", "mb-3");
+    
+        newRow.innerHTML = `
+            <div class="col-md-4">
+                <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" required>
+            </div>
+            <div class="col-md-8">
+                <div class="checkbox-group">
+                    ${levels.map(level => `
+                        <label class="form-check-label me-3">
+                            <input type="checkbox" name="levels_${subjectIndex}[]" value="${level.value}">
+                            ${level.display}
+                        </label>
+                    `).join("")}
+                </div>
+            </div>
+            <div class="col-md-12 text-end mt-2">
+                <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+            </div>
+        `;
+    
+        subjectRowsContainer.appendChild(newRow);
+    
+        // "Remove" functionality for dynamic rows
+        newRow.querySelector(".remove-row").addEventListener("click", function () {
+            newRow.remove();
+        });
+    });
+
+
+    // Remove existing subject & level row
+    subjectRowsContainer.querySelectorAll(".remove-row").forEach((button) => {
+        button.addEventListener("click", async function () {
+            const row = button.closest(".subject-row");
+            const subjectLevelId = button.getAttribute("data-id"); // Get the ID of the SubjectLevel
+
+            if (subjectLevelId) {
+                const confirmDelete = confirm("Are you sure you want to delete this subject?");
+                if (!confirmDelete) return;
+
+                try {
+                    const response = await fetch(`/delete_subject_level/${subjectLevelId}/`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCSRFToken(),
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            alert("Subject removed successfully.");
+                            row.remove(); // Remove the row from the modal
+                        } else {
+                            alert(data.error || "An error occurred while removing the subject.");
+                        }
+                    } else {
+                        alert("Failed to remove the subject. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Failed to remove the subject. Check your internet connection.");
+                }
+            } else {
+                // If there's no ID, just remove the row from the modal
+                row.remove();
+            }
+        });
+    });
+
+
     // Availability handling
+    const maxAvailability = 8; 
     const availabilityContainer = document.getElementById("availability-rows-container");
     const addAvailabilityButton = document.getElementById("btn-add-availability");
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -264,12 +304,20 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Event listener for "Add availability" button
-    addAvailabilityButton.addEventListener("click", () => { 
-        availabilityContainer.appendChild(createAvailabilityRow()); 
+    addAvailabilityButton.addEventListener("click", () => {
+        const rowCount = availabilityContainer.querySelectorAll(".availability-row").length;
+
+        if (rowCount >= maxAvailability) {
+            alert(`You cannot add more than ${maxAvailability} availability slots.`);
+            return;
+        }
+
+        const newRow = createAvailabilityRow();
+        availabilityContainer.appendChild(newRow);
     });
 
 
-    // Remove availability rows
+    // Remove availability row
     availabilityContainer.querySelectorAll(".remove-availability").forEach(button => {
         button.addEventListener("click", () => {
             button.closest(".availability-row").remove();
@@ -277,9 +325,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // ******************************
-    // ***** Edit Profile Modal *****
-    // ******************************
+    // *****************************************
+    // ***** Edit Profile Modal Validation *****
+    // *****************************************
 
     const modalForms = document.querySelectorAll(".modal form");
     modalForms.forEach(form => {
