@@ -35,8 +35,14 @@ class User(AbstractUser):
     birthdate = models.DateField(blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
-    show_address = models.BooleanField(default=False)
+
+    # Toggles
+    show_full_name = models.BooleanField(default=False)
+    show_birthdate = models.BooleanField(default=False)
     show_phone_number = models.BooleanField(default=False)
+    show_email = models.BooleanField(default=False)
+    show_address = models.BooleanField(default=False)
+    allow_spotlight = models.BooleanField(default=True)
 
     # localization
     preferred_language = models.CharField(max_length=10, blank=True, null=True, default='en')

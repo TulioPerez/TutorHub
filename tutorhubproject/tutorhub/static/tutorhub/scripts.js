@@ -495,7 +495,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ******************************
-    // ***** Langiage Selection *****
+    // ***** Language Selection *****
     // ******************************
 
 
