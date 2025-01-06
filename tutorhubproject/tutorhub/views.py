@@ -137,6 +137,8 @@ def register(request):
 # ********** PROFILE **********
 # *****************************
 
+# todo not needed for profile completion: birthdate
+
 @login_required
 def profile(request, user_id=None):
     profile_user = request.user if user_id is None else get_object_or_404(User, id=user_id)
@@ -146,7 +148,22 @@ def profile(request, user_id=None):
 
         # Nickname & Bio (first, last cannot be changed)
         profile_user.nickname = request.POST.get('nickname', '')
+        profile_user.middle_name = request.POST.get('middle_name', '')
         profile_user.bio = request.POST.get('bio', '')
+        profile_user.birthdate = request.POST.get('birthdate', None)
+        profile_user.phone_number = request.POST.get('phone_number', None)
+        profile_user.email = request.POST.get('email', profile_user.email)
+        
+        # Handle alerts for missing profile data alerts 
+        profile_user.missing_profile_data_alert = request.POST.get('missing_profile_data_alert') == 'on'
+
+        # Handle profile data visibility toggling
+        profile_user.show_full_name = 'show_full_name' in request.POST
+        profile_user.show_birthdate = 'show_birthdate' in request.POST
+        profile_user.show_phone_number = 'show_phone_number' in request.POST
+        profile_user.show_email = 'show_email' in request.POST
+        profile_user.show_address = 'show_address' in request.POST
+        profile_user.missing_profile_data_alert = 'missing_profile_data_alert' in request.POST
 
         # Profile image
         if 'profile_image' in request.FILES:
@@ -198,18 +215,6 @@ def profile(request, user_id=None):
         if 'credentials[]' in request.FILES:
             for file in request.FILES.getlist('credentials[]'):
                 Credential.objects.create(user=profile_user, file=file)
-
-        # Handle alerts for missing profile data alerts 
-        profile_user.missing_profile_data_alert = request.POST.get('missing_profile_data_alert') == 'on'
-
-        # Handle profile data visibility toggles
-        profile_user.show_full_name = 'show_full_name' in request.POST
-        profile_user.show_birthdate = 'show_birthdate' in request.POST
-        profile_user.show_phone_number = 'show_phone_number' in request.POST
-        profile_user.show_email = 'show_email' in request.POST
-        profile_user.show_address = 'show_address' in request.POST
-        profile_user.missing_profile_data_alert = 'missing_profile_data_alert' in request.POST
-
 
         profile_user.save()
         return JsonResponse({"success": True, "message": "Profile updated successfully."})

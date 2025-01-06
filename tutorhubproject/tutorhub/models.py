@@ -30,8 +30,9 @@ class Address(models.Model):
 # django default fields: username, password, first_name, last_name, email, is_staff, is_active, is_superuser, date_joined, last_login
 class User(AbstractUser):
     nickname = models.CharField(max_length=50, blank=True, null=True)
+    middle_name = models.CharField(max_length=50, blank=True, null=True, default ="")
     role = models.CharField(max_length=10, choices=UserRoles.choices, default=UserRoles.STUDENT)
-    phone_number = PhoneNumberField(blank=True, null=True)
+    phone_number = PhoneNumberField(blank=True, null=True, default = "")
     birthdate = models.DateField(blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
