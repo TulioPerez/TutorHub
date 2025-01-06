@@ -329,8 +329,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ***** Edit Profile Modal Validation *****
     // *****************************************
 
-    const modalForms = document.querySelectorAll(".modal form");
-    modalForms.forEach(form => {
+    const editProfileModal = document.querySelector("#editProfileModal");
+    if (editProfileModal) {
+        const form = editProfileModal.querySelector("form"); // Select the form inside the modal
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
             const formData = new FormData(form);
@@ -382,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("Failed to save changes. Check your connection.");
             }
         });
-    });
+    }
     
 
     // *********************
