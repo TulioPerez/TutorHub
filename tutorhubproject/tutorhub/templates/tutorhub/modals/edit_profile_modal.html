@@ -221,13 +221,19 @@
                             <label class="form-label">Credentials</label>
                             <div id="credential-rows-container">
                                 {% for credential in credentials %}
-                                <div class="credential-row row mb-3">
-                                    <div class="col-md-10">
+                                <div class="credential-row row mb-3 align-items-center">
+                                    <div class="col-md-2">
+                                        {% if credential.is_image %}
+                                            <img src="{{ credential.file.url }}" alt="Credential Thumbnail" style="max-width: 100%; max-height: 50px;">
+                                        {% else %}
+                                            <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Icon" style="max-width: 100%; max-height: 50px;">
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-8">
                                         <a href="{{ credential.file.url }}" target="_blank">{{ credential.file.name }}</a>
                                     </div>
                                     <div class="col-md-2 text-end">
-                                        <button type="button" class="btn btn-danger btn-sm remove-credential"
-                                            data-id="{{ credential.id }}">X</button>
+                                        <button type="button" class="btn btn-danger btn-sm remove-credential" data-id="{{ credential.id }}">X</button>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -235,7 +241,7 @@
                             <button type="button" class="btn btn-sm btn-secondary" id="btn-add-credential">Add Credential</button>
                         </div>
                     </div>
-                    
+
                     <!-- Toggle profile data visibility -->
                     <div class="edit-profile-modal-section">
                         <div class="mb-3">
