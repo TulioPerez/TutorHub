@@ -158,7 +158,11 @@
                             <strong>{{ slot.day|title }}:</strong> {{ slot.start }} - {{ slot.end }}
                         </li>
                     {% empty %}
-                        <p>Add your availability so that potential students can know when you're open for business.</p>
+                        {% if is_own_profile %}
+                            <p>Add your availability so that potential students can know when you're open for business.</p>
+                        {% else %}
+                            <p>No availability yet</p>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             </div>
@@ -171,7 +175,11 @@
                     {% for subject_level in subject_levels %}
                         <li><strong>{{ subject_level.subject }}</strong>: {{ subject_level.levels|join:", " }}</li>
                     {% empty %}
-                        <p>Add subjects and levels to appear in search results.</p>
+                        {% if is_own_profile %}
+                            <p>Add subjects and levels to appear in search results.</p>
+                        {% else %}
+                            <p>No subjects yet</p>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             </div>
@@ -193,7 +201,11 @@
                             </div>
                         </a>
                     {% empty %}
-                        <p>Add credentials, such as certificates, diplomas or a resume.</p>
+                        {% if is_own_profile %}
+                            <p>Add credentials, such as certificates, diplomas or a resume.</p>
+                        {% else %}
+                            <p>No credentials yet</p>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

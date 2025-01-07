@@ -63,7 +63,7 @@
                         <div class="mb-3">
                             <label for="birthdate" class="form-label">Birthdate</label>
                             <input type="date" class="form-control" id="birthdate" name="birthdate" 
-                                value="{{ profile.birthdate|date:'Y-m-d' }}">
+                                value="{{ profile.birthdate|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}">
                         </div>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="showBirthdate" name="show_birthdate" 

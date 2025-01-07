@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.utils.timezone import now
 from django_countries import countries
 from django.utils.safestring import mark_safe
+from datetime import date, datetime
 import json
 
 
@@ -150,9 +151,25 @@ def profile(request, user_id=None):
         profile_user.nickname = request.POST.get('nickname', '')
         profile_user.middle_name = request.POST.get('middle_name', '')
         profile_user.bio = request.POST.get('bio', '')
-        profile_user.birthdate = request.POST.get('birthdate', None)
+        birthdate = request.POST.get('birthdate', '').strip()
         profile_user.phone_number = request.POST.get('phone_number', None)
         profile_user.email = request.POST.get('email', profile_user.email)
+
+        # Handle empty birthdate string
+        if birthdate:  # If not empty, parse and save
+            try:
+                parsed_birthdate = datetime.strptime(birthdate, "%Y-%m-%d").date()
+
+                # Check if the birthdate is in the future
+                if parsed_birthdate > date.today():
+                    return JsonResponse({"success": False, "message": "Birthdate cannot be in the future."}, status=400)
+
+                # Save the valid birthdate
+                profile_user.birthdate = parsed_birthdate
+            except ValueError:
+                return JsonResponse({"success": False, "message": "Invalid date format. Please use YYYY-MM-DD."}, status=400)
+        else:
+            profile_user.birthdate = None  # Set to None if empty
         
         # Handle alerts for missing profile data alerts 
         profile_user.missing_profile_data_alert = request.POST.get('missing_profile_data_alert') == 'on'
@@ -209,7 +226,6 @@ def profile(request, user_id=None):
                         subject=subject.strip(),
                         defaults={"levels": unique_levels},  # Store levels
                     )
-
 
         # Credentials
         if 'credentials[]' in request.FILES:
