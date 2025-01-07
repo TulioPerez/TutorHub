@@ -20,6 +20,33 @@ import json
 # ***************************
 
 
+def landing_page(request):
+    # Example sponsored tutors data
+    sponsored_tutors = [
+        {
+            "name": "ArtFanatic",
+            "levels": ["Elementary", "Middle School"],
+            "url": "/profile/1",
+        },
+        {
+            "name": "SpanishSage",
+            "levels": ["Middle School", "High School"],
+            "url": "/profile/2",
+        },
+        {
+            "name": "HistoryBuff",
+            "levels": ["Elementary", "Middle School"],
+            "url": "/profile/3",
+        },
+        {
+            "name": "CodeMaster",
+            "levels": ["High School", "College"],
+            "url": "/profile/4",
+        },
+    ]
+    return render(request, "tutorhub/landing_page.html", {"sponsored_tutors": sponsored_tutors})
+
+
 def index(request):
     query = request.GET.get('q', '').strip()
     view_type = request.GET.get('view', 'all')

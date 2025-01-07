@@ -14,7 +14,8 @@ urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/tutorhub/images/mentor-logo-bull.svg', permanent=True)),
     
     # default route
-    path("", views.index, name="index"),
+    path("index/", views.index, name="index"),
+    path("", views.landing_page, name='landing_page'),
 
     # Following
     path("follow/<int:tutor_id>/", views.follow_tutor, name="follow_tutor"),

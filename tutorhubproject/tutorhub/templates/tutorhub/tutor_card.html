@@ -1,0 +1,17 @@
+<div class="row">
+    {% for sponsor in sponsored_tutors %}
+    <div class="col-md-3">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ sponsor.name }}</h5>
+                <p class="card-text">
+                    {% for level in sponsor.levels %}
+                        <span class="badge bg-success">{{ level }}</span>
+                    {% endfor %}
+                </p>
+                <a href="{{ sponsor.url }}" class="btn btn-primary">View Profile</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
