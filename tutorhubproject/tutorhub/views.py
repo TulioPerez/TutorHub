@@ -100,6 +100,8 @@ def logout_view(request):
 # ********** REGISTER **********
 # ******************************
 
+# todo email and tel validation upon submission. Else, do not commit data to db
+
 def register(request):
     if request.method == "POST":
         email = request.POST["email"]
@@ -296,8 +298,10 @@ def profile(request, user_id=None):
             pass
 
     countries_list = list(countries)
+
     for credential in credentials:
-        credential.is_image = credential.file.url.lower().endswith(('.jpg', '.jpeg', '.png'))
+        credential.is_image = credential.file.url.lower().endswith(('.jpg', '.jpeg', '.png', '.gif'))
+        credential.is_pdf = credential.file.url.lower().endswith('.pdf')
 
     display_name = profile_user.nickname or profile_user.first_name or "User"
     possessive_name = f"{display_name}'s" if not display_name.endswith('s') else f"{display_name}'"

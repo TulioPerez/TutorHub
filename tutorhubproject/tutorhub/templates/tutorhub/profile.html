@@ -195,14 +195,18 @@
                             <div class="credential-item-container">
                                 {% if credential.is_image %}
                                     <img src="{{ credential.file.url }}" alt="Credential Image">
+                                {% elif credential.is_pdf %}
+                                    <img src="{% static 'tutorhub/images/pdf-icon.png' %}" alt="PDF Icon">
                                 {% else %}
-                                    <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Credential Icon">
+                                    <img src="{% static 'tutorhub/images/default-credential-icon.png' %}" alt="Default Credential Icon">
                                 {% endif %}
+                                <!-- <p>{{ credential.file.name }}</p> -->
                             </div>
                         </a>
                     {% empty %}
                         {% if is_own_profile %}
                             <p>Add credentials, such as certificates, diplomas or a resume.</p>
+                            <p>Acceptable formats: .pdf, .jpg, .jpeg, .png & .gif</p>
                         {% else %}
                             <p>No credentials yet</p>
                         {% endif %}

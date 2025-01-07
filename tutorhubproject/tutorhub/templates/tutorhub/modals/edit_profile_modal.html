@@ -30,7 +30,7 @@
                         </div>
                     </div>
 
-                    <!-- FUll Name -->
+                    <!-- Full Name -->
                     <div class="edit-profile-modal-section">
                         <div class="mb-3">
                             <label for="full-name" class="form-label">First Name</label>
@@ -225,8 +225,10 @@
                                     <div class="col-md-2">
                                         {% if credential.is_image %}
                                             <img src="{{ credential.file.url }}" alt="Credential Thumbnail" style="max-width: 100%; max-height: 50px;">
+                                        {% elif credential.is_pdf %}
+                                            <img src="{% static 'tutorhub/images/pdf-icon.png' %}" alt="PDF Icon" style="max-width: 100%; max-height: 50px;">
                                         {% else %}
-                                            <img src="{% static 'tutorhub/images/credential-icon.png' %}" alt="Default Icon" style="max-width: 100%; max-height: 50px;">
+                                            <img src="{% static 'tutorhub/images/default-credential-icon.png' %}" alt="Default Credential Icon" style="max-width: 100%; max-height: 50px;">
                                         {% endif %}
                                     </div>
                                     <div class="col-md-8">

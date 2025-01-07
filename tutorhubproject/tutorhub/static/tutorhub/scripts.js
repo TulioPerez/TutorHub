@@ -390,6 +390,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ***** Messaging *****
     // *********************
 
+    // todo if profile data incomplete - disable messaging
 
     // Message editing
     document.querySelectorAll('.edit-btn').forEach(button => {
