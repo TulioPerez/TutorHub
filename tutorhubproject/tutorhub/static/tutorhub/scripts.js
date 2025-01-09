@@ -49,6 +49,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ************************
+    // ***** Landing Page *****
+    // ************************
+
+
+    const gpsButton = document.getElementById("gps-button");
+    const locationInput = document.getElementById("location-input");
+    const mapContainer = document.getElementById("map-container");
+
+    gpsButton.addEventListener("click", () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Populate the location field with coordinates
+                    locationInput.value = `${latitude}, ${longitude}`;
+
+                    // Update the map with the user's location
+                    const mapSrc = `https://www.google.com/maps/embed/v1/view?key=YOUR_GOOGLE_MAPS_API_KEY&center=${latitude},${longitude}&zoom=14`;
+                    mapContainer.innerHTML = `
+                        <iframe
+                            src="${mapSrc}"
+                            width="100%"
+                            height="100%"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy">
+                        </iframe>`;
+                },
+                (error) => {
+                    console.error("Geolocation error:", error);
+                    alert("Unable to fetch your location. Please enable location services and try again.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    });
+
+
+
+    // ************************
     // ***** Edit Profile *****
     // ************************
 

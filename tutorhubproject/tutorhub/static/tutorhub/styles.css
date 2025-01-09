@@ -38,14 +38,31 @@ html, body {
 }
 
 .landing-page-background {
-    background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
-                      url('/static/tutorhub/images/world_map.jpg');
+    background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url('/static/tutorhub/images/world_map.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     width: 100%;
     padding-top: 0px;
     height: 100vh; /* Adjust as needed */
+}
+
+#map-container, #landing-page-form-field {
+    margin: 10px 20px;
+    border-width: 1px;
+    overflow: hidden;
+    border-radius: 10px;
+    border-color: #754284;
+    border-style: solid;
+}
+
+#landing-page-form-field {
+    margin: 0;
+}
+
+#gps-button {
+    background-color: #754284;
+    padding: 6px;
 }
 
 .card {
