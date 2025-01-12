@@ -1,6 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Authentication status
-    const authStatus = JSON.parse(document.getElementById("auth-status").textContent);
+    const authMetaTag = document.querySelector('meta[name="auth-status"]');
+    const isAuthenticated = authMetaTag?.content === "true";
+
+    // Example: Log authentication status globally
+    if (!isAuthenticated) {
+        console.warn("User is not logged in.");
+    }
 
     
     // ****************************
@@ -28,26 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Handle row clicks
-    const clickableRow = document.querySelectorAll(".clickable-row");
-    if (clickableRow.length > 0) {
-        clickableRow.forEach((row) => {
-            row.addEventListener("click", function () {
-                const href = this.dataset.href;
-    
-                if (!authStatus) {
-                    alert("Please login to view tutor profiles.");
-                    window.location.href = "/login";
-                } else if (href) {
-                    window.location.href = href;
-                }
-            });
-        });
-    } else {
-        console.warn("No clickable rows found.");
-    }
-
-
     // ******************************
     // ***** Language Selection *****
     // ******************************
@@ -66,8 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const bootstrapModal = bootstrap.Modal.getInstance(modal);
             bootstrapModal.hide();
 
-            // You might want to reload the page or update the UI here
-            // For example:
+            // Might want to reload the page or update the UI here as in:
             // window.location.href = `/?lang=${language}`;
         });
     });

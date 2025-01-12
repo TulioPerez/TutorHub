@@ -9,6 +9,11 @@
         <link rel="icon" type="image/svg+xml" href="{% static 'tutorhub/images/mentor-logo-bull.svg' %}">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="{% static 'tutorhub/styles.css' %}">
+        <script src="{% static 'tutorhub/scripts.js' %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <meta name="auth-status" content="{{ user.is_authenticated|yesno:'true,false' }}">
+        
+
     </head>
     
     <body class="d-flex flex-column min-vh-100">
@@ -45,12 +50,11 @@
         </div>
     </nav>
 
-    <!-- the extra 'block page_class...' is a conditional class that allows the padding at the botton of main-content to be overridden as in the landing page -->
-    <div id="main-content" class="flex-grow-1 {% block page_class %}{% endblock %}">
-        {% block body %}
-        {% endblock %}
-    </div>
-
+        <!-- the extra 'block page_class...' is a conditional class that allows the padding at the botton of main-content to be overridden as in the landing page -->
+        <div id="main-content" class="flex-grow-1 {% block page_class %}{% endblock %}">
+            {% block body %}
+            {% endblock %}
+        </div>
     </body>
 
     <!-- FOOTER -->
@@ -124,18 +128,28 @@
         </div>
     </footer>
 
-    <!--  Inline scripts -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const messagesLink = document.getElementById("menu-messages");
-
-            if (!messagesLink) {
-                console.error("Error: #menu-messages element not found.");
-                return;
-            }
-
-            // Fetch unread message count
-            fetch("{% url 'unread_messages_count' %}")
+            // Get the auth-status meta tag
+            const authMetaTag = document.querySelector('meta[name="auth-status"]');
+            const isAuthenticated = authMetaTag?.content === "true";
+            
+            // User not logged in - skip new message check
+            if (!isAuthenticated) {
+                console.warn("Skipping message check.");
+                return; // Exit if the user is not authenticated
+            } else if (isAuthenticated) {
+                
+                // User is logged in - check messages
+                const messagesLink = document.getElementById("menu-messages");
+                
+                if (!messagesLink) {
+                    console.error("Error: #menu-messages element not found.");
+                    return;
+                }
+                
+                // Fetch unread message count
+                fetch("{% url 'unread_messages_count' %}")
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Network response was not ok");
@@ -153,18 +167,9 @@
                     }
                 })
                 .catch(err => console.error("Error fetching unread count:", err));
+            }
         });
     </script>
+
+    </html>
     
-    <script src="{% static 'tutorhub/scripts.js' %}"></script>
-</html>
-
-<!-- Authentication status -->
-<script type="application/json" id="auth-status">{{ user.is_authenticated|yesno:"true,false" }}</script>
-
-<!-- Currently logged in user -->
-<script>const loggedInUsername = "{{ request.user.username }}";</script>
-
-<!-- Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-

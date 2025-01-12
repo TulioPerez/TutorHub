@@ -16,11 +16,12 @@
     </div>
 
     <!-- Tutor List -->
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover" id="tutor-table">
         <tbody>
             {% for tutor in page_obj %}
-            <!-- Tutor Row -->
-            <tr class="clickable-row" data-href="{% if user.is_authenticated %}{% url 'profile' tutor.id %}{% else %}{% url 'login' %}{% endif %}"">
+            <!-- Tutor Row (clickable for logged in users) -->
+            <tr class="clickable-row"
+                data-href="{% if user.is_authenticated %}{% url 'profile' tutor.id %}{% else %}#%{% endif %}">
                 <td>
                     <div class="tutor-row">
                         <!-- Profile Picture and Nickname -->
@@ -75,6 +76,25 @@
                 </td>
             </tr>
             {% endfor %}
+
+            <!-- Login Required Modal -->
+            <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            You need to log in to view tutor profiles. Please log in or register to continue.
+                        </div>
+                        <div class="modal-footer">
+                            <a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
+                            <a href="{% url 'register' %}" class="btn btn-secondary">Register</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </tbody>
     </table>
 
@@ -93,9 +113,48 @@
         </span>
     </div>
 
-    <script>
-        const isAuthenticated = JSON.parse(document.getElementById('auth-status').textContent);
-    </script>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const authMetaTag = document.querySelector('meta[name="auth-status"]');
+        const isAuthenticated = authMetaTag?.content === "true";
+        console.log("Authentication status = " + isAuthenticated)
+               
+        // Authenticated user - enable row click redirects to profile pages
+        if (isAuthenticated) {
+            const clickableRow = document.querySelectorAll(".clickable-row");
+            if (clickableRow.length > 0) {
+                clickableRow.forEach((row) => {
+                    row.addEventListener("click", function () {
+                        const href = this.dataset.href;
+
+                        if (href) {
+                            window.location.href = href;
+                        } else {
+                            console.error("no href found in the row's dataset.")
+                        }
+                    });
+                });
+            } else {
+                console.error("no clickable rows found.")
+            }
+
+        // Unauthenticated user - show login modal
+        } else {
+            const loginModal = new bootstrap.Modal(document.getElementById("loginModal"));
+
+            const table = document.querySelector(".table");
+            if (!table) {
+                console.error("Table element not found.");
+                return;
+            }
+
+            table.addEventListener("click", (event) => {
+                loginModal.show();
+            });
+        }
+    });
+</script>
 
 {% endblock %}
