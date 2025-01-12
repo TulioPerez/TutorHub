@@ -22,8 +22,11 @@
                  <!-- todo check if this aligns with setting in edit_profile_modal -->
                 {% if is_own_profile and missing_details and profile.missing_profile_data_alert %}
                 <div class="alert alert-info text-center">
-                    Some profile details are missing. Completing all sections increases your profile's visibility in search results.
-                    <ul class="text-danger">
+                    <p>Some profile details are missing.<br>Completing all sections increases your profile's visibility in search results.</b></p>
+                    <div>
+                        Missing:
+                    </div>
+                    <ul class="text-danger"> 
                         {% for detail in missing_details %}
                         <li>{{ detail }}</li>
                         {% endfor %}

@@ -32,7 +32,7 @@
                 <li class="nav-item px-2"><a class="nav-link" id="menu-username" href="{% url 'my_profile' %}"><strong>{{ user.username }} ⚙️</strong></a></li>
                 <li class="nav-item px-2"><a class="nav-link" id="menu-messages" href="{% url 'messages' %}">Messages</a></li>
                 {% endif %}
-                <li class="nav-item px-2"><a class="nav-link" id="menu-all-tutors" href="{% url 'index' %}">All Tutors</a></li>
+                <li class="nav-item px-2"><a class="nav-link" id="menu-all-tutors" href="{% url 'index' %}">Tutors</a></li>
                 {% if user.is_authenticated %}
                 <li class="nav-item px-2"><a class="nav-link" id="menu-following" href="{% url 'index' %}?view=following">Following</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
@@ -46,7 +46,8 @@
         </div>
     </nav>
 
-    <div id="main-content" class="flex-grow-1">
+    <!-- the extra 'block page_class...' is a conditional class that allows the padding at the botton of main-content to be overridden as in the landing page -->
+    <div id="main-content" class="flex-grow-1 {% block page_class %}{% endblock %}">
         {% block body %}
         {% endblock %}
     </div>

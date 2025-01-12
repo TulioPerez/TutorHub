@@ -4,9 +4,8 @@
 
 <div class="container mt-5 p-3">
     <h1 id="page-title" class="mb-0">{{ page_title }}</h1>
+    <!-- Search Form -->
     <div id="search-container" class="mb-4 d-flex justify-content-end align-items-center">
-
-        <!-- Search Form -->
         <form id="search-form" action="{% if user.is_authenticated %}{% url 'index' %}{% else %}{% url 'login' %}{% endif %}" method="get" class="d-flex align-items-center">
             <input type="hidden" name="view" value="search">
             <input type="text" name="q" id="search-input" class="form-control me-2" placeholder="Search by city, state, grade, name" value="{{ request.GET.q|default:'' }}">
@@ -15,7 +14,9 @@
             <!-- TODO ADD SEARCH FILTERS: by name, city, state, subject, level, bio content -->
         </form>
     </div>
-    <table class="table table-striped">
+
+    <!-- Tutor List -->
+    <table class="table table-striped table-hover">
         <tbody>
             {% for tutor in page_obj %}
             <!-- Tutor Row -->
@@ -40,7 +41,6 @@
                     <div class="address-container">
                         <div>{{ tutor.address.street_address|default:"N/A" }}</div>
                         <div>{{ tutor.address.city|default:"N/A" }}, {{ tutor.address.state_region|default:"N/A" }} {{ tutor.address.postal_code|default:"" }}</div>
-                        
                     </div>
                 </td>
                 {% endif %}
@@ -77,6 +77,7 @@
             {% endfor %}
         </tbody>
     </table>
+
     <div class="pagination">
         <span class="step-links">
             {% if page_obj.has_previous %}
@@ -91,6 +92,7 @@
             {% endif %}
         </span>
     </div>
+
     <script>
         const isAuthenticated = JSON.parse(document.getElementById('auth-status').textContent);
     </script>

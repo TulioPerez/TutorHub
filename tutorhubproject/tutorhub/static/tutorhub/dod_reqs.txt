@@ -3,12 +3,14 @@ Mentor Finder is an application that matches students with tutors in their neigh
 Templates:
     Landing page
         Mapbox integration
+
         Not authenticated:
             Pinned tutors in most densely populated city
             Search for a tutor near location
             Random, highly rated teacher cards above footer
+
         Authenticated:
-            Same but near user
+            Same but in user vicinity
 
     Registration
         teacher / student / parent, name, nickname, email, profile image, address, DOB 
