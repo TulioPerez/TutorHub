@@ -26,18 +26,19 @@
                     <div>
                         Missing:
                     </div>
-                    <ul class="text-danger"> 
+                    <ul class="text-danger list-unstyled"> 
                         {% for detail in missing_details %}
                         <li>{{ detail }}</li>
                         {% endfor %}
                     </ul>
                 </div>
-                <script>
+                <!-- AUto open the edit-profile modal -->
+                <!-- <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         var modal = new bootstrap.Modal(document.getElementById('editProfileModal'), {});
                         modal.show();
                     });
-                </script>
+                </script> -->
                 {% endif %}
                 
                 <div class="profile-header">
