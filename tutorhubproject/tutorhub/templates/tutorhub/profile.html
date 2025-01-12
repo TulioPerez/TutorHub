@@ -1,7 +1,6 @@
 {% extends "tutorhub/layout.html" %}
 {% load static %}
 {% block body %}
-
 {% include 'tutorhub/modals/edit_profile_modal.html' %}
 
 <div class="container mt-5 p-3">
@@ -32,7 +31,7 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <!-- AUto open the edit-profile modal -->
+                <!-- Auto open the edit-profile modal -->
                 <!-- <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         var modal = new bootstrap.Modal(document.getElementById('editProfileModal'), {});
@@ -222,5 +221,166 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventLIstener("DOMContentLoaded", () => {
+
+        // Edit profile modal
+        const editProfileModal = document.querySelector("#editProfileModal");
+        if (editProfileModal) {
+            const form = editProfileModal.querySelector("form"); // Select the form inside the modal
+            form.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                const formData = new FormData(form);
+
+                // Handle availability
+                const availabilityRows = form.querySelectorAll('.availability-row');
+                formData.delete('availability_days[]');
+                formData.delete('availability_start[]');
+                formData.delete('availability_end[]');
+                availabilityRows.forEach(row => {
+                    formData.append('availability_days[]', row.querySelector('[name="availability_days[]"]').value);
+                    formData.append('availability_start[]', row.querySelector('[name="availability_start[]"]').value);
+                    formData.append('availability_end[]', row.querySelector('[name="availability_end[]"]').value);
+                });
+
+                // Handle subjects and levels
+                form.querySelectorAll('.subject-row').forEach((row, index) => {
+                    const subject = row.querySelector('[name="subjects[]"]').value;
+                    formData.append(`subjects[]`, subject);
+        
+                    row.querySelectorAll(`[name="levels_${index}[]"]`).forEach(checkbox => {
+                        if (checkbox.checked) {
+                            formData.append(`levels_${index}[]`, checkbox.value);
+                        }
+                    });
+                });
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': getCSRFToken(),
+                        },
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            alert(data.message);
+                            window.location.reload();
+                        } else {
+                            alert(data.error || "An error occurred. Please try again.");
+                        }
+                    } else {
+                        alert("An error occurred. Please try again.");
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert("Failed to save changes. Check your connection.");
+                }
+            });
+        }
+
+
+        // Handle following
+        const followButtons = document.querySelectorAll(".follow-btn");
+
+        followButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const tutorId = button.getAttribute("data-tutor-id");
+
+                fetch(`/follow/${tutorId}/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCSRFToken(),
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.action === "followed") {
+                            button.textContent = "Unfollow";
+                        } else if (data.action === "unfollowed") {
+                            button.textContent = "Follow";
+                        }
+                    })
+                    .catch((error) => console.error("Error following/unfollowing:", error));
+            });
+        });
+
+
+        // TODO if profile data incomplete - disable messaging
+        // Message editing
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const messageId = button.getAttribute('data-message-id');
+                const messageElement = button.parentElement.querySelector('p');
+                const originalContent = messageElement.textContent;
+
+                const textarea = document.createElement('textarea');
+                textarea.value = originalContent;
+                textarea.style.width = "100%";
+                textarea.style.marginBottom = "5px";
+                messageElement.replaceWith(textarea);
+
+                const saveButton = document.createElement('button');
+                saveButton.textContent = 'Save';
+                saveButton.classList.add("btn", "btn-success", "btn-sm");
+
+                const cancelButton = document.createElement("button");
+                cancelButton.textContent = "Cancel";
+                cancelButton.classList.add("btn", "btn-secondary", "btn-sm");
+                cancelButton.style.marginLeft = "5px";
+
+                button.after(saveButton, cancelButton);
+                button.style.display = "none";
+
+                saveButton.addEventListener("click", () => {
+                    fetch(`/edit_message/${messageId}/`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                        },
+                        body: JSON.stringify({ action: "edit", content: textarea.value })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            const newMessageElement = document.createElement("p");
+                            newMessageElement.textContent = data.content;
+                            textarea.replaceWith(newMessageElement);
+                            saveButton.remove();
+                            cancelButton.remove();
+                            button.style.display = "inline-block";
+                        }
+                    });
+                });
+
+                // Cancel message edit
+                cancelButton.addEventListener("click", () => {
+                    const originalMessage = document.createElement("p");
+                    originalMessage.textContent = originalContent;
+                    textarea.replaceWith(originalMessage);
+                    saveButton.remove();
+                    cancelButton.remove();
+                    button.style.display = "inline-block";
+                });
+            });
+        });
+            
+            
+        // Message auto scrolling
+        const scrollTarget = document.getElementById("scroll-target");
+        const scrollToId = scrollTarget ? scrollTarget.getAttribute("data-scroll-to") : null;
+        if (scrollToId) {
+            const targetElement = document.getElementById(`message-${scrollToId}`);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }
+    });
+</script>
 
 {% endblock %}

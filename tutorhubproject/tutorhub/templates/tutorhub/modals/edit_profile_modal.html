@@ -1,4 +1,6 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel"
     aria-hidden="true">
@@ -300,5 +302,296 @@
             </form>
         </div>
     </div>
-    <script id="level-options" type="application/json">{{ levels_json }}</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Profile image handling
+            const profileImageSelection = document.getElementById("profile_image");
+            const profileImagePreview = document.querySelector("#profile_image + img");
+            const removeImageButton = document.querySelector(".remove-profile-image");
+        
+            if (profileImageSelection && profileImagePreview) {
+                profileImageSelection.addEventListener("change", (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            profileImagePreview.src = e.target.result;
+                            profileImagePreview.style.display = "block"; // Ensure the preview is visible
+                            if (removeImageButton) {
+                                removeImageButton.style.display = "inline-block"; // Show remove button if hidden
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Remove profile image
+            if (removeImageButton) {
+                removeImageButton.addEventListener("click", async () => {
+                    const confirmRemoval = confirm("Are you sure you want to remove the profile image?");
+                    if (!confirmRemoval) return;
+
+                    try {
+                        const response = await fetch("/remove_profile_image/", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                            },
+                        });
+            
+                        // todo fix bugs: image persists in modal and profile after deletion until page refresh
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                alert("Profile image removed successfully.");
+            
+                                // Dynamically update the modal to remove the image
+                                if (profileImagePreview) {
+                                    profileImagePreview.src = ""; // Clear the image source
+                                    profileImagePreview.style.display = "none"; // Hide the preview
+                                }
+                                if (removeImageButton) {
+                                    removeImageButton.style.display = "none"; // Hide the remove button
+                                }
+                                if (profileImageSelection) {
+                                    profileImageSelection.value = ""; // Reset file input
+                                }
+                            } else {
+                                // If success = false, show the error from the response
+                                alert(data.error || "Failed to remove profile image.");
+                            }
+                        } else {
+                            alert("An error occurred while removing the profile image. Please try again.");
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        alert("Failed to remove the profile image. Check your internet connection.");
+                    }
+                });
+            }
+
+
+            // Credential handling
+            const maxCredentials = 5;
+            const credentialRowsContainer = document.getElementById("credential-rows-container");
+            const addCredentialButton = document.getElementById("btn-add-credential");
+
+            if (addCredentialButton) {
+                addCredentialButton.addEventListener("click", () => {
+                    const credentialCount = document.querySelectorAll(".credential-row").length;
+
+                    if (credentialCount >= maxCredentials) {
+                        alert(`You cannot add more than ${maxCredentials} credentials.`);
+                        return;
+                    }
+
+                    const newRow = document.createElement("div");
+                    newRow.classList.add("credential-row", "row", "mb-3");
+
+                    newRow.innerHTML = `
+                        <div class="col-md-10">
+                            <input type="file" name="credentials[]" class="form-control" accept=".pdf,.doc,.docx,.jpg,.png" required>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="btn btn-danger btn-sm remove-row">X</button>
+                        </div>
+                    `;
+
+                    credentialRowsContainer.appendChild(newRow);
+
+                    // Add event listener to the "Remove" button
+                    newRow.querySelector(".remove-row").addEventListener("click", () => {
+                        newRow.remove();
+                    });
+                });
+            }
+
+
+            // Remove existing credential row
+            if (credentialRowsContainer) {
+                credentialRowsContainer.addEventListener("click", (event) => {
+                    if (event.target.classList.contains("remove-credential")) {
+                        const row = event.target.closest(".credential-row");
+                        const credentialId = event.target.getAttribute("data-id");
+                        
+                        // Confirm deletion
+                        if (confirm("Are you sure you want to delete this credential?")) {
+                            fetch(`/delete_credential/${credentialId}/`, {
+                                method: "POST",
+                                headers: {
+                                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                                },
+                            })
+                            .then((response) => {
+                                if (response.ok) {
+                                    row.remove();
+                                    console.log("Credential deleted successfully.");
+                                } else {
+                                    alert("Failed to delete credential.");
+                                }
+                            })
+                            .catch((error) => console.error("Error:", error));
+                        }
+                    }
+                });
+            }
+                
+
+            // Handle Subjects & Levels
+            const subjectRowsContainer = document.getElementById("subject-rows-container");
+            const addSubjectButton = document.getElementById("btn-add-subject");
+
+            const levelOptionsElement = document.getElementById("level-options");
+            if (levelOptionsElement) {
+                const levels = JSON.parse(levelOptionsElement.textContent);
+                console.log(levels);
+            } else {
+                console.error("Element with ID 'level-options' not found.");
+            }
+
+            // Add a new subject row
+            if (addSubjectButton) {
+                addSubjectButton.addEventListener("click", function () {
+                    const subjectIndex = subjectRowsContainer.children.length; // Get current row index
+                    const newRow = document.createElement("div");
+                    newRow.classList.add("subject-row", "row", "mb-3");
+                
+                    newRow.innerHTML = `
+                        <div class="col-md-4">
+                            <input type="text" name="subjects[]" class="form-control" placeholder="Subject" maxlength="100" required>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="checkbox-group">
+                                ${levels.map(level => `
+                                    <label class="form-check-label me-3">
+                                        <input type="checkbox" name="levels_${subjectIndex}[]" value="${level.value}">
+                                        ${level.display}
+                                    </label>
+                                `).join("")}
+                            </div>
+                        </div>
+                        <div class="col-md-12 text-end mt-2">
+                            <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                        </div>
+                    `;
+                
+                    subjectRowsContainer.appendChild(newRow);
+                
+                    // "Remove" functionality for dynamic rows
+                    newRow.querySelector(".remove-row").addEventListener("click", function () {
+                        newRow.remove();
+                    });
+                });
+            }
+
+
+            // Remove existing subject & level row
+            subjectRowsContainer.querySelectorAll(".remove-row").forEach((button) => {
+                button.addEventListener("click", async function () {
+                    const row = button.closest(".subject-row");
+                    const subjectLevelId = button.getAttribute("data-id"); // Get the ID of the SubjectLevel
+
+                    if (subjectLevelId) {
+                        const confirmDelete = confirm("Are you sure you want to delete this subject?");
+                        if (!confirmDelete) return;
+
+                        try {
+                            const response = await fetch(`/delete_subject_level/${subjectLevelId}/`, {
+                                method: "POST",
+                                headers: {
+                                    "X-CSRFToken": getCSRFToken(),
+                                },
+                            });
+
+                            if (response.ok) {
+                                const data = await response.json();
+                                if (data.success) {
+                                    alert("Subject removed successfully.");
+                                    row.remove(); // Remove the row from the modal
+                                } else {
+                                    alert(data.error || "An error occurred while removing the subject.");
+                                }
+                            } else {
+                                alert("Failed to remove the subject. Please try again.");
+                            }
+                        } catch (error) {
+                            console.error("Error:", error);
+                            alert("Failed to remove the subject. Check your internet connection.");
+                        }
+                    } else {
+                        // If there's no ID, just remove the row from the modal
+                        row.remove();
+                    }
+                });
+            });
+
+
+            // Availability handling
+            const maxAvailability = 8; 
+            const availabilityContainer = document.getElementById("availability-rows-container");
+            const addAvailabilityButton = document.getElementById("btn-add-availability");
+            const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+            const createAvailabilityRow = (day = "", start = "", end = "") => {
+                const newRow = document.createElement("div");
+                newRow.classList.add("availability-row", "row", "mb-3");
+
+                newRow.innerHTML = `
+                    <div class="col-md-4">
+                        <select name="availability_days[]" class="form-select" required>
+                            <option value="" disabled ${!day ? "selected" : ""}>Select a day</option>
+                            ${daysOfWeek
+                                .map(d => `<option value="${d}" ${d === day ? "selected" : ""}>${d}</option>`)
+                                .join("")}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="time" name="availability_start[]" value="${start}" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="time" name="availability_end[]" value="${end}" class="form-control" required>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button type="button" class="btn btn-danger btn-sm remove-availability">X</button>
+                    </div>
+                `;
+
+                // Event listener for "Remove" button
+                newRow.querySelector(".remove-availability").addEventListener("click", () => {
+                    newRow.remove();
+                });
+
+                return newRow;
+            };
+
+            // Event listener for "Add availability" button
+            addAvailabilityButton.addEventListener("click", () => {
+                const rowCount = availabilityContainer.querySelectorAll(".availability-row").length;
+
+                if (rowCount >= maxAvailability) {
+                    alert(`You cannot add more than ${maxAvailability} availability slots.`);
+                    return;
+                }
+
+                const newRow = createAvailabilityRow();
+                availabilityContainer.appendChild(newRow);
+            });
+
+
+            // Remove availability row
+            availabilityContainer.querySelectorAll(".remove-availability").forEach(button => {
+                button.addEventListener("click", () => {
+                    button.closest(".availability-row").remove();
+                });
+            });
+
+        });
+    </script>
+
+    <script id="level-options" type="application/json">
+        {{ levels_json }}
+    </script>
+
 </div>
