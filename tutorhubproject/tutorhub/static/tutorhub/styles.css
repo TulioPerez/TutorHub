@@ -31,7 +31,7 @@ html, body {
 /* navbar */
 .navbar {
     background-color: #522A5E;
-    padding: 0px 30px 0px 30px;
+    padding: 5px 30px 5px 30px;
 }
 
 /* logo */
@@ -61,12 +61,16 @@ html, body {
     justify-content: center;
 }
 
+#landing-page-form {
+    padding: 20px 50px;
+}
+
 #map-container {
     height: 50vh;
 }
 
 #map-container, #landing-page-form-field {
-    margin: 10px 20px;
+    margin: 10px 0px 10px 20px;
     border-width: 1px;
     overflow: hidden;
     border-radius: 10px;
@@ -75,7 +79,7 @@ html, body {
 }
 
 #landing-page-form-field {
-    margin: 0;
+    margin: 5px 0px;
 }
 
 #gps-button {
